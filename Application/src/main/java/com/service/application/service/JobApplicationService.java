@@ -102,19 +102,14 @@ public class JobApplicationService {
     
     public List<ApplicationResponseDto> getApplicationsForJob(Long jobId) {
         List<JobApplication> applications = jobApplicationRepository.findByJobId(jobId);
-        System.out.println("Found " + applications.size() + " applications for job " + jobId);
         
         return applications.stream()
                 .map(application -> {
                     try {
-                        System.out.println("Fetching job details for job ID: " + application.getJobId());
                         JobDto job = jobServiceClient.getJobById(application.getJobId());
-                        System.out.println("Successfully fetched job: " + job.getTitle());
                         return mapToResponseDto(application, job);
                     } catch (Exception e) {
-                        System.err.println("Error fetching job details: " + e.getMessage());
-                        e.printStackTrace();
-                        throw new RuntimeException("Error fetching job details", e);
+                        throw new RuntimeException("Error fetching job details for jobId: " + application.getJobId(), e);
                     }
                 })
                 .collect(Collectors.toList());

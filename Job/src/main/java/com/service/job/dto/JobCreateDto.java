@@ -38,5 +38,6 @@ public class JobCreateDto {
     @Positive(message = "Maximum salary must be positive")
     private Double salaryMax;
     
+    @Builder.Default
     private JobStatus status = JobStatus.OPEN;
 }

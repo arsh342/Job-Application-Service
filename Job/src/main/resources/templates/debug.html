@@ -177,8 +177,7 @@
 
       function setTestToken() {
         // This is just for testing - normally you'd get this from login
-        const testToken =
-          "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyVHlwZSI6IkVNUExPWUVSIiwidXNlcklkIjozLCJzdWIiOiJlbXBsb3llckBnbWFpbC5jb20iLCJpYXQiOjE3NTcxNTgwNTcsImV4cCI6MTc1NzI0NDQ1N30.j-DfFhg8UHUsaAt9aErdbrfw5EO6OHM7josDIOXzKRs";
+        const testToken = "YOUR_TEST_TOKEN_HERE";
         localStorage.setItem("authToken", testToken);
         displayTokenInfo();
         logResult("Set Test Token", "Test token set in localStorage");

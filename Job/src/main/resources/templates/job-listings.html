@@ -539,27 +539,18 @@
 
       async function loadApplicationsForJob(jobId) {
         try {
-          console.log(`Loading applications for job ${jobId}...`);
           const headers = getAuthHeaders();
-          console.log("Headers:", headers);
 
           const response = await fetch(`/api/jobs/${jobId}/applications`, {
             headers: headers,
           });
 
-          console.log(`Response status for job ${jobId}:`, response.status);
-
           if (response.ok) {
             const applications = await response.json();
-            console.log(`Applications for job ${jobId}:`, applications);
             return applications;
           } else if (response.status === 401) {
-            console.error("Authentication required for job", jobId);
             throw new Error("Authentication required");
           } else {
-            console.warn(
-              `Failed to load applications for job ${jobId}, status: ${response.status}`
-            );
             return []; // Return empty array if no applications or other error
           }
         } catch (error) {
@@ -576,30 +567,17 @@
         errorEl.style.display = "none";
 
         try {
-          console.log("Starting to load all data...");
-
           // Load jobs first
-          console.log("Loading jobs...");
           allJobs = await loadJobs();
-          console.log("Loaded jobs:", allJobs);
 
           // Load applications for each job
           allApplications = {};
-          console.log("Loading applications for", allJobs.length, "jobs...");
 
           for (const job of allJobs) {
-            console.log(`Loading applications for job ${job.jobId}...`);
             allApplications[job.jobId] = await loadApplicationsForJob(
               job.jobId
             );
-            console.log(
-              `Loaded ${
-                allApplications[job.jobId].length
-              } applications for job ${job.jobId}`
-            );
           }
-
-          console.log("All applications loaded:", allApplications);
 
           updateStats();
           renderJobs();

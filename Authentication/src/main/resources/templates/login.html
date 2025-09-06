@@ -228,10 +228,6 @@
             if (response.ok) {
               const data = await response.json();
 
-              // Debug logging
-              console.log("Login response data:", data);
-              console.log("User type:", data.userType);
-
               // Store token in localStorage
               localStorage.setItem("authToken", data.token);
               localStorage.setItem("userType", data.userType);
@@ -249,25 +245,17 @@
                 localStorage.setItem("authToken", data.token);
                 sessionStorage.setItem("authToken", data.token);
 
-                console.log("About to redirect for user type:", data.userType);
-
                 if (data.userType === "EMPLOYER") {
-                  console.log("Redirecting to Job Service");
                   // Redirect to Job Service (Employer Dashboard) with token
                   window.location.href = `http://localhost:8081/dashboard?token=${encodeURIComponent(
                     data.token
                   )}`;
                 } else if (data.userType === "APPLICANT") {
-                  console.log("Redirecting to Application Service");
                   // Redirect to Application Service (Applicant Dashboard) with token
                   window.location.href = `http://localhost:8082/dashboard?token=${encodeURIComponent(
                     data.token
                   )}`;
                 } else {
-                  console.log(
-                    "Redirecting to fallback dashboard, userType was:",
-                    data.userType
-                  );
                   // Fallback to general dashboard
                   window.location.href = "/dashboard";
                 }

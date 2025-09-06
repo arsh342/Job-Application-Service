@@ -497,7 +497,6 @@
           if (response.ok) {
             const applications = await response.json();
             alert(`Applications for this job: ${applications.length}`);
-            console.log("Applications:", applications);
           } else {
             alert("Failed to load applications");
           }
