@@ -522,22 +522,32 @@
         }
 
         async function loadApplications() {
-          if (!currentApplicantId) return;
+          console.log("Loading applications...");
+          console.log("Auth token:", getJwtToken() ? "Present" : "Missing");
 
           try {
-            const response = await fetch(
-              `/api/applicants/${currentApplicantId}/applications`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  ...getAuthHeaders(),
-                },
-              }
-            );
+            const response = await fetch(`/api/applications/my-applications`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+            });
+
+            console.log("Response status:", response.status);
+
             if (response.ok) {
               const applications = await response.json();
+              console.log("Applications received:", applications);
               displayApplications(applications);
+            } else {
+              const errorText = await response.text();
+              console.error(
+                "Failed to load applications. Status:",
+                response.status,
+                "Error:",
+                errorText
+              );
             }
           } catch (error) {
             console.error("Failed to load applications:", error);

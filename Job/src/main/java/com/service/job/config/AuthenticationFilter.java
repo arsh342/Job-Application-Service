@@ -110,7 +110,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                path.equals("/profile") ||
                path.equals("/job-listings") ||
                path.equals("/debug") ||
-               path.equals("/api/jobs"); // Only GET /api/jobs is public, not other operations
+               path.equals("/api/jobs") || // GET /api/jobs for browsing
+               path.equals("/api/jobs/all") || // GET /api/jobs/all for browsing all jobs
+               (path.startsWith("/api/jobs/") && path.matches("/api/jobs/\\d+$")); // GET /api/jobs/{id} for job details
     }
 
     private UserValidationResponse validateTokenWithAuthService(String token) throws Exception {
