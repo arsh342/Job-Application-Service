@@ -28,9 +28,9 @@ This project follows a microservices architecture with three core services:
 │  (Port 8083)    │    │                 │    │  (Port 8082)    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
-         │◄──── Token Validation ─┤                       │
+         │◄─── Token Validation ─┤                       │
          │                       │                       │
-         │◄──── Token Validation ─┼───────────────────────┤
+         │◄─── Token Validation ─┼───────────────────────┤
          │                       │                       │
          │                       │◄──── Job Data ────────┤
          │                       │                       │
