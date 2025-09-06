@@ -2,6 +2,15 @@
 
 A comprehensive Job Portal application built with Spring Boot microservices architecture, featuring three independent services for authentication, job management, and application management with JWT-based security.
 
+## 🚀 Recent Updates & Fixes
+
+- ✅ **Authentication Filter Optimization**: Fixed job update authentication issues
+- ✅ **Public Endpoint Configuration**: Properly configured public vs protected endpoints
+- ✅ **Inter-Service Communication**: Resolved communication issues between services
+- ✅ **Dashboard Applications Display**: Fixed "My Applications" loading in dashboard
+- ✅ **Debug Capabilities**: Enhanced debugging for development and troubleshooting
+- ✅ **Duplicate Controller Resolution**: Removed conflicting controllers causing startup issues
+
 ## Architecture Overview
 
 This project follows a microservices architecture with three core services:
@@ -26,6 +35,74 @@ This project follows a microservices architecture with three core services:
          │                       │◄──── Job Data ────────┤
          │                       │                       │
 ```
+
+## 🔧 Quick Start (Updated)
+
+### Prerequisites
+
+- **Java**: OpenJDK 17+ (tested with Java 21+)
+- **Maven**: 3.6+ for dependency management
+- **MySQL**: 8.0+ database server
+- **Git**: For version control
+
+### Database Setup
+
+1. **Install and start MySQL server**
+2. **Create databases** (auto-created if they don't exist):
+   ```sql
+   CREATE DATABASE job_portal_auth_db;
+   CREATE DATABASE job_portal_job_db;
+   CREATE DATABASE job_portal_application_db;
+   ```
+3. **Update database credentials** in each service's `application.properties`:
+   ```properties
+   spring.datasource.username=root
+   spring.datasource.password=your_password
+   ```
+
+### Service Startup Sequence ⚡
+
+**CRITICAL**: Start services in this exact order:
+
+#### Step 1: Authentication Service (MUST START FIRST)
+
+```bash
+cd Authentication
+./mvnw spring-boot:run
+```
+
+- 🟢 Available at: http://localhost:8083
+- ✅ Health check: http://localhost:8083/health
+
+#### Step 2: Job Service
+
+```bash
+cd Job
+./mvnw spring-boot:run
+```
+
+- 🟢 Available at: http://localhost:8081
+- 🔧 Debug page: http://localhost:8081/debug
+
+#### Step 3: Application Service
+
+```bash
+cd Application
+./mvnw spring-boot:run
+```
+
+- 🟢 Available at: http://localhost:8082
+- 📊 Dashboard: http://localhost:8082/dashboard
+
+### ⚡ Quick Access URLs
+
+- **🏠 Main Portal**: http://localhost:8083
+- **👤 Register**: http://localhost:8083/register
+- **🔐 Login**: http://localhost:8083/login
+- **💼 Employer Dashboard**: http://localhost:8081/dashboard
+- **👔 Job Seeker Dashboard**: http://localhost:8082/dashboard
+- **🔍 Browse Jobs**: http://localhost:8082/browse-jobs
+- **📋 My Applications**: http://localhost:8082/my-applications
 
 ## Features
 
@@ -73,9 +150,9 @@ This project follows a microservices architecture with three core services:
 - **API Documentation**: RESTful API design with comprehensive endpoints
 - **Password Encryption**: BCrypt for secure password hashing
 
-## Authentication & Security
+## 🛡️ Authentication & Security (Updated)
 
-This application implements a comprehensive JWT-based authentication system:
+This application implements a robust JWT-based authentication system with recent security enhancements:
 
 ### Authentication Flow
 
@@ -85,7 +162,7 @@ This application implements a comprehensive JWT-based authentication system:
 4. **Service Access**: Each service validates tokens with the Authentication Service
 5. **Session Management**: Tokens expire after 24 hours for security
 
-### Security Features
+### 🔒 Security Features
 
 - **JWT Token Authentication**: Stateless authentication across all services
 - **Password Encryption**: BCrypt hashing with salt for password security
@@ -93,7 +170,33 @@ This application implements a comprehensive JWT-based authentication system:
 - **Token Validation**: Real-time token verification with Authentication Service
 - **CORS Support**: Configured cross-origin resource sharing for frontend
 - **API Security**: Protected endpoints with Bearer token authentication
-- **Session Security**: Secure token storage and management
+- **Smart Endpoint Protection**: Public browsing vs. protected management operations
+
+### 🎯 Endpoint Security Configuration
+
+#### Public Endpoints (No Authentication Required)
+
+- `GET /api/jobs` - Browse all available jobs
+- `GET /api/jobs/all` - Get complete job listings
+- `GET /api/jobs/{id}` - View individual job details
+- Static resources (CSS, JS, images)
+- Health check endpoints
+
+#### Protected Endpoints (Authentication Required)
+
+- `POST /api/jobs` - Create new job (Employer only)
+- `PUT /api/jobs/{id}` - Update job (Employer only)
+- `DELETE /api/jobs/{id}` - Delete job (Employer only)
+- `POST /api/applications` - Apply to job (Job Seeker only)
+- `GET /api/applications/my-applications` - View user's applications
+- User profile and management endpoints
+
+### 🔧 Recent Security Improvements
+
+1. **Authentication Filter Optimization**: Fixed authentication bypass issues
+2. **Public Endpoint Configuration**: Properly separated public vs protected routes
+3. **Token Validation Enhancement**: Improved token handling across services
+4. **Debug Capabilities**: Enhanced debugging for authentication troubleshooting
 
 ### Token Structure
 
@@ -108,6 +211,18 @@ This application implements a comprehensive JWT-based authentication system:
   "companyName": "TechCorp" // For employers only
 }
 ```
+
+{
+"token": "eyJhbGciOiJIUzI1NiJ9...",
+"userId": 123,
+"email": "user@example.com",
+"name": "John Doe",
+"userType": "EMPLOYER" | "JOB_SEEKER",
+"externalUserId": 456,
+"companyName": "TechCorp" // For employers only
+}
+
+````
 
 ## Database Schema
 
@@ -127,7 +242,7 @@ CREATE TABLE users (
     created_date DATE DEFAULT CURRENT_DATE,
     updated_date DATE DEFAULT CURRENT_DATE
 );
-```
+````
 
 ### Job Service Database (`job_portal_job_db`)
 
@@ -267,7 +382,7 @@ mvn spring-boot:run
 - **Browse Jobs**: http://localhost:8082/browse-jobs
 - **My Applications**: http://localhost:8082/my-applications
 
-## API Endpoints
+## 📊 API Endpoints (Updated)
 
 ### Authentication Service APIs (`http://localhost:8083`)
 
@@ -285,6 +400,51 @@ mvn spring-boot:run
 - `POST /api/auth/validate-token` - Validate JWT token
 - `GET /api/auth/profile` - Get user profile (requires token)
 - `PUT /api/auth/profile` - Update user profile (requires token)
+
+### Job Service APIs (`http://localhost:8081`)
+
+#### Public Endpoints (✅ Recently Updated)
+
+- `GET /` - Employer landing page
+- `GET /dashboard` - Employer dashboard
+- `GET /debug` - **NEW**: Authentication debug tools
+- `GET /api/jobs` - Get all jobs (public browsing)
+- `GET /api/jobs/all` - Get all jobs (public browsing)
+- `GET /api/jobs/{jobId}` - Get specific job details (public)
+
+#### Job Management APIs (🔒 Protected)
+
+- `POST /api/jobs` - Create new job (Employer only)
+- `PUT /api/jobs/{jobId}` - **FIXED**: Update job (Employer only)
+- `DELETE /api/jobs/{jobId}` - Delete job (Employer only)
+- `GET /api/jobs/my-jobs` - Get jobs by current employer
+- `GET /api/jobs/{jobId}/applications` - Get applications for job
+
+### Application Service APIs (`http://localhost:8082`)
+
+#### Public Endpoints
+
+- `GET /` - Job seeker landing page
+- `GET /dashboard` - Job seeker dashboard
+- `GET /browse-jobs` - Browse available jobs
+- `GET /my-applications` - View my applications page
+- `GET /profile` - Job seeker profile page
+
+#### Application Management APIs (🔒 Protected)
+
+- `POST /api/applications` - Apply to a job
+- `GET /api/applications/my-applications` - **UPDATED**: Get my applications (simplified)
+- `GET /api/applicants/{applicantId}/applications` - Get applications by applicant ID
+- `PUT /api/applications/{applicationId}` - Update application
+- `DELETE /api/applications/{applicationId}` - Withdraw application
+- `PUT /api/applications/{applicationId}/status` - Update application status (Employer only)
+
+### 🔧 Recent API Improvements
+
+1. **Simplified Authentication**: `/api/applications/my-applications` no longer requires URL parameters
+2. **Public Job Access**: Job browsing endpoints are now publicly accessible
+3. **Enhanced Debugging**: New debug endpoints for authentication troubleshooting
+4. **Fixed Job Updates**: Job management endpoints now properly handle authentication
 
 **Registration Request:**
 
@@ -601,11 +761,53 @@ public class SecurityConfig {
 - **Search and Filters**: Advanced filtering capabilities
 - **Status Indicators**: Visual status badges and progress indicators
 
-## Troubleshooting
+## 🐛 Troubleshooting & Debug (Updated)
+
+### Debug Tools
+
+#### Job Service Debug Page
+
+Access http://localhost:8081/debug for comprehensive authentication testing:
+
+- **Token Information**: View all stored tokens (localStorage, sessionStorage, URL)
+- **API Testing**: Test GET, POST, PUT operations with authentication
+- **Authentication Status**: Real-time token validation status
+- **Error Analysis**: Detailed error messages and status codes
+
+#### Console Debugging
+
+The dashboards now include enhanced console debugging:
+
+```javascript
+// Open browser console (F12) to see:
+"Loading applications..."
+"Auth token: Present" or "Auth token: Missing"
+"Response status: 200"
+"Applications received: [...]"
+```
 
 ### Common Issues and Solutions
 
-#### 1. Service Startup Issues
+#### 1. "Failed to update job: Authentication required"
+
+**✅ FIXED**: This was caused by misconfigured public endpoints
+**Solution**: Authentication filter now properly protects job management endpoints
+
+#### 2. "My Applications" not showing in dashboard
+
+**✅ FIXED**: Updated to use simplified `/api/applications/my-applications` endpoint
+**Solution**: Dashboard now uses direct authentication without URL parameters
+
+#### 3. Browse Jobs not loading
+
+**✅ FIXED**: Public endpoints now properly configured for job browsing
+**Solution**: GET endpoints for jobs are now publicly accessible
+
+#### 4. Service Startup Issues
+
+**Problem**: Service fails to start with "Ambiguous mapping" error
+**✅ FIXED**: Removed duplicate controllers
+**Solution**: Each service now has clean, non-conflicting controller mappings
 
 **Problem**: Service fails to start
 **Solutions**:
@@ -613,37 +815,28 @@ public class SecurityConfig {
 - Check if MySQL is running
 - Verify database credentials in `application.properties`
 - Ensure ports 8081, 8082, 8083 are available
-- Check Java version (requires Java 21+)
+- Check Java version (requires Java 17+)
 
-#### 2. Authentication Problems
+#### 5. Authentication Problems
 
 **Problem**: "Authentication required" errors
 **Solutions**:
 
 - Verify Authentication Service is running on port 8083
-- Check JWT token validity and expiration
+- Check JWT token validity and expiration using debug page
 - Ensure proper token format: `Bearer <token>`
-- Verify user exists in Authentication Service
+- Use debug console to verify token presence
 
-#### 3. Database Connection Issues
+#### 6. Dashboard Applications Not Loading
 
-**Problem**: Cannot connect to database
+**Problem**: Applications section shows "No applications yet" despite having applications
+**✅ FIXED**: Now uses proper authentication endpoint
 **Solutions**:
 
-- Start MySQL service
-- Create required databases manually
-- Check MySQL credentials and permissions
-- Verify database URLs in configuration
-
-#### 4. Cross-Service Communication
-
-**Problem**: Services cannot communicate
-**Solutions**:
-
-- Ensure all services are running
-- Check service URLs in configuration
-- Verify network connectivity between services
-- Check firewall settings
+- Check browser console for error messages
+- Verify token is present using debug tools
+- Ensure Application Service is running on port 8082
+- Use `/api/applications/my-applications` endpoint
 
 ### Service Health Checks
 
@@ -656,7 +849,18 @@ curl http://localhost:8081/health
 
 # Check Application Service
 curl http://localhost:8082/health
+
+# Test Authentication (replace with actual token)
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8082/api/applications/my-applications
 ```
+
+### Debug Workflow
+
+1. **Check Service Status**: Verify all three services are running
+2. **Test Authentication**: Use debug page to verify token functionality
+3. **Check Console Logs**: Open browser console for detailed error information
+4. **Verify Database**: Ensure MySQL is running and databases are accessible
+5. **Test API Endpoints**: Use debug tools to test specific API calls
 
 ## Development Guidelines
 
@@ -783,6 +987,45 @@ For support and questions:
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: September 2025  
+## 📋 Changelog
+
+### Version 1.1.0 (September 2025) - Recent Updates
+
+#### 🔒 Authentication & Security Improvements
+
+- **Fixed job update authentication**: Resolved "Authentication required" error when updating jobs
+- **Optimized public endpoints**: Properly configured public vs protected routes
+- **Enhanced token validation**: Improved cross-service token handling
+- **Smart endpoint protection**: Balanced public browsing with secure management operations
+
+#### 🐛 Bug Fixes
+
+- **Resolved duplicate controllers**: Fixed "Ambiguous mapping" startup errors
+- **Fixed dashboard applications**: "My Applications" now loads correctly in dashboard
+- **Improved inter-service communication**: Services now communicate reliably
+- **Enhanced error handling**: Better error messages and debugging information
+
+#### 🛠️ Development Improvements
+
+- **Added debug tools**: Comprehensive authentication debugging at `/debug` endpoints
+- **Enhanced console logging**: Better frontend debugging with detailed console output
+- **Simplified API endpoints**: Streamlined application management APIs
+- **Updated documentation**: Comprehensive troubleshooting and setup guides
+
+#### 🎯 Feature Enhancements
+
+- **Improved user experience**: Faster loading and more reliable application features
+- **Better error feedback**: Clear error messages for authentication and API issues
+- **Enhanced dashboard**: More reliable data loading and display
+- **Streamlined workflows**: Simplified user flows for job seekers and employers
+
+### Version 1.0.0 (Initial Release)
+
+- **Core microservices architecture**: Three independent services with JWT authentication
+- **Complete job portal functionality**: Job posting, application management, user authentication
+- **Modern UI design**: Responsive design with professional gradient themes
+- **Comprehensive API coverage**: RESTful APIs for all major operations
+
+**Version**: 1.1.0  
+**Last Updated**: September 6, 2025  
 **Maintainers**: Development Team
