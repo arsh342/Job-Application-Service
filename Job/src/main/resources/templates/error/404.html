@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found - Job Portal</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 50px;
+        text-align: center;
+        background-color: #f5f5f5;
+      }
+      .error-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 50px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .error-code {
+        font-size: 72px;
+        font-weight: bold;
+        color: #e74c3c;
+        margin-bottom: 20px;
+      }
+      .error-message {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 30px;
+      }
+      .error-description {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 40px;
+      }
+      .back-home {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+        margin: 0 10px;
+      }
+      .back-home:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-container">
+      <div class="error-code">404</div>
+      <div class="error-message">Page Not Found</div>
+      <div class="error-description">
+        The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      </div>
+      <div>
+        <a href="/dashboard" class="back-home">Go to Dashboard</a>
+        <a href="/" class="back-home">Go to Home</a>
+      </div>
+    </div>
+
+    <script>
+      // Auto-redirect to appropriate service based on current port
+      if (window.location.port === "8081") {
+        // Job Service
+        document.querySelector('a[href="/dashboard"]').href = "/dashboard";
+      } else if (window.location.port === "8082") {
+        // Application Service
+        document.querySelector('a[href="/dashboard"]').href = "/dashboard";
+      }
+    </script>
+  </body>
+</html>

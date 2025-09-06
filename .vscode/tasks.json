@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Job Service",
+      "type": "shell",
+      "command": "cd Job && mvn clean compile",
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    }
+  ]
+}

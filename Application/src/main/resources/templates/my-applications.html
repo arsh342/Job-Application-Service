@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Applications - Job Portal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: #007bff;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      .content-area {
+        padding: 30px;
+        min-height: 400px;
+      }
+
+      .application-card {
+        background: white;
+        border: none;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e1e1e1;
+        transition: transform 0.3s;
+      }
+
+      .application-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .application-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .job-title {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .company-name {
+        color: #667eea;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .status-applied {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .status-shortlisted {
+        background: #fff3e0;
+        color: #f57c00;
+      }
+
+      .status-rejected {
+        background: #ffebee;
+        color: #d32f2f;
+      }
+
+      .status-hired {
+        background: #e8f5e8;
+        color: #388e3c;
+      }
+
+      .application-details {
+        margin: 20px 0;
+        line-height: 1.6;
+      }
+
+      .application-details p {
+        margin: 8px 0;
+        color: #666;
+      }
+
+      .application-meta {
+        color: #adb5bd;
+        font-size: 0.9rem;
+        margin: 15px 0;
+      }
+
+      .cover-letter {
+        background: #f8f9fa;
+        padding: 20px;
+        border-left: 4px solid #667eea;
+        margin: 20px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .cover-letter h4 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+
+      .cover-letter p {
+        color: #666;
+        line-height: 1.6;
+        font-style: italic;
+      }
+
+      .application-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .view-job-btn {
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .view-job-btn:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      .no-applications {
+        text-align: center;
+        color: #666;
+        padding: 60px 30px;
+        font-size: 1.1rem;
+      }
+
+      .no-applications a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .no-applications a:hover {
+        text-decoration: underline;
+      }
+
+      .withdraw-btn {
+        background: #dc3545;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .withdraw-btn:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+      }
+
+      .filter-section {
+        background: #f8f9fa;
+        padding: 25px 30px;
+        border-bottom: 1px solid #e1e1e1;
+      }
+
+      .filter-group {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 10px;
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+      }
+
+      input, select {
+        padding: 8px 12px;
+        border: 2px solid #e1e1e1;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s;
+      }
+
+      input:focus, select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .stats-section {
+        background: #f8f9fa;
+        padding: 25px 30px;
+        margin: 0;
+        border-bottom: 1px solid #e1e1e1;
+      }
+
+      .stats-section h3 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .stat-item {
+        text-align: center;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>My Applications</h1>
+        <div class="header-buttons">
+          <button class="btn btn-primary" onclick="navigateToPage('/browse-jobs')">Browse Jobs</button>
+          <button class="btn btn-primary" onclick="navigateToPage('/dashboard')">Dashboard</button>
+          <button class="btn btn-primary" onclick="navigateToPage('/profile')">Profile</button>
+          <button class="btn btn-primary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>Application Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number" id="totalApplications">0</div>
+            <div class="stat-label">Total Applications</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="pendingApplications">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="shortlistedApplications">0</div>
+            <div class="stat-label">Shortlisted</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="rejectedApplications">0</div>
+            <div class="stat-label">Rejected</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <label>Filter by Status:</label>
+          <select id="statusFilter" onchange="filterApplications()">
+            <option value="">All Applications</option>
+            <option value="APPLIED">Applied</option>
+            <option value="SHORTLISTED">Shortlisted</option>
+            <option value="REJECTED">Rejected</option>
+            <option value="HIRED">Hired</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Search:</label>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Job title or company..."
+            onkeyup="filterApplications()"
+          />
+        </div>
+        <div class="filter-group">
+          <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+        </div>
+      </div>
+
+      <!-- Applications List -->
+      <div class="content-area">
+        <div id="applicationsList">
+          <!-- Applications will be dynamically loaded here -->
+        </div>
+      </div>
+    </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="shortlistedApplications">0</div>
+          <div class="stat-label">Shortlisted</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="hiredApplications">0</div>
+          <div class="stat-label">Hired</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <h3>Filter Applications</h3>
+      <div class="filter-group">
+        <select id="statusFilter" onchange="filterApplications()">
+          <option value="">All Status</option>
+          <option value="APPLIED">Applied</option>
+          <option value="SHORTLISTED">Shortlisted</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="HIRED">Hired</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <input
+          type="text"
+          id="jobTitleFilter"
+          placeholder="Job title..."
+          onkeyup="filterApplications()"
+        />
+      </div>
+      <div class="filter-group">
+        <input
+          type="text"
+          id="companyFilter"
+          placeholder="Company..."
+          onkeyup="filterApplications()"
+        />
+      </div>
+      <div class="filter-group">
+        <select id="sortBy" onchange="filterApplications()">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="status">By Status</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <button onclick="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+
+    <div id="applicationsList">
+      <!-- Applications will be loaded here -->
+    </div>
+
+    <script>
+      let allApplications = [];
+      let filteredApplications = [];
+
+      // JWT utility functions
+      function getJwtToken() {
+        return (
+          localStorage.getItem("authToken") ||
+          localStorage.getItem("jwtToken") ||
+          sessionStorage.getItem("authToken")
+        );
+      }
+
+      function setJwtToken(token) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("jwtToken", token); // Keep for compatibility
+      }
+
+      function removeJwtToken() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("authToken");
+      }
+
+      function getAuthHeaders() {
+        const token = getJwtToken();
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      }
+
+      function navigateToPage(page) {
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = page;
+        }
+      }
+
+      window.addEventListener("load", async function () {
+        // Load applications
+        await loadApplications();
+      });
+
+      async function loadApplications() {
+        try {
+          const response = await fetch("/api/applications/my-applications", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+          });
+          if (response.ok) {
+            allApplications = await response.json();
+
+            // Load job details for each application
+            for (let application of allApplications) {
+              try {
+                const jobResponse = await fetch(
+                  `http://localhost:8081/api/jobs/${application.jobId}`
+                );
+                if (jobResponse.ok) {
+                  const job = await jobResponse.json();
+                  application.jobTitle = job.title;
+                  application.companyName = job.companyName;
+                  application.jobLocation = job.location;
+                  application.jobSalary = job.salary;
+                }
+              } catch (error) {
+                console.error(
+                  "Error loading job details for application:",
+                  application.applicationId
+                );
+                application.jobTitle = "Job details unavailable";
+                application.companyName = "Unknown";
+              }
+            }
+
+            filteredApplications = [...allApplications];
+            displayApplications();
+            updateStats();
+          } else {
+            document.getElementById("applicationsList").innerHTML =
+              '<div class="no-applications">Failed to load applications</div>';
+          }
+        } catch (error) {
+          document.getElementById("applicationsList").innerHTML =
+            '<div class="no-applications">Error loading applications</div>';
+        }
+      }
+
+      function displayApplications() {
+        const applicationsList = document.getElementById("applicationsList");
+
+        if (filteredApplications.length === 0) {
+          applicationsList.innerHTML =
+            '<div class="no-applications">No applications found. <a href="/browse-jobs">Browse Jobs</a> to start applying!</div>';
+          return;
+        }
+
+        applicationsList.innerHTML = filteredApplications
+          .map(
+            (application) => `
+                <div class="application-card">
+                    <div class="application-header">
+                        <div>
+                            <h3 class="job-title">${
+                              application.jobTitle || "Job Title Unavailable"
+                            }</h3>
+                            <div class="company-name">${
+                              application.companyName || "Unknown Company"
+                            }</div>
+                        </div>
+                        <span class="status-badge status-${application.status.toLowerCase()}">${
+              application.status
+            }</span>
+                    </div>
+                    
+                    <div class="application-details">
+                        <div class="application-meta">
+                            <strong>Applied:</strong> ${
+                              application.appliedDate
+                            } | 
+                            <strong>Location:</strong> ${
+                              application.jobLocation || "Not specified"
+                            }
+                            ${
+                              application.jobSalary
+                                ? ` | <strong>Salary:</strong> $${application.jobSalary}`
+                                : ""
+                            }
+                        </div>
+                        
+                        ${
+                          application.coverLetter
+                            ? `
+                            <div class="cover-letter">
+                                <strong>Cover Letter:</strong><br>
+                                ${application.coverLetter}
+                            </div>
+                        `
+                            : ""
+                        }
+                        
+                        ${
+                          application.additionalNotes
+                            ? `
+                            <div>
+                                <strong>Additional Notes:</strong> ${application.additionalNotes}
+                            </div>
+                        `
+                            : ""
+                        }
+                    </div>
+                    
+                    <div class="application-actions">
+                        <button onclick="viewJobDetails(${
+                          application.jobId
+                        })" class="view-job-btn">View Job</button>
+                        ${
+                          application.status === "APPLIED"
+                            ? `
+                            <button onclick="withdrawApplication(${application.applicationId})" class="withdraw-btn">Withdraw Application</button>
+                        `
+                            : ""
+                        }
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function updateStats() {
+        const total = allApplications.length;
+        const pending = allApplications.filter(
+          (app) => app.status === "APPLIED"
+        ).length;
+        const shortlisted = allApplications.filter(
+          (app) => app.status === "SHORTLISTED"
+        ).length;
+        const hired = allApplications.filter(
+          (app) => app.status === "HIRED"
+        ).length;
+
+        document.getElementById("totalApplications").textContent = total;
+        document.getElementById("pendingApplications").textContent = pending;
+        document.getElementById("shortlistedApplications").textContent =
+          shortlisted;
+        document.getElementById("hiredApplications").textContent = hired;
+      }
+
+      function filterApplications() {
+        const statusFilter = document.getElementById("statusFilter").value;
+        const jobTitleFilter = document
+          .getElementById("jobTitleFilter")
+          .value.toLowerCase();
+        const companyFilter = document
+          .getElementById("companyFilter")
+          .value.toLowerCase();
+        const sortBy = document.getElementById("sortBy").value;
+
+        // Filter applications
+        filteredApplications = allApplications.filter((application) => {
+          const matchesStatus =
+            !statusFilter || application.status === statusFilter;
+          const matchesJobTitle =
+            !jobTitleFilter ||
+            (application.jobTitle &&
+              application.jobTitle.toLowerCase().includes(jobTitleFilter));
+          const matchesCompany =
+            !companyFilter ||
+            (application.companyName &&
+              application.companyName.toLowerCase().includes(companyFilter));
+
+          return matchesStatus && matchesJobTitle && matchesCompany;
+        });
+
+        // Sort applications
+        filteredApplications.sort((a, b) => {
+          switch (sortBy) {
+            case "newest":
+              return new Date(b.appliedDate) - new Date(a.appliedDate);
+            case "oldest":
+              return new Date(a.appliedDate) - new Date(b.appliedDate);
+            case "status":
+              const statusOrder = {
+                HIRED: 0,
+                SHORTLISTED: 1,
+                APPLIED: 2,
+                REJECTED: 3,
+              };
+              return (
+                (statusOrder[a.status] || 999) - (statusOrder[b.status] || 999)
+              );
+            default:
+              return 0;
+          }
+        });
+
+        displayApplications();
+      }
+
+      function clearFilters() {
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("jobTitleFilter").value = "";
+        document.getElementById("companyFilter").value = "";
+        document.getElementById("sortBy").value = "newest";
+        filteredApplications = [...allApplications];
+        displayApplications();
+      }
+
+      function viewJobDetails(jobId) {
+        window.open(`http://localhost:8081/job-details?id=${jobId}`, "_blank");
+      }
+
+      async function withdrawApplication(applicationId) {
+        if (
+          !confirm(
+            "Are you sure you want to withdraw this application? This action cannot be undone."
+          )
+        ) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/applications/${applicationId}`, {
+            method: "DELETE",
+            headers: getAuthHeaders(),
+          });
+
+          if (response.ok) {
+            alert("Application withdrawn successfully!");
+            await loadApplications();
+          } else {
+            alert("Failed to withdraw application");
+          }
+        } catch (error) {
+          alert("Error withdrawing application: " + error.message);
+        }
+      }
+
+      async function logout() {
+        removeJwtToken();
+        window.location.href = "/login";
+      }
+    </script>
+  </body>
+</html>

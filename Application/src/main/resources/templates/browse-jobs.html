@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Jobs - Job Portal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .search-filters {
+        background: #f8f9fa;
+        padding: 25px 30px;
+        border-bottom: 1px solid #e1e1e1;
+      }
+
+      .filter-group {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 10px;
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+      }
+
+      input,
+      select {
+        padding: 8px 12px;
+        border: 2px solid #e1e1e1;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .job-card {
+        background: white;
+        border: none;
+        padding: 25px 30px;
+        margin: 0;
+        border-bottom: 1px solid #e1e1e1;
+        transition: background-color 0.3s;
+      }
+
+      .job-card:hover {
+        background: #f8f9fa;
+      }
+
+      .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+      }
+
+      .job-title {
+        margin: 0 0 5px 0;
+        color: #333;
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .job-company {
+        color: #667eea;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      .job-details {
+        margin: 15px 0;
+        line-height: 1.6;
+      }
+
+      .job-details p {
+        margin: 5px 0;
+        color: #666;
+      }
+
+      .job-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .apply-btn {
+        background: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .apply-btn:hover {
+        background: #218838;
+        transform: translateY(-2px);
+      }
+
+      .view-btn {
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .view-btn:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      .applied-badge {
+        background: #ffc107;
+        color: #333;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-radius: 15px;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      .salary {
+        font-weight: 600;
+        color: #28a745;
+        font-size: 1.1rem;
+      }
+
+      .location {
+        color: #6c757d;
+        font-weight: 500;
+      }
+
+      .posted-date {
+        color: #adb5bd;
+        font-size: 0.9rem;
+      }
+
+      .no-jobs {
+        text-align: center;
+        color: #666;
+        padding: 60px 30px;
+        font-size: 1.1rem;
+      }
+
+      .pagination {
+        text-align: center;
+        padding: 30px;
+        background: #f8f9fa;
+        border-top: 1px solid #e1e1e1;
+      }
+
+      .pagination button {
+        margin: 0 5px;
+        padding: 8px 16px;
+        background: white;
+        border: 2px solid #667eea;
+        color: #667eea;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .pagination button:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .pagination button.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .content-area {
+        min-height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Browse Jobs</h1>
+        <div class="header-buttons">
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/dashboard')"
+          >
+            Dashboard
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/my-applications')"
+          >
+            My Applications
+          </button>
+          <button class="btn btn-primary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- Search and Filter Section -->
+      <div class="search-filters">
+        <div class="filter-group">
+          <label>Search:</label>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Job title, company, or keywords..."
+            onkeyup="filterJobs()"
+          />
+        </div>
+        <div class="filter-group">
+          <label>Location:</label>
+          <input
+            type="text"
+            id="locationFilter"
+            placeholder="City or state..."
+            onkeyup="filterJobs()"
+          />
+        </div>
+        <div class="filter-group">
+          <label>Company:</label>
+          <input
+            type="text"
+            id="companyFilter"
+            placeholder="Company name..."
+            onkeyup="filterJobs()"
+          />
+        </div>
+        <div class="filter-group">
+          <label>Salary Range:</label>
+          <select id="salaryFilter" onchange="filterJobs()">
+            <option value="">Any</option>
+            <option value="0-30000">$0 - $30,000</option>
+            <option value="30000-50000">$30,000 - $50,000</option>
+            <option value="50000-75000">$50,000 - $75,000</option>
+            <option value="75000-100000">$75,000 - $100,000</option>
+            <option value="100000+">$100,000+</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <button class="btn btn-primary" onclick="clearFilters()">
+            Clear All
+          </button>
+        </div>
+      </div>
+
+      <!-- Jobs List Section -->
+      <div class="content-area">
+        <div id="jobsList">
+          <!-- Jobs will be dynamically loaded here -->
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <div id="paginationControls">
+          <!-- Pagination controls will be generated here -->
+        </div>
+      </div>
+    </div>
+    <script>
+      let allJobs = [];
+      let filteredJobs = [];
+      let appliedJobs = new Set();
+      let currentPage = 1;
+      let jobsPerPage = 10;
+
+      // JWT utility functions
+      function getJwtToken() {
+        return (
+          localStorage.getItem("authToken") ||
+          localStorage.getItem("jwtToken") ||
+          sessionStorage.getItem("authToken")
+        );
+      }
+
+      function setJwtToken(token) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("jwtToken", token); // Keep for compatibility
+      }
+
+      function removeJwtToken() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("authToken");
+      }
+
+      function getAuthHeaders() {
+        const token = getJwtToken();
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      }
+
+      function navigateToPage(page) {
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = page;
+        }
+      }
+
+      window.addEventListener("load", async function () {
+        // Load jobs and applications
+        await loadJobs();
+        await loadApplications();
+      });
+
+      async function loadJobs() {
+        try {
+          const response = await fetch("http://localhost:8081/api/jobs/all");
+          if (response.ok) {
+            allJobs = await response.json();
+            // Filter only open jobs
+            allJobs = allJobs.filter((job) => job.status === "OPEN");
+            filteredJobs = [...allJobs];
+            displayJobs();
+          } else {
+            document.getElementById("jobsList").innerHTML =
+              '<div class="no-jobs">Failed to load jobs</div>';
+          }
+        } catch (error) {
+          document.getElementById("jobsList").innerHTML =
+            '<div class="no-jobs">Error loading jobs</div>';
+        }
+      }
+
+      async function loadAppliedJobs() {
+        try {
+          const response = await fetch("/api/applications/my-applications", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+          });
+          if (response.ok) {
+            const applications = await response.json();
+            appliedJobs = new Set(applications.map((app) => app.jobId));
+            displayJobs(); // Refresh display to show applied status
+          }
+        } catch (error) {
+          console.error("Error loading applied jobs:", error);
+        }
+      }
+
+      function displayJobs() {
+        const jobsList = document.getElementById("jobsList");
+
+        if (filteredJobs.length === 0) {
+          jobsList.innerHTML =
+            '<div class="no-jobs">No jobs found matching your criteria</div>';
+          return;
+        }
+
+        // Calculate pagination
+        const startIndex = (currentPage - 1) * jobsPerPage;
+        const endIndex = startIndex + jobsPerPage;
+        const jobsToShow = filteredJobs.slice(startIndex, endIndex);
+
+        jobsList.innerHTML = jobsToShow
+          .map((job) => {
+            const isApplied = appliedJobs.has(job.jobId);
+            return `
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div style="flex: 1;">
+                                <h3 class="job-title">${job.title}</h3>
+                                <div class="job-company">${job.company}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                ${
+                                  isApplied
+                                    ? '<span class="applied-badge">Applied</span>'
+                                    : ""
+                                }
+                                <div class="posted-date">Posted: ${
+                                  job.postedDate
+                                }</div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-details">
+                            <p><span class="location">📍 ${
+                              job.location
+                            }</span></p>
+                            ${
+                              job.salaryMin || job.salaryMax
+                                ? `<p class="salary">💰 $${
+                                    job.salaryMin && job.salaryMax
+                                      ? `${job.salaryMin} - ${job.salaryMax}`
+                                      : job.salaryMin
+                                      ? `${job.salaryMin}+`
+                                      : `Up to ${job.salaryMax}`
+                                  }</p>`
+                                : '<p class="salary">💰 $Not specified</p>'
+                            }
+                            <p>${
+                              job.description.length > 200
+                                ? job.description.substring(0, 200) + "..."
+                                : job.description
+                            }</p>
+                        </div>
+                        
+                        <div class="job-actions">
+                            <button onclick="viewJobDetails(${
+                              job.jobId
+                            })" class="view-btn">View Details</button>
+                            ${
+                              !isApplied
+                                ? `<button onclick="applyNow(${job.jobId})" class="apply-btn">Apply Now</button>`
+                                : ""
+                            }
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
+
+        displayPagination();
+      }
+
+      function displayPagination() {
+        const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+        const pagination = document.getElementById("pagination");
+
+        if (totalPages <= 1) {
+          pagination.innerHTML = "";
+          return;
+        }
+
+        let paginationHTML = "";
+
+        // Previous button
+        if (currentPage > 1) {
+          paginationHTML += `<button onclick="changePage(${
+            currentPage - 1
+          })">Previous</button>`;
+        }
+
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === currentPage) {
+            paginationHTML += `<button style="background-color: #4CAF50; color: white;">${i}</button>`;
+          } else {
+            paginationHTML += `<button onclick="changePage(${i})">${i}</button>`;
+          }
+        }
+
+        // Next button
+        if (currentPage < totalPages) {
+          paginationHTML += `<button onclick="changePage(${
+            currentPage + 1
+          })">Next</button>`;
+        }
+
+        pagination.innerHTML = paginationHTML;
+      }
+
+      function changePage(page) {
+        currentPage = page;
+        displayJobs();
+      }
+
+      function filterJobs() {
+        const titleFilter = document
+          .getElementById("searchTitle")
+          .value.toLowerCase();
+        const locationFilter = document
+          .getElementById("searchLocation")
+          .value.toLowerCase();
+        const companyFilter = document
+          .getElementById("searchCompany")
+          .value.toLowerCase();
+        const sortBy = document.getElementById("sortBy").value;
+
+        // Filter jobs
+        filteredJobs = allJobs.filter((job) => {
+          return (
+            job.title.toLowerCase().includes(titleFilter) &&
+            job.location.toLowerCase().includes(locationFilter) &&
+            job.companyName.toLowerCase().includes(companyFilter)
+          );
+        });
+
+        // Sort jobs
+        filteredJobs.sort((a, b) => {
+          switch (sortBy) {
+            case "newest":
+              return new Date(b.postedDate) - new Date(a.postedDate);
+            case "oldest":
+              return new Date(a.postedDate) - new Date(b.postedDate);
+            case "salary_high":
+              return (b.salary || 0) - (a.salary || 0);
+            case "salary_low":
+              return (a.salary || 0) - (b.salary || 0);
+            default:
+              return 0;
+          }
+        });
+
+        currentPage = 1;
+        displayJobs();
+      }
+
+      function clearFilters() {
+        document.getElementById("searchTitle").value = "";
+        document.getElementById("searchLocation").value = "";
+        document.getElementById("searchCompany").value = "";
+        document.getElementById("sortBy").value = "newest";
+        filteredJobs = [...allJobs];
+        currentPage = 1;
+        displayJobs();
+      }
+
+      function viewJobDetails(jobId) {
+        window.open(`http://localhost:8081/job-details?id=${jobId}`, "_blank");
+      }
+
+      function applyNow(jobId) {
+        // Direct application logic here
+        const job = allJobs.find((job) => job.jobId === jobId);
+
+        if (!job) {
+          alert("Job not found");
+          return;
+        }
+
+        const applicationData = {
+          jobId: job.jobId,
+          coverLetter: "hi",
+          additionalNotes: "",
+        };
+
+        // Submit application
+        fetch("/api/applications/apply", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders(),
+          },
+          body: JSON.stringify(applicationData),
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Application submitted successfully!");
+              appliedJobs.add(job.jobId);
+              displayJobs();
+            } else {
+              response.text().then((text) => {
+                alert("Failed to submit application: " + text);
+              });
+            }
+          })
+          .catch((error) => {
+            alert("Error submitting application: " + error.message);
+          });
+      }
+
+      async function logout() {
+        removeJwtToken();
+        window.location.href = "/login";
+      }
+    </script>
+  </body>
+</html>

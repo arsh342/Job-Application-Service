@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Management Service</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        background: white;
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+      }
+
+      .service-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 2.5rem;
+      }
+
+      p {
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+        line-height: 1.6;
+      }
+
+      .auth-notice {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 2rem;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        transition: transform 0.3s;
+        margin: 0.5rem;
+      }
+
+      .btn:hover {
+        transform: translateY(-3px);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+      }
+
+      .features {
+        margin-top: 2rem;
+        text-align: left;
+      }
+
+      .features h3 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+
+      .features ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .features li {
+        padding: 0.5rem 0;
+        color: #666;
+      }
+
+      .features li:before {
+        content: "✓";
+        color: #28a745;
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="service-icon">💼</div>
+      <h1>Job Management Service</h1>
+      <p>
+        Manage job postings, review applications, and connect with talented
+        candidates.
+      </p>
+
+      <div class="auth-notice">
+        <strong>Authentication Required:</strong> Please log in to access job
+        management features.
+      </div>
+
+      <div>
+        <a href="http://localhost:8083/login" class="btn">Login to Continue</a>
+        <a href="http://localhost:8083/register" class="btn btn-secondary"
+          >Create Account</a
+        >
+      </div>
+
+      <div class="features">
+        <h3>Service Features:</h3>
+        <ul>
+          <li>Post and manage job openings</li>
+          <li>Review candidate applications</li>
+          <li>Track hiring progress</li>
+          <li>Employer dashboard and analytics</li>
+          <li>Integration with application service</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Check if user has authentication token
+      window.addEventListener("load", function () {
+        // Check for token in URL parameters first
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get("token");
+
+        if (urlToken) {
+          // Store token from URL parameter
+          localStorage.setItem("authToken", urlToken);
+          sessionStorage.setItem("authToken", urlToken);
+          // Clean URL by removing token parameter
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+          // Redirect to dashboard
+          window.location.href = "/dashboard";
+          return;
+        }
+
+        // Check existing stored tokens
+        const token =
+          localStorage.getItem("authToken") ||
+          sessionStorage.getItem("authToken");
+        if (token) {
+          // User is authenticated, redirect to dashboard
+          window.location.href = "/dashboard";
+        }
+      });
+    </script>
+  </body>
+</html>

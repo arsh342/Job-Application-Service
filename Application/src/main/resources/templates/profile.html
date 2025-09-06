@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - Job Portal</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .profile-container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .profile-section {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        cursor: pointer;
+      }
+      .save-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+      .cancel-btn {
+        background-color: #f44336;
+        color: white;
+      }
+      .success-msg {
+        color: green;
+        margin-top: 10px;
+      }
+      .error-msg {
+        color: red;
+        margin-top: 10px;
+      }
+      .password-section {
+        border-top: 2px solid #eee;
+        padding-top: 20px;
+        margin-top: 20px;
+      }
+      .skill-tag {
+        display: inline-block;
+        background-color: #e3f2fd;
+        color: #1976d2;
+        padding: 4px 8px;
+        margin: 2px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+      .skill-input {
+        display: flex;
+        margin-bottom: 10px;
+      }
+      .skill-input input {
+        flex: 1;
+        margin-right: 10px;
+      }
+      .experience-item {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+      }
+      .education-item {
+        border: 1px solid #eee;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Profile Management</h1>
+      <div>
+        <button onclick="navigateToPage('/dashboard')">Dashboard</button>
+        <button onclick="navigateToPage('/browse-jobs')">Browse Jobs</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="profile-container">
+      <div class="profile-section">
+        <h2>Personal Information</h2>
+        <form id="profileForm">
+          <div class="form-group">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" />
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="dateOfBirth">Date of Birth:</label>
+            <input type="date" id="dateOfBirth" name="dateOfBirth" />
+          </div>
+
+          <div class="form-group">
+            <label for="linkedinUrl">LinkedIn Profile:</label>
+            <input
+              type="url"
+              id="linkedinUrl"
+              name="linkedinUrl"
+              placeholder="https://linkedin.com/in/yourprofile"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="portfolioUrl">Portfolio/Website:</label>
+            <input
+              type="url"
+              id="portfolioUrl"
+              name="portfolioUrl"
+              placeholder="https://yourportfolio.com"
+            />
+          </div>
+
+          <button type="button" onclick="updateProfile()" class="save-btn">
+            Update Profile
+          </button>
+          <div id="profileMessage"></div>
+        </form>
+      </div>
+
+      <div class="profile-section">
+        <h2>Professional Summary</h2>
+        <div class="form-group">
+          <label for="summary">Professional Summary:</label>
+          <textarea
+            id="summary"
+            rows="5"
+            placeholder="Brief description of your professional background and career objectives..."
+          ></textarea>
+        </div>
+        <button type="button" onclick="updateSummary()" class="save-btn">
+          Update Summary
+        </button>
+        <div id="summaryMessage"></div>
+      </div>
+
+      <div class="profile-section">
+        <h2>Skills</h2>
+        <div class="form-group">
+          <label>Add Skill:</label>
+          <div class="skill-input">
+            <input type="text" id="newSkill" placeholder="Enter a skill..." />
+            <button type="button" onclick="addSkill()">Add</button>
+          </div>
+          <div id="skillsList"></div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <h2>Work Experience</h2>
+        <div id="experienceList"></div>
+        <button type="button" onclick="addExperience()">Add Experience</button>
+      </div>
+
+      <div class="profile-section">
+        <h2>Education</h2>
+        <div id="educationList"></div>
+        <button type="button" onclick="addEducation()">Add Education</button>
+      </div>
+
+      <div class="profile-section">
+        <div class="password-section">
+          <h2>Change Password</h2>
+          <form id="passwordForm">
+            <div class="form-group">
+              <label for="currentPassword">Current Password:</label>
+              <input
+                type="password"
+                id="currentPassword"
+                name="currentPassword"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">New Password:</label>
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                required
+                minlength="6"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirm New Password:</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+                minlength="6"
+              />
+            </div>
+
+            <button type="button" onclick="changePassword()" class="save-btn">
+              Change Password
+            </button>
+            <div id="passwordMessage"></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <h2>Account Statistics</h2>
+        <div id="stats">
+          <p>
+            <strong>Total Applications:</strong>
+            <span id="totalApplications">Loading...</span>
+          </p>
+          <p>
+            <strong>Applications This Month:</strong>
+            <span id="monthlyApplications">Loading...</span>
+          </p>
+          <p>
+            <strong>Shortlisted:</strong>
+            <span id="shortlistedCount">Loading...</span>
+          </p>
+          <p><strong>Hired:</strong> <span id="hiredCount">Loading...</span></p>
+          <p>
+            <strong>Member Since:</strong>
+            <span id="memberSince">Loading...</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentApplicant = null;
+      let skills = [];
+      let experiences = [];
+      let educations = [];
+
+      // JWT utility functions
+      function getJwtToken() {
+        return (
+          localStorage.getItem("authToken") ||
+          localStorage.getItem("jwtToken") ||
+          sessionStorage.getItem("authToken")
+        );
+      }
+
+      function setJwtToken(token) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("jwtToken", token);
+      }
+
+      function removeJwtToken() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("authToken");
+      }
+
+      function getAuthHeaders() {
+        const token = getJwtToken();
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      }
+
+      function navigateToPage(page) {
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = page;
+        }
+      }
+
+      window.addEventListener("load", async function () {
+        // Load profile data
+        await loadProfile();
+      });
+
+      async function loadProfile() {
+        try {
+          const response = await fetch("/api/auth/current", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+          });
+          if (response.ok) {
+            const applicant = await response.json();
+
+            document.getElementById("fullName").value =
+              applicant.fullName || "";
+            document.getElementById("email").value = applicant.email || "";
+            document.getElementById("phone").value = applicant.phone || "";
+            document.getElementById("address").value = applicant.address || "";
+            document.getElementById("dateOfBirth").value =
+              applicant.dateOfBirth || "";
+            document.getElementById("linkedinUrl").value =
+              applicant.linkedinUrl || "";
+            document.getElementById("portfolioUrl").value =
+              applicant.portfolioUrl || "";
+            document.getElementById("summary").value = applicant.summary || "";
+
+            // Load skills, experience, education if stored in applicant object
+            skills = applicant.skills || [];
+            experiences = applicant.experiences || [];
+            educations = applicant.educations || [];
+
+            displaySkills();
+            displayExperiences();
+            displayEducations();
+          } else {
+            showMessage(
+              "profileMessage",
+              "Failed to load profile data",
+              "error"
+            );
+          }
+        } catch (error) {
+          showMessage(
+            "profileMessage",
+            "Error loading profile: " + error.message,
+            "error"
+          );
+        }
+      }
+
+      async function loadStats() {
+        try {
+          const response = await fetch("/api/applications/my-applications", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+          });
+          if (response.ok) {
+            const applications = await response.json();
+
+            document.getElementById("totalApplications").textContent =
+              applications.length;
+
+            const thisMonth = new Date();
+            thisMonth.setDate(1);
+            const monthlyApps = applications.filter(
+              (app) => new Date(app.appliedDate) >= thisMonth
+            ).length;
+            document.getElementById("monthlyApplications").textContent =
+              monthlyApps;
+
+            const shortlisted = applications.filter(
+              (app) => app.status === "SHORTLISTED"
+            ).length;
+            document.getElementById("shortlistedCount").textContent =
+              shortlisted;
+
+            const hired = applications.filter(
+              (app) => app.status === "HIRED"
+            ).length;
+            document.getElementById("hiredCount").textContent = hired;
+          }
+
+          if (currentApplicant && currentApplicant.createdDate) {
+            document.getElementById("memberSince").textContent = new Date(
+              currentApplicant.createdDate
+            ).toLocaleDateString();
+          } else {
+            document.getElementById("memberSince").textContent = "N/A";
+          }
+        } catch (error) {
+          console.error("Error loading statistics:", error);
+        }
+      }
+
+      async function updateProfile() {
+        const profileData = {
+          fullName: document.getElementById("fullName").value,
+          phone: document.getElementById("phone").value,
+          address: document.getElementById("address").value,
+          dateOfBirth: document.getElementById("dateOfBirth").value,
+          linkedinUrl: document.getElementById("linkedinUrl").value,
+          portfolioUrl: document.getElementById("portfolioUrl").value,
+          skills: skills,
+          experiences: experiences,
+          educations: educations,
+        };
+
+        try {
+          const response = await fetch("/api/auth/profile", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+            body: JSON.stringify(profileData),
+          });
+
+          if (response.ok) {
+            showMessage(
+              "profileMessage",
+              "Profile updated successfully!",
+              "success"
+            );
+          } else {
+            const error = await response.text();
+            showMessage(
+              "profileMessage",
+              "Failed to update profile: " + error,
+              "error"
+            );
+          }
+        } catch (error) {
+          showMessage(
+            "profileMessage",
+            "Error updating profile: " + error.message,
+            "error"
+          );
+        }
+      }
+
+      async function updateSummary() {
+        const summary = document.getElementById("summary").value;
+
+        try {
+          const response = await fetch("/api/auth/profile", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+            body: JSON.stringify({ summary: summary }),
+          });
+
+          if (response.ok) {
+            showMessage(
+              "summaryMessage",
+              "Summary updated successfully!",
+              "success"
+            );
+          } else {
+            const error = await response.text();
+            showMessage(
+              "summaryMessage",
+              "Failed to update summary: " + error,
+              "error"
+            );
+          }
+        } catch (error) {
+          showMessage(
+            "summaryMessage",
+            "Error updating summary: " + error.message,
+            "error"
+          );
+        }
+      }
+
+      function addSkill() {
+        const skillInput = document.getElementById("newSkill");
+        const skill = skillInput.value.trim();
+
+        if (skill && !skills.includes(skill)) {
+          skills.push(skill);
+          skillInput.value = "";
+          displaySkills();
+          updateProfile();
+        }
+      }
+
+      function removeSkill(skill) {
+        skills = skills.filter((s) => s !== skill);
+        displaySkills();
+        updateProfile();
+      }
+
+      function displaySkills() {
+        const skillsList = document.getElementById("skillsList");
+        skillsList.innerHTML = skills
+          .map(
+            (skill) =>
+              `<span class="skill-tag">${skill} <span onclick="removeSkill('${skill}')" style="cursor: pointer; margin-left: 5px;">×</span></span>`
+          )
+          .join("");
+      }
+
+      function addExperience() {
+        const experience = {
+          id: Date.now(),
+          company: "",
+          position: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+          current: false,
+        };
+        experiences.push(experience);
+        displayExperiences();
+      }
+
+      function removeExperience(id) {
+        experiences = experiences.filter((exp) => exp.id !== id);
+        displayExperiences();
+        updateProfile();
+      }
+
+      function displayExperiences() {
+        const experienceList = document.getElementById("experienceList");
+        experienceList.innerHTML = experiences
+          .map(
+            (exp) => `
+                <div class="experience-item">
+                    <div class="form-group">
+                        <label>Company:</label>
+                        <input type="text" value="${
+                          exp.company
+                        }" onchange="updateExperience(${
+              exp.id
+            }, 'company', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Position:</label>
+                        <input type="text" value="${
+                          exp.position
+                        }" onchange="updateExperience(${
+              exp.id
+            }, 'position', this.value)">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Start Date:</label>
+                            <input type="date" value="${
+                              exp.startDate
+                            }" onchange="updateExperience(${
+              exp.id
+            }, 'startDate', this.value)">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>End Date:</label>
+                            <input type="date" value="${
+                              exp.endDate
+                            }" onchange="updateExperience(${
+              exp.id
+            }, 'endDate', this.value)" ${exp.current ? "disabled" : ""}>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" ${
+                              exp.current ? "checked" : ""
+                            } onchange="updateExperience(${
+              exp.id
+            }, 'current', this.checked)">
+                            Currently working here
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <textarea rows="3" onchange="updateExperience(${
+                          exp.id
+                        }, 'description', this.value)">${
+              exp.description
+            }</textarea>
+                    </div>
+                    <button type="button" onclick="removeExperience(${
+                      exp.id
+                    })" class="cancel-btn">Remove</button>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function updateExperience(id, field, value) {
+        const exp = experiences.find((e) => e.id === id);
+        if (exp) {
+          exp[field] = value;
+          if (field === "current" && value) {
+            exp.endDate = "";
+          }
+          updateProfile();
+        }
+      }
+
+      function addEducation() {
+        const education = {
+          id: Date.now(),
+          institution: "",
+          degree: "",
+          fieldOfStudy: "",
+          startDate: "",
+          endDate: "",
+          gpa: "",
+        };
+        educations.push(education);
+        displayEducations();
+      }
+
+      function removeEducation(id) {
+        educations = educations.filter((edu) => edu.id !== id);
+        displayEducations();
+        updateProfile();
+      }
+
+      function displayEducations() {
+        const educationList = document.getElementById("educationList");
+        educationList.innerHTML = educations
+          .map(
+            (edu) => `
+                <div class="education-item">
+                    <div class="form-group">
+                        <label>Institution:</label>
+                        <input type="text" value="${edu.institution}" onchange="updateEducation(${edu.id}, 'institution', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Degree:</label>
+                        <input type="text" value="${edu.degree}" onchange="updateEducation(${edu.id}, 'degree', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Field of Study:</label>
+                        <input type="text" value="${edu.fieldOfStudy}" onchange="updateEducation(${edu.id}, 'fieldOfStudy', this.value)">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Start Date:</label>
+                            <input type="date" value="${edu.startDate}" onchange="updateEducation(${edu.id}, 'startDate', this.value)">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>End Date:</label>
+                            <input type="date" value="${edu.endDate}" onchange="updateEducation(${edu.id}, 'endDate', this.value)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>GPA:</label>
+                        <input type="text" value="${edu.gpa}" onchange="updateEducation(${edu.id}, 'gpa', this.value)" placeholder="e.g., 3.8/4.0">
+                    </div>
+                    <button type="button" onclick="removeEducation(${edu.id})" class="cancel-btn">Remove</button>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function updateEducation(id, field, value) {
+        const edu = educations.find((e) => e.id === id);
+        if (edu) {
+          edu[field] = value;
+          updateProfile();
+        }
+      }
+
+      async function changePassword() {
+        const currentPassword =
+          document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        if (newPassword !== confirmPassword) {
+          showMessage("passwordMessage", "New passwords do not match", "error");
+          return;
+        }
+
+        if (newPassword.length < 6) {
+          showMessage(
+            "passwordMessage",
+            "Password must be at least 6 characters long",
+            "error"
+          );
+          return;
+        }
+
+        const passwordData = {
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        };
+
+        try {
+          const response = await fetch("/api/auth/change-password", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+            body: JSON.stringify(passwordData),
+          });
+
+          if (response.ok) {
+            showMessage(
+              "passwordMessage",
+              "Password changed successfully!",
+              "success"
+            );
+            document.getElementById("passwordForm").reset();
+          } else {
+            const error = await response.text();
+            showMessage(
+              "passwordMessage",
+              "Failed to change password: " + error,
+              "error"
+            );
+          }
+        } catch (error) {
+          showMessage(
+            "passwordMessage",
+            "Error changing password: " + error.message,
+            "error"
+          );
+        }
+      }
+
+      function showMessage(elementId, message, type) {
+        const messageDiv = document.getElementById(elementId);
+        messageDiv.textContent = message;
+        messageDiv.className = type === "success" ? "success-msg" : "error-msg";
+
+        setTimeout(() => {
+          messageDiv.textContent = "";
+          messageDiv.className = "";
+        }, 5000);
+      }
+
+      async function logout() {
+        removeJwtToken();
+        window.location.href = "/login";
+      }
+    </script>
+  </body>
+</html>

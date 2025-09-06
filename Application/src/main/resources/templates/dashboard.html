@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Portal - Job Seeker Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: #f8f9fa;
+        color: #333;
+      }
+
+      .btn-secondary:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #218838;
+        transform: translateY(-2px);
+      }
+
+      .dashboard-layout {
+        display: flex;
+        gap: 30px;
+        padding: 30px;
+      }
+
+      .main-content {
+        flex: 2;
+      }
+
+      .sidebar {
+        flex: 1;
+      }
+
+      .section {
+        margin-bottom: 30px;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .section h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .job-item {
+        background: white;
+        margin: 15px 0;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e1e1e1;
+      }
+
+      .job-item h3 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 1.3rem;
+      }
+
+      .job-item p {
+        color: #666;
+        margin: 5px 0;
+        line-height: 1.5;
+      }
+
+      .job-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .application-item {
+        background: white;
+        margin: 15px 0;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e1e1e1;
+      }
+
+      .application-item h4 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
+
+      .application-item p {
+        color: #666;
+        margin: 5px 0;
+        line-height: 1.5;
+      }
+
+      .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      .status-applied {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .status-shortlisted {
+        background: #fff3e0;
+        color: #f57c00;
+      }
+
+      .status-rejected {
+        background: #ffebee;
+        color: #d32f2f;
+      }
+
+      .status-hired {
+        background: #e8f5e8;
+        color: #388e3c;
+      }
+
+      #welcomeMessage {
+        color: white;
+        font-weight: 500;
+        margin-right: 15px;
+      }
+
+      .quick-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .quick-action-btn {
+        padding: 12px 20px;
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .quick-action-btn:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .no-items {
+        text-align: center;
+        color: #666;
+        padding: 40px;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Job Portal - Job Seeker Dashboard</h1>
+        <div class="header-buttons">
+          <span id="welcomeMessage"></span>
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/browse-jobs')"
+          >
+            Browse Jobs
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/my-applications')"
+          >
+            My Applications
+          </button>
+          <button class="btn btn-primary" onclick="navigateToPage('/profile')">
+            Profile
+          </button>
+          <button class="btn btn-primary" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div class="dashboard-layout">
+        <div class="main-content">
+          <div class="quick-actions">
+            <a href="/browse-jobs" class="quick-action-btn">Browse All Jobs</a>
+            <a href="/my-applications" class="quick-action-btn"
+              >View Applications</a
+            >
+          </div>
+
+          <!-- Job Search Section -->
+          <div class="section">
+            <h2>Search Jobs</h2>
+            <div>
+              <input type="text" id="searchTitle" placeholder="Job Title" />
+              <input type="text" id="searchLocation" placeholder="Location" />
+              <input type="text" id="searchCompany" placeholder="Company" />
+              <button onclick="searchJobs()">Search</button>
+              <button onclick="loadJobs()">Show All Jobs</button>
+            </div>
+          </div>
+
+          <!-- Available Jobs Section -->
+          <div class="section">
+            <h2>Available Jobs</h2>
+            <div id="jobsList"></div>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <!-- My Applications Section -->
+          <div class="section">
+            <h2>My Applications</h2>
+            <div id="applicationsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        let currentApplicantId = null;
+        let currentApplicant = null;
+
+        // JWT utility functions
+        function getJwtToken() {
+          return (
+            localStorage.getItem("authToken") ||
+            localStorage.getItem("jwtToken") ||
+            sessionStorage.getItem("authToken")
+          );
+        }
+
+        function setJwtToken(token) {
+          localStorage.setItem("authToken", token);
+          localStorage.setItem("jwtToken", token); // Keep for compatibility
+        }
+
+        function removeJwtToken() {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("jwtToken");
+          sessionStorage.removeItem("authToken");
+        }
+
+        function getAuthHeaders() {
+          const token = getJwtToken();
+          return token ? { Authorization: `Bearer ${token}` } : {};
+        }
+
+        function navigateToPage(page) {
+          const token = getJwtToken();
+          if (token) {
+            window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+          } else {
+            window.location.href = page;
+          }
+        }
+
+        // Check authentication on page load
+        async function checkAuth() {
+          // First check if token is passed via URL parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlToken = urlParams.get("token");
+
+          if (urlToken) {
+            // Store token from URL parameter
+            setJwtToken(urlToken);
+            // Clean URL by removing token parameter
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname
+            );
+          }
+
+          const token = getJwtToken();
+          if (!token) {
+            window.location.href = "http://localhost:8083/auth/login";
+            return;
+          }
+
+          // If user is already loaded, no need to fetch again
+          if (currentApplicant) {
+            return;
+          }
+
+          // Extract user info from stored token data
+          const userType = localStorage.getItem("userType");
+          const userName = localStorage.getItem("userName");
+          const userId = localStorage.getItem("userId");
+
+          if (userType && userName && userId) {
+            // Use stored user information
+            currentApplicant = {
+              id: parseInt(userId),
+              name: userName,
+              userType: userType,
+            };
+            currentApplicantId = parseInt(userId);
+
+            document.getElementById(
+              "welcomeMessage"
+            ).textContent = `Welcome, ${userName}!`;
+            await loadJobs();
+            await loadApplications();
+            return;
+          }
+
+          // Fallback: try to get user info from Authentication Service
+          try {
+            const response = await fetch(
+              "http://localhost:8083/api/auth/validate",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  ...getAuthHeaders(),
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Authentication failed");
+            }
+
+            const userData = await response.json();
+            if (userData.valid) {
+              currentApplicant = {
+                id: userData.userId,
+                name: userData.name,
+                userType: userData.userType,
+              };
+              currentApplicantId = userData.userId;
+
+              // Store user info for future use
+              localStorage.setItem("userType", userData.userType);
+              localStorage.setItem("userName", userData.name);
+              localStorage.setItem("userId", userData.userId.toString());
+
+              document.getElementById(
+                "welcomeMessage"
+              ).textContent = `Welcome, ${userData.name}!`;
+              await loadJobs();
+              await loadApplications();
+            } else {
+              throw new Error("Invalid token");
+            }
+          } catch (error) {
+            console.error("Authentication error:", error);
+            window.location.href = "http://localhost:8083/auth/login";
+          }
+        }
+
+        async function loadJobs() {
+          try {
+            const response = await fetch("http://localhost:8081/api/jobs", {
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+            });
+            if (response.ok) {
+              const jobs = await response.json();
+              displayJobs(jobs);
+            }
+          } catch (error) {
+            console.error("Failed to load jobs:", error);
+          }
+        }
+
+        async function searchJobs() {
+          const title = document.getElementById("searchTitle").value;
+          const location = document.getElementById("searchLocation").value;
+          const companyName = document.getElementById("searchCompany").value;
+
+          const params = new URLSearchParams();
+          if (title) params.append("title", title);
+          if (location) params.append("location", location);
+          if (companyName) params.append("companyName", companyName);
+
+          try {
+            const response = await fetch(
+              `http://localhost:8081/api/jobs?${params}`
+            );
+            if (response.ok) {
+              const jobs = await response.json();
+              displayJobs(jobs);
+            }
+          } catch (error) {
+            console.error("Failed to search jobs:", error);
+          }
+        }
+
+        function displayJobs(jobs) {
+          const jobsList = document.getElementById("jobsList");
+          jobsList.innerHTML = "";
+
+          if (jobs.length === 0) {
+            jobsList.innerHTML = "<p>No jobs available.</p>";
+            return;
+          }
+
+          jobs.forEach((job) => {
+            const jobDiv = document.createElement("div");
+            jobDiv.className = "job-item";
+            jobDiv.innerHTML = `
+                    <h4>${job.title}</h4>
+                    <p><strong>Company:</strong> ${job.companyName}</p>
+                    <p><strong>Description:</strong> ${job.description}</p>
+                    <p><strong>Location:</strong> ${job.location}</p>
+                    <p><strong>Salary:</strong> $${
+                      job.salary || "Not specified"
+                    }</p>
+                    <p><strong>Posted:</strong> ${job.postedDate}</p>
+                    <button onclick="applyToJob(${job.jobId})">Apply</button>
+                `;
+            jobsList.appendChild(jobDiv);
+          });
+        }
+
+        async function applyToJob(jobId) {
+          if (!currentApplicantId) {
+            alert("Please login first");
+            return;
+          }
+
+          try {
+            const response = await fetch("/api/applications", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+              body: JSON.stringify({ jobId: jobId }),
+            });
+
+            if (response.ok) {
+              alert("Application submitted successfully!");
+              await loadApplications();
+            } else {
+              const error = await response.text();
+              alert("Failed to apply: " + error);
+            }
+          } catch (error) {
+            alert("Failed to apply: " + error.message);
+          }
+        }
+
+        async function loadApplications() {
+          if (!currentApplicantId) return;
+
+          try {
+            const response = await fetch(
+              `/api/applicants/${currentApplicantId}/applications`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  ...getAuthHeaders(),
+                },
+              }
+            );
+            if (response.ok) {
+              const applications = await response.json();
+              displayApplications(applications);
+            }
+          } catch (error) {
+            console.error("Failed to load applications:", error);
+          }
+        }
+
+        function displayApplications(applications) {
+          const applicationsList = document.getElementById("applicationsList");
+          applicationsList.innerHTML = "";
+
+          if (applications.length === 0) {
+            applicationsList.innerHTML = "<p>No applications yet.</p>";
+            return;
+          }
+
+          applications.forEach((application) => {
+            const appDiv = document.createElement("div");
+            appDiv.className = "application-item";
+            appDiv.innerHTML = `
+                    <h4>${application.job.title}</h4>
+                    <p><strong>Company:</strong> ${application.job.companyName}</p>
+                    <p><strong>Status:</strong> ${application.status}</p>
+                    <p><strong>Applied:</strong> ${application.appliedDate}</p>
+                    <button onclick="withdrawApplication(${application.applicationId})">Withdraw</button>
+                `;
+            applicationsList.appendChild(appDiv);
+          });
+        }
+
+        async function withdrawApplication(applicationId) {
+          if (!confirm("Are you sure you want to withdraw this application?"))
+            return;
+
+          try {
+            const response = await fetch(`/api/applications/${applicationId}`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+            });
+
+            if (response.ok) {
+              alert("Application withdrawn successfully!");
+              await loadApplications();
+            } else {
+              const error = await response.text();
+              alert("Failed to withdraw application: " + error);
+            }
+          } catch (error) {
+            alert("Failed to withdraw application: " + error.message);
+          }
+        }
+
+        async function logout() {
+          removeJwtToken();
+          window.location.href = "http://localhost:8083/auth/login";
+        }
+
+        // Initialize page
+        document.addEventListener("DOMContentLoaded", function () {
+          checkAuth();
+        });
+      </script>
+    </div>
+  </body>
+</html>
