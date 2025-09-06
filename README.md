@@ -1,14 +1,5 @@
 # Job Portal Microservices System
 
-## College Project - Spring Boot Microservices Architecture
-
-**Student**: Arsh  
-**Institution**: Chitkara University  
-**Subject**: Advanced Software Engineering / Microservices  
-**Academic Year**: 2025
-
----
-
 ## � **Project Overview**
 
 This project demonstrates a real-world **Job Portal System** built using **Spring Boot Microservices Architecture**. It showcases modern software engineering practices including microservices design, JWT authentication, RESTful APIs, and database management.
