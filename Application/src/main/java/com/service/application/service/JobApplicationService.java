@@ -102,11 +102,41 @@ public class JobApplicationService {
     
     public List<ApplicationResponseDto> getApplicationsForJob(Long jobId) {
         List<JobApplication> applications = jobApplicationRepository.findByJobId(jobId);
+        System.out.println("Found " + applications.size() + " applications for job " + jobId);
         
         return applications.stream()
                 .map(application -> {
-                    JobDto job = jobServiceClient.getJobById(application.getJobId());
-                    return mapToResponseDto(application, job);
+                    try {
+                        System.out.println("Fetching job details for job ID: " + application.getJobId());
+                        JobDto job = jobServiceClient.getJobById(application.getJobId());
+                        System.out.println("Successfully fetched job: " + job.getTitle());
+                        return mapToResponseDto(application, job);
+                    } catch (Exception e) {
+                        System.err.println("Error fetching job details: " + e.getMessage());
+                        e.printStackTrace();
+                        throw new RuntimeException("Error fetching job details", e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+    
+    public List<ApplicationResponseDto> getAllApplications() {
+        List<JobApplication> applications = jobApplicationRepository.findAll();
+        
+        return applications.stream()
+                .map(application -> {
+                    try {
+                        JobDto job = jobServiceClient.getJobById(application.getJobId());
+                        return mapToResponseDto(application, job);
+                    } catch (Exception e) {
+                        // If job service fails, create a minimal response
+                        JobDto errorJob = JobDto.builder()
+                                .jobId(application.getJobId())
+                                .title("Error loading job details")
+                                .description("Job service unavailable")
+                                .build();
+                        return mapToResponseDto(application, errorJob);
+                    }
                 })
                 .collect(Collectors.toList());
     }

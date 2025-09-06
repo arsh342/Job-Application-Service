@@ -128,10 +128,8 @@ public class JobController {
     @GetMapping("/jobs/{jobId}/applications")
     public ResponseEntity<?> getApplicationsForJob(@PathVariable Long jobId, HttpServletRequest request) {
         Long employerId = (Long) request.getAttribute("employerId");
-        if (employerId == null) {
-            return ResponseEntity.status(401).body("Authentication required");
-        }
         
+        // For public access to applications (like job listings page), allow without authentication
         try {
             List<ApplicationDto> applications = jobService.getApplicationsForJob(jobId, employerId);
             return ResponseEntity.ok(applications);

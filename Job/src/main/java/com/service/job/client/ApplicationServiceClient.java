@@ -10,6 +10,6 @@ import java.util.List;
 @FeignClient(name = "application-service", url = "${application.service.url:http://localhost:8082}")
 public interface ApplicationServiceClient {
     
-    @GetMapping("/jobs/{jobId}/applications")
+    @GetMapping("/api/jobs/{jobId}/applications")
     List<ApplicationDto> getApplicationsForJob(@PathVariable("jobId") Long jobId);
 }

@@ -29,7 +29,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**", "/login-redirect", "/dashboard", "/jobs", "/create-job", "/job-details", "/profile").permitAll()
+                .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**", "/login-redirect", "/dashboard", "/jobs", "/create-job", "/job-details", "/profile", "/job-listings").permitAll()
                 .requestMatchers("/api/jobs/**", "/api/jobs").permitAll()
                 .anyRequest().authenticated()
             )

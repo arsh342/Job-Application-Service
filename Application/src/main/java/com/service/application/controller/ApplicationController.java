@@ -151,6 +151,17 @@ public class ApplicationController {
         private String status;
         
         public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
+        public void setStatus(String status) { this.status = status;         }
+    }
+    
+    // Debug endpoint to check all applications
+    @GetMapping("/debug/applications")
+    public ResponseEntity<?> getAllApplicationsDebug() {
+        try {
+            List<ApplicationResponseDto> applications = jobApplicationService.getAllApplications();
+            return ResponseEntity.ok(applications);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 }

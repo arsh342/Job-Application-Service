@@ -185,6 +185,12 @@
         <h1>Job Portal - Employer Dashboard</h1>
         <div class="header-buttons">
           <span id="welcomeMessage"></span>
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/job-listings')"
+          >
+            Job Listings
+          </button>
           <button class="btn btn-primary" onclick="navigateToPage('/profile')">
             Profile
           </button>
@@ -408,9 +414,7 @@
                     }</p>
                     <p><strong>Status:</strong> ${job.status}</p>
                     <p><strong>Posted:</strong> ${job.postedDate}</p>
-                    <button onclick="window.location.href='/job-details?id=${
-                      job.jobId
-                    }'">View Details</button>
+                    <button onclick="editJob(${job.jobId})">Edit Job</button>
                     <button onclick="viewApplications(${
                       job.jobId
                     })">View Applications</button>
@@ -452,6 +456,17 @@
           }
         } catch (error) {
           alert("Failed to create job: " + error.message);
+        }
+      }
+
+      function editJob(jobId) {
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `/create-job?edit=${jobId}&token=${encodeURIComponent(
+            token
+          )}`;
+        } else {
+          window.location.href = `/create-job?edit=${jobId}`;
         }
       }
 

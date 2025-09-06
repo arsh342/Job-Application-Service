@@ -105,7 +105,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                path.startsWith("/images/") ||
                path.equals("/login-redirect") ||
                path.equals("/dashboard") ||
-               path.equals("/browse-jobs");
+               path.equals("/browse-jobs") ||
+               path.matches("/api/jobs/\\d+/applications") ||
+               path.equals("/debug/applications");
     }
 
     private UserValidationResponse validateTokenWithAuthService(String token) throws Exception {

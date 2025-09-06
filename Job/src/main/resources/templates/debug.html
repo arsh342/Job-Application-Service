@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Debug Auth Token</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .debug-info {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+      }
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Authentication Debug Page</h1>
+
+    <div class="debug-info">
+      <h3>Token Information:</h3>
+      <p>
+        <strong>localStorage.authToken:</strong> <span id="localAuth"></span>
+      </p>
+      <p><strong>localStorage.jwtToken:</strong> <span id="localJwt"></span></p>
+      <p>
+        <strong>sessionStorage.authToken:</strong>
+        <span id="sessionAuth"></span>
+      </p>
+      <p><strong>URL token parameter:</strong> <span id="urlToken"></span></p>
+    </div>
+
+    <div class="debug-info">
+      <h3>Test Actions:</h3>
+      <button onclick="testJobsAPI()">Test GET /api/jobs</button>
+      <button onclick="testCreateJobAPI()">Test POST /api/jobs</button>
+      <button onclick="testUpdateJobAPI()">Test PUT /api/jobs</button>
+      <button onclick="testEmployerJobsAPI()">
+        Test GET /api/employers/3/jobs
+      </button>
+      <button onclick="clearTokens()">Clear All Tokens</button>
+      <button onclick="setTestToken()">Set Test Token</button>
+    </div>
+
+    <div id="results" class="debug-info">
+      <h3>Results:</h3>
+      <pre id="resultText"></pre>
+    </div>
+
+    <script>
+      function displayTokenInfo() {
+        document.getElementById("localAuth").textContent =
+          localStorage.getItem("authToken") || "null";
+        document.getElementById("localJwt").textContent =
+          localStorage.getItem("jwtToken") || "null";
+        document.getElementById("sessionAuth").textContent =
+          sessionStorage.getItem("authToken") || "null";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById("urlToken").textContent =
+          urlParams.get("token") || "null";
+      }
+
+      function getJwtToken() {
+        return (
+          localStorage.getItem("authToken") ||
+          localStorage.getItem("jwtToken") ||
+          sessionStorage.getItem("authToken")
+        );
+      }
+
+      function getAuthHeaders() {
+        const token = getJwtToken();
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      }
+
+      function logResult(action, result) {
+        const timestamp = new Date().toLocaleTimeString();
+        const resultText = document.getElementById("resultText");
+        resultText.textContent += `[${timestamp}] ${action}: ${result}\n`;
+      }
+
+      async function testJobsAPI() {
+        try {
+          const response = await fetch("/api/jobs", {
+            headers: getAuthHeaders(),
+          });
+          logResult(
+            "GET /api/jobs",
+            `Status: ${response.status}, Response: ${await response.text()}`
+          );
+        } catch (error) {
+          logResult("GET /api/jobs", `Error: ${error.message}`);
+        }
+      }
+
+      async function testCreateJobAPI() {
+        try {
+          const testJob = {
+            title: "Test Job",
+            description: "Test Description",
+            location: "Test Location",
+            company: "Test Company",
+          };
+
+          const response = await fetch("/api/jobs", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+            body: JSON.stringify(testJob),
+          });
+          logResult(
+            "POST /api/jobs",
+            `Status: ${response.status}, Response: ${await response.text()}`
+          );
+        } catch (error) {
+          logResult("POST /api/jobs", `Error: ${error.message}`);
+        }
+      }
+
+      async function testUpdateJobAPI() {
+        try {
+          const updateJob = {
+            title: "Updated Test Job",
+            description: "Updated Test Description",
+            location: "Updated Test Location",
+            company: "Updated Test Company",
+          };
+
+          // Using job ID 1 for testing - you can change this to an existing job ID
+          const jobId = 1;
+          const response = await fetch(`/api/jobs/${jobId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+            body: JSON.stringify(updateJob),
+          });
+          logResult(
+            `PUT /api/jobs/${jobId}`,
+            `Status: ${response.status}, Response: ${await response.text()}`
+          );
+        } catch (error) {
+          logResult("PUT /api/jobs", `Error: ${error.message}`);
+        }
+      }
+
+      async function testEmployerJobsAPI() {
+        try {
+          const response = await fetch("/api/employers/3/jobs", {
+            headers: getAuthHeaders(),
+          });
+          logResult(
+            "GET /api/employers/3/jobs",
+            `Status: ${response.status}, Response: ${await response.text()}`
+          );
+        } catch (error) {
+          logResult("GET /api/employers/3/jobs", `Error: ${error.message}`);
+        }
+      }
+
+      function clearTokens() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("authToken");
+        displayTokenInfo();
+        logResult("Clear Tokens", "All tokens cleared");
+      }
+
+      function setTestToken() {
+        // This is just for testing - normally you'd get this from login
+        const testToken =
+          "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyVHlwZSI6IkVNUExPWUVSIiwidXNlcklkIjozLCJzdWIiOiJlbXBsb3llckBnbWFpbC5jb20iLCJpYXQiOjE3NTcxNTgwNTcsImV4cCI6MTc1NzI0NDQ1N30.j-DfFhg8UHUsaAt9aErdbrfw5EO6OHM7josDIOXzKRs";
+        localStorage.setItem("authToken", testToken);
+        displayTokenInfo();
+        logResult("Set Test Token", "Test token set in localStorage");
+      }
+
+      // Initialize page
+      window.addEventListener("load", function () {
+        displayTokenInfo();
+
+        // If token in URL, save it
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get("token");
+        if (urlToken) {
+          localStorage.setItem("authToken", urlToken);
+          // Clean URL
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+          displayTokenInfo();
+          logResult("URL Token", "Token from URL saved to localStorage");
+        }
+      });
+    </script>
+  </body>
+</html>

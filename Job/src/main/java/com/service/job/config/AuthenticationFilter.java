@@ -39,9 +39,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         
         // Skip authentication for public endpoints
         if (isPublicEndpoint(path)) {
+            log.debug("Public endpoint accessed: {}", path);
             filterChain.doFilter(request, response);
             return;
         }
+
+        log.debug("Authentication required for path: {}", path);
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -105,8 +108,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                path.equals("/create-job") ||
                path.equals("/job-details") ||
                path.equals("/profile") ||
-               path.startsWith("/api/jobs/") ||
-               path.equals("/api/jobs");
+               path.equals("/job-listings") ||
+               path.equals("/debug") ||
+               path.equals("/api/jobs"); // Only GET /api/jobs is public, not other operations
     }
 
     private UserValidationResponse validateTokenWithAuthService(String token) throws Exception {

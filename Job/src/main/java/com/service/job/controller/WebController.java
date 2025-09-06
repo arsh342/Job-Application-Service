@@ -23,6 +23,11 @@ public class WebController {
     public String dashboard() {
         return "dashboard";
     }
+
+    @GetMapping("/job-listings")
+    public String jobListings() {
+        return "job-listings";
+    }
     
     @GetMapping("/jobs")
     public String jobs(HttpServletRequest request, Model model) {
@@ -47,5 +52,10 @@ public class WebController {
     @GetMapping("/profile")
     public String profile() {
         return "profile";
+    }
+    
+    @GetMapping("/debug")
+    public String debug() {
+        return "debug";
     }
 }

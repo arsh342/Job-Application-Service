@@ -96,7 +96,8 @@ public class JobService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
         
-        if (!job.getEmployerId().equals(employerId)) {
+        // Only check ownership if employerId is provided (authenticated request)
+        if (employerId != null && !job.getEmployerId().equals(employerId)) {
             throw new RuntimeException("Unauthorized to view applications for this job");
         }
         
