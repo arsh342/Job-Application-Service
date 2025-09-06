@@ -499,7 +499,7 @@
                 if (jobResponse.ok) {
                   const job = await jobResponse.json();
                   application.jobTitle = job.title;
-                  application.companyName = job.companyName;
+                  application.companyName = job.company;
                   application.jobLocation = job.location;
                   application.jobSalary = job.salary;
                 }
@@ -591,9 +591,6 @@
                     </div>
                     
                     <div class="application-actions">
-                        <button onclick="viewJobDetails(${
-                          application.jobId
-                        })" class="view-job-btn">View Job</button>
                         ${
                           application.status === "APPLIED"
                             ? `

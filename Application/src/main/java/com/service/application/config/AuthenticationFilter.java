@@ -36,12 +36,16 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        log.info("Processing request for path: {}", path);
         
         // Skip authentication for public endpoints
         if (isPublicEndpoint(path)) {
+            log.info("Skipping authentication for public endpoint: {}", path);
             filterChain.doFilter(request, response);
             return;
         }
+
+        log.info("Applying authentication for path: {}", path);
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -101,7 +105,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                path.startsWith("/images/") ||
                path.equals("/login-redirect") ||
                path.equals("/dashboard") ||
-               path.startsWith("/api/");
+               path.equals("/browse-jobs");
     }
 
     private UserValidationResponse validateTokenWithAuthService(String token) throws Exception {

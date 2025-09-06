@@ -185,10 +185,7 @@
         <h1>Job Portal - Employer Dashboard</h1>
         <div class="header-buttons">
           <span id="welcomeMessage"></span>
-          <button
-            class="btn btn-primary"
-            onclick="window.location.href='/profile'"
-          >
+          <button class="btn btn-primary" onclick="navigateToPage('/profile')">
             Profile
           </button>
           <button class="btn btn-primary" onclick="logout()">Logout</button>
@@ -263,6 +260,15 @@
       function getAuthHeaders() {
         const token = getJwtToken();
         return token ? { Authorization: `Bearer ${token}` } : {};
+      }
+
+      function navigateToPage(page) {
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = page;
+        }
       }
 
       // Check authentication on page load

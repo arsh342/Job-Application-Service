@@ -36,8 +36,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**", "/login-redirect", "/dashboard").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**", "/login-redirect", "/dashboard", "/browse-jobs").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);

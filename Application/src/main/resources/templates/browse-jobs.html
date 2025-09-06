@@ -375,12 +375,13 @@
       window.addEventListener("load", async function () {
         // Load jobs and applications
         await loadJobs();
-        await loadApplications();
+        await loadAppliedJobs();
       });
 
       async function loadJobs() {
         try {
           const response = await fetch("http://localhost:8081/api/jobs/all");
+
           if (response.ok) {
             allJobs = await response.json();
             // Filter only open jobs
@@ -392,6 +393,7 @@
               '<div class="no-jobs">Failed to load jobs</div>';
           }
         } catch (error) {
+          console.error("Error loading jobs:", error);
           document.getElementById("jobsList").innerHTML =
             '<div class="no-jobs">Error loading jobs</div>';
         }
@@ -475,9 +477,6 @@
                         </div>
                         
                         <div class="job-actions">
-                            <button onclick="viewJobDetails(${
-                              job.jobId
-                            })" class="view-btn">View Details</button>
                             ${
                               !isApplied
                                 ? `<button onclick="applyNow(${job.jobId})" class="apply-btn">Apply Now</button>`
@@ -494,7 +493,7 @@
 
       function displayPagination() {
         const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
-        const pagination = document.getElementById("pagination");
+        const pagination = document.getElementById("paginationControls");
 
         if (totalPages <= 1) {
           pagination.innerHTML = "";

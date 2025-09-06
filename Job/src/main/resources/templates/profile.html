@@ -5,498 +5,671 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile - Job Portal</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+      }
+
       .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 40px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
       }
+
+      .header h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
       .profile-container {
-        max-width: 600px;
-        margin: 0 auto;
+        padding: 40px;
       }
+
       .profile-section {
-        border: 1px solid #ccc;
-        padding: 20px;
-        margin-bottom: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       }
+
+      .profile-section h2 {
+        color: #495057;
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #667eea;
+        position: relative;
+      }
+
+      .profile-section h2:after {
+        content: "";
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: #764ba2;
+      }
+
       .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 25px;
       }
+
       label {
         display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
+
       input,
       textarea {
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
+        padding: 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: white;
       }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
       button {
-        padding: 10px 15px;
-        margin: 5px;
+        padding: 15px 30px;
+        margin: 8px;
         cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
+
       .save-btn {
-        background-color: #4caf50;
+        background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
       }
+
+      .save-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+      }
+
       .cancel-btn {
-        background-color: #f44336;
+        background: linear-gradient(135deg, #dc3545, #e83e8c);
         color: white;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
       }
+
+      .cancel-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+      }
+
       .success-msg {
-        color: green;
-        margin-top: 10px;
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border-left: 4px solid #28a745;
+        font-weight: 600;
       }
+
       .error-msg {
-        color: red;
-        margin-top: 10px;
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        color: #721c24;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border-left: 4px solid #dc3545;
+        font-weight: 600;
       }
+
       .password-section {
-        border-top: 2px solid #eee;
-        padding-top: 20px;
-        margin-top: 20px;
+        border-top: 3px solid #667eea;
+        padding-top: 30px;
+        margin-top: 30px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .profile-container {
+          padding: 20px;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="header">
-      <h1>Profile Management</h1>
-      <div>
-        <button onclick="window.location.href='/dashboard'">
-          Back to Dashboard
-        </button>
-        <button onclick="logout()">Logout</button>
-      </div>
-    </div>
-
-    <div class="profile-container">
-      <div class="profile-section">
-        <h2>Company Information</h2>
-        <form id="profileForm">
-          <div class="form-group">
-            <label for="companyName">Company Name:</label>
-            <input type="text" id="companyName" name="companyName" required />
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required readonly />
-          </div>
-
-          <div class="form-group">
-            <label for="contactNumber">Contact Number:</label>
-            <input type="tel" id="contactNumber" name="contactNumber" />
-          </div>
-
-          <div class="form-group">
-            <label for="address">Address:</label>
-            <textarea id="address" name="address" rows="3"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="website">Website:</label>
-            <input type="url" id="website" name="website" />
-          </div>
-
-          <div class="form-group">
-            <label for="description">Company Description:</label>
-            <textarea id="description" name="description" rows="4"></textarea>
-          </div>
-
-          <button type="button" onclick="updateProfile()" class="save-btn">
-            Update Profile
+    <div class="container">
+      <div class="header">
+        <h1>Profile Management</h1>
+        <div class="header-buttons">
+          <button
+            class="btn btn-primary"
+            onclick="window.location.href='/dashboard'"
+          >
+            Back to Dashboard
           </button>
-          <div id="profileMessage"></div>
-        </form>
+          <button class="btn btn-primary" onclick="logout()">Logout</button>
+        </div>
       </div>
 
-      <div class="profile-section">
-        <div class="password-section">
-          <h2>Change Password</h2>
-          <form id="passwordForm">
+      <div class="profile-container">
+        <div class="profile-section">
+          <h2>Company Information</h2>
+          <form id="profileForm">
             <div class="form-group">
-              <label for="currentPassword">Current Password:</label>
-              <input
-                type="password"
-                id="currentPassword"
-                name="currentPassword"
-                required
-              />
+              <label for="companyName">Company Name:</label>
+              <input type="text" id="companyName" name="companyName" required />
             </div>
 
             <div class="form-group">
-              <label for="newPassword">New Password:</label>
-              <input
-                type="password"
-                id="newPassword"
-                name="newPassword"
-                required
-                minlength="6"
-              />
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" required readonly />
             </div>
 
             <div class="form-group">
-              <label for="confirmPassword">Confirm New Password:</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                required
-                minlength="6"
-              />
+              <label for="contactNumber">Contact Number:</label>
+              <input type="tel" id="contactNumber" name="contactNumber" />
             </div>
 
-            <button type="button" onclick="changePassword()" class="save-btn">
-              Change Password
+            <div class="form-group">
+              <label for="address">Address:</label>
+              <textarea id="address" name="address" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="website">Website:</label>
+              <input type="url" id="website" name="website" />
+            </div>
+
+            <div class="form-group">
+              <label for="description">Company Description:</label>
+              <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+
+            <button type="button" onclick="updateProfile()" class="save-btn">
+              Update Profile
             </button>
-            <div id="passwordMessage"></div>
+            <div id="profileMessage"></div>
           </form>
         </div>
-      </div>
 
-      <div class="profile-section">
-        <h2>Account Statistics</h2>
-        <div id="stats">
-          <p>
-            <strong>Total Jobs Posted:</strong>
-            <span id="totalJobs">Loading...</span>
-          </p>
-          <p>
-            <strong>Active Jobs:</strong>
-            <span id="activeJobs">Loading...</span>
-          </p>
-          <p>
-            <strong>Total Applications Received:</strong>
-            <span id="totalApplications">Loading...</span>
-          </p>
-          <p>
-            <strong>Member Since:</strong>
-            <span id="memberSince">Loading...</span>
-          </p>
+        <div class="profile-section">
+          <div class="password-section">
+            <h2>Change Password</h2>
+            <form id="passwordForm">
+              <div class="form-group">
+                <label for="currentPassword">Current Password:</label>
+                <input
+                  type="password"
+                  id="currentPassword"
+                  name="currentPassword"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="newPassword">New Password:</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                  required
+                  minlength="6"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword">Confirm New Password:</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  required
+                  minlength="6"
+                />
+              </div>
+
+              <button type="button" onclick="changePassword()" class="save-btn">
+                Change Password
+              </button>
+              <div id="passwordMessage"></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h2>Account Statistics</h2>
+          <div id="stats">
+            <p>
+              <strong>Total Jobs Posted:</strong>
+              <span id="totalJobs">Loading...</span>
+            </p>
+            <p>
+              <strong>Active Jobs:</strong>
+              <span id="activeJobs">Loading...</span>
+            </p>
+            <p>
+              <strong>Total Applications Received:</strong>
+              <span id="totalApplications">Loading...</span>
+            </p>
+            <p>
+              <strong>Member Since:</strong>
+              <span id="memberSince">Loading...</span>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <script>
-      let currentEmployer = null;
+      <script>
+        let currentEmployer = null;
 
-      // JWT utility functions
-      function getJwtToken() {
-        return (
-          localStorage.getItem("authToken") ||
-          localStorage.getItem("jwtToken") ||
-          sessionStorage.getItem("authToken")
-        );
-      }
-
-      function setJwtToken(token) {
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("jwtToken", token); // Keep for compatibility
-      }
-
-      function removeJwtToken() {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("jwtToken");
-        sessionStorage.removeItem("authToken");
-      }
-
-      function getAuthHeaders() {
-        const token = getJwtToken();
-        return token ? { Authorization: `Bearer ${token}` } : {};
-      }
-
-      window.addEventListener("load", async function () {
-        // First check if token is passed via URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlToken = urlParams.get("token");
-
-        if (urlToken) {
-          // Store token from URL parameter
-          setJwtToken(urlToken);
-          // Clean URL by removing token parameter
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
+        // JWT utility functions
+        function getJwtToken() {
+          return (
+            localStorage.getItem("authToken") ||
+            localStorage.getItem("jwtToken") ||
+            sessionStorage.getItem("authToken")
           );
         }
 
-        const token = getJwtToken();
-        if (!token) {
-          window.location.href = "http://localhost:8083/login";
-          return;
+        function setJwtToken(token) {
+          localStorage.setItem("authToken", token);
+          localStorage.setItem("jwtToken", token); // Keep for compatibility
         }
 
-        try {
-          // Extract user info from stored token data
-          const userType = localStorage.getItem("userType");
-          const userName = localStorage.getItem("userName");
-          const userId = localStorage.getItem("userId");
+        function removeJwtToken() {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("jwtToken");
+          sessionStorage.removeItem("authToken");
+        }
 
-          if (userType && userName && userId) {
-            // Use stored user information
-            currentEmployer = {
-              employerId: parseInt(userId),
-              name: userName,
-              userType: userType,
-            };
-            currentEmployerId = parseInt(userId);
+        function getAuthHeaders() {
+          const token = getJwtToken();
+          return token ? { Authorization: `Bearer ${token}` } : {};
+        }
 
-            document.getElementById(
-              "welcomeMessage"
-            ).textContent = `Welcome, ${userName}!`;
-            await loadProfile();
-            await loadStats();
-            return;
+        window.addEventListener("load", async function () {
+          // First check if token is passed via URL parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlToken = urlParams.get("token");
+
+          if (urlToken) {
+            // Store token from URL parameter
+            setJwtToken(urlToken);
+            // Clean URL by removing token parameter
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname
+            );
           }
 
-          // Fallback: try to validate token with Authentication Service
-          const response = await fetch(
-            "http://localhost:8083/api/auth/validate",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(),
-              },
-            }
-          );
-
-          if (!response.ok) {
-            removeJwtToken();
+          const token = getJwtToken();
+          if (!token) {
             window.location.href = "http://localhost:8083/login";
             return;
           }
 
-          const userData = await response.json();
-          if (userData.valid) {
-            currentEmployer = {
-              employerId: userData.userId,
-              name: userData.name,
-              userType: userData.userType,
-            };
-            currentEmployerId = userData.userId;
+          try {
+            // Extract user info from stored token data
+            const userType = localStorage.getItem("userType");
+            const userName = localStorage.getItem("userName");
+            const userId = localStorage.getItem("userId");
 
-            // Store user info for future use
-            localStorage.setItem("userType", userData.userType);
-            localStorage.setItem("userName", userData.name);
-            localStorage.setItem("userId", userData.userId.toString());
+            if (userType && userName && userId) {
+              // Use stored user information
+              currentEmployer = {
+                employerId: parseInt(userId),
+                name: userName,
+                userType: userType,
+              };
+              currentEmployerId = parseInt(userId);
 
-            document.getElementById(
-              "welcomeMessage"
-            ).textContent = `Welcome, ${userData.name}!`;
-            await loadProfile();
-            await loadStats();
-          } else {
-            throw new Error("Invalid token");
-          }
-        } catch (error) {
-          removeJwtToken();
-          window.location.href = "http://localhost:8083/auth/login";
-        }
-      });
-
-      async function loadProfile() {
-        try {
-          const response = await fetch("/api/auth/profile");
-          if (response.ok) {
-            const employer = await response.json();
-
-            document.getElementById("companyName").value =
-              employer.companyName || "";
-            document.getElementById("email").value = employer.email || "";
-            document.getElementById("contactNumber").value =
-              employer.contactNumber || "";
-            document.getElementById("address").value = employer.address || "";
-            document.getElementById("website").value = employer.website || "";
-            document.getElementById("description").value =
-              employer.description || "";
-          } else {
-            showMessage(
-              "profileMessage",
-              "Failed to load profile data",
-              "error"
-            );
-          }
-        } catch (error) {
-          showMessage(
-            "profileMessage",
-            "Error loading profile: " + error.message,
-            "error"
-          );
-        }
-      }
-
-      async function loadStats() {
-        try {
-          // Load job statistics
-          const jobsResponse = await fetch("/api/jobs/my-jobs");
-          if (jobsResponse.ok) {
-            const jobs = await jobsResponse.json();
-            document.getElementById("totalJobs").textContent = jobs.length;
-
-            const activeJobs = jobs.filter(
-              (job) => job.status === "OPEN"
-            ).length;
-            document.getElementById("activeJobs").textContent = activeJobs;
-
-            // Load total applications across all jobs
-            let totalApplications = 0;
-            for (const job of jobs) {
-              try {
-                const appResponse = await fetch(
-                  `/api/jobs/${job.jobId}/applications`
-                );
-                if (appResponse.ok) {
-                  const applications = await appResponse.json();
-                  totalApplications += applications.length;
-                }
-              } catch (error) {
-                console.error("Error loading applications for job:", job.jobId);
-              }
+              document.getElementById(
+                "welcomeMessage"
+              ).textContent = `Welcome, ${userName}!`;
+              await loadProfile();
+              await loadStats();
+              return;
             }
-            document.getElementById("totalApplications").textContent =
-              totalApplications;
-          }
 
-          // Set member since date (you might want to add this field to employer model)
-          if (currentEmployer && currentEmployer.createdDate) {
-            document.getElementById("memberSince").textContent = new Date(
-              currentEmployer.createdDate
-            ).toLocaleDateString();
-          } else {
-            document.getElementById("memberSince").textContent = "N/A";
-          }
-        } catch (error) {
-          console.error("Error loading statistics:", error);
-        }
-      }
-
-      async function updateProfile() {
-        const profileData = {
-          companyName: document.getElementById("companyName").value,
-          contactNumber: document.getElementById("contactNumber").value,
-          address: document.getElementById("address").value,
-          website: document.getElementById("website").value,
-          description: document.getElementById("description").value,
-        };
-
-        try {
-          const response = await fetch("/api/auth/profile", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(profileData),
-          });
-
-          if (response.ok) {
-            showMessage(
-              "profileMessage",
-              "Profile updated successfully!",
-              "success"
+            // Fallback: try to validate token with Authentication Service
+            const response = await fetch(
+              "http://localhost:8083/api/auth/validate",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  ...getAuthHeaders(),
+                },
+              }
             );
-          } else {
-            const error = await response.text();
+
+            if (!response.ok) {
+              removeJwtToken();
+              window.location.href = "http://localhost:8083/login";
+              return;
+            }
+
+            const userData = await response.json();
+            if (userData.valid) {
+              currentEmployer = {
+                employerId: userData.userId,
+                name: userData.name,
+                userType: userData.userType,
+              };
+              currentEmployerId = userData.userId;
+
+              // Store user info for future use
+              localStorage.setItem("userType", userData.userType);
+              localStorage.setItem("userName", userData.name);
+              localStorage.setItem("userId", userData.userId.toString());
+
+              document.getElementById(
+                "welcomeMessage"
+              ).textContent = `Welcome, ${userData.name}!`;
+              await loadProfile();
+              await loadStats();
+            } else {
+              throw new Error("Invalid token");
+            }
+          } catch (error) {
+            removeJwtToken();
+            window.location.href = "http://localhost:8083/auth/login";
+          }
+        });
+
+        async function loadProfile() {
+          try {
+            const response = await fetch("/api/auth/profile");
+            if (response.ok) {
+              const employer = await response.json();
+
+              document.getElementById("companyName").value =
+                employer.companyName || "";
+              document.getElementById("email").value = employer.email || "";
+              document.getElementById("contactNumber").value =
+                employer.contactNumber || "";
+              document.getElementById("address").value = employer.address || "";
+              document.getElementById("website").value = employer.website || "";
+              document.getElementById("description").value =
+                employer.description || "";
+            } else {
+              showMessage(
+                "profileMessage",
+                "Failed to load profile data",
+                "error"
+              );
+            }
+          } catch (error) {
             showMessage(
               "profileMessage",
-              "Failed to update profile: " + error,
+              "Error loading profile: " + error.message,
               "error"
             );
           }
-        } catch (error) {
-          showMessage(
-            "profileMessage",
-            "Error updating profile: " + error.message,
-            "error"
-          );
-        }
-      }
-
-      async function changePassword() {
-        const currentPassword =
-          document.getElementById("currentPassword").value;
-        const newPassword = document.getElementById("newPassword").value;
-        const confirmPassword =
-          document.getElementById("confirmPassword").value;
-
-        if (newPassword !== confirmPassword) {
-          showMessage("passwordMessage", "New passwords do not match", "error");
-          return;
         }
 
-        if (newPassword.length < 6) {
-          showMessage(
-            "passwordMessage",
-            "Password must be at least 6 characters long",
-            "error"
-          );
-          return;
+        async function loadStats() {
+          try {
+            // Load job statistics
+            const jobsResponse = await fetch("/api/jobs/my-jobs");
+            if (jobsResponse.ok) {
+              const jobs = await jobsResponse.json();
+              document.getElementById("totalJobs").textContent = jobs.length;
+
+              const activeJobs = jobs.filter(
+                (job) => job.status === "OPEN"
+              ).length;
+              document.getElementById("activeJobs").textContent = activeJobs;
+
+              // Load total applications across all jobs
+              let totalApplications = 0;
+              for (const job of jobs) {
+                try {
+                  const appResponse = await fetch(
+                    `/api/jobs/${job.jobId}/applications`
+                  );
+                  if (appResponse.ok) {
+                    const applications = await appResponse.json();
+                    totalApplications += applications.length;
+                  }
+                } catch (error) {
+                  console.error(
+                    "Error loading applications for job:",
+                    job.jobId
+                  );
+                }
+              }
+              document.getElementById("totalApplications").textContent =
+                totalApplications;
+            }
+
+            // Set member since date (you might want to add this field to employer model)
+            if (currentEmployer && currentEmployer.createdDate) {
+              document.getElementById("memberSince").textContent = new Date(
+                currentEmployer.createdDate
+              ).toLocaleDateString();
+            } else {
+              document.getElementById("memberSince").textContent = "N/A";
+            }
+          } catch (error) {
+            console.error("Error loading statistics:", error);
+          }
         }
 
-        const passwordData = {
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-        };
+        async function updateProfile() {
+          const profileData = {
+            companyName: document.getElementById("companyName").value,
+            contactNumber: document.getElementById("contactNumber").value,
+            address: document.getElementById("address").value,
+            website: document.getElementById("website").value,
+            description: document.getElementById("description").value,
+          };
 
-        try {
-          const response = await fetch("/api/auth/change-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(passwordData),
-          });
+          try {
+            const response = await fetch("/api/auth/profile", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(profileData),
+            });
 
-          if (response.ok) {
+            if (response.ok) {
+              showMessage(
+                "profileMessage",
+                "Profile updated successfully!",
+                "success"
+              );
+            } else {
+              const error = await response.text();
+              showMessage(
+                "profileMessage",
+                "Failed to update profile: " + error,
+                "error"
+              );
+            }
+          } catch (error) {
             showMessage(
-              "passwordMessage",
-              "Password changed successfully!",
-              "success"
-            );
-            document.getElementById("passwordForm").reset();
-          } else {
-            const error = await response.text();
-            showMessage(
-              "passwordMessage",
-              "Failed to change password: " + error,
+              "profileMessage",
+              "Error updating profile: " + error.message,
               "error"
             );
           }
-        } catch (error) {
-          showMessage(
-            "passwordMessage",
-            "Error changing password: " + error.message,
-            "error"
-          );
         }
-      }
 
-      function showMessage(elementId, message, type) {
-        const messageDiv = document.getElementById(elementId);
-        messageDiv.textContent = message;
-        messageDiv.className = type === "success" ? "success-msg" : "error-msg";
+        async function changePassword() {
+          const currentPassword =
+            document.getElementById("currentPassword").value;
+          const newPassword = document.getElementById("newPassword").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
 
-        // Clear message after 5 seconds
-        setTimeout(() => {
-          messageDiv.textContent = "";
-          messageDiv.className = "";
-        }, 5000);
-      }
+          if (newPassword !== confirmPassword) {
+            showMessage(
+              "passwordMessage",
+              "New passwords do not match",
+              "error"
+            );
+            return;
+          }
 
-      async function logout() {
-        try {
-          await fetch("/api/auth/logout", { method: "POST" });
-          window.location.href = "/login";
-        } catch (error) {
-          window.location.href = "/login";
+          if (newPassword.length < 6) {
+            showMessage(
+              "passwordMessage",
+              "Password must be at least 6 characters long",
+              "error"
+            );
+            return;
+          }
+
+          const passwordData = {
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+          };
+
+          try {
+            const response = await fetch("/api/auth/change-password", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(passwordData),
+            });
+
+            if (response.ok) {
+              showMessage(
+                "passwordMessage",
+                "Password changed successfully!",
+                "success"
+              );
+              document.getElementById("passwordForm").reset();
+            } else {
+              const error = await response.text();
+              showMessage(
+                "passwordMessage",
+                "Failed to change password: " + error,
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "passwordMessage",
+              "Error changing password: " + error.message,
+              "error"
+            );
+          }
         }
-      }
-    </script>
+
+        function showMessage(elementId, message, type) {
+          const messageDiv = document.getElementById(elementId);
+          messageDiv.textContent = message;
+          messageDiv.className =
+            type === "success" ? "success-msg" : "error-msg";
+
+          // Clear message after 5 seconds
+          setTimeout(() => {
+            messageDiv.textContent = "";
+            messageDiv.className = "";
+          }, 5000);
+        }
+
+        async function logout() {
+          try {
+            await fetch("/api/auth/logout", { method: "POST" });
+            window.location.href = "/login";
+          } catch (error) {
+            window.location.href = "/login";
+          }
+        }
+      </script>
+    </div>
   </body>
 </html>

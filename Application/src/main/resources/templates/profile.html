@@ -5,564 +5,764 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile - Job Portal</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+      }
+
       .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 40px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
       }
+
+      .header h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
       .profile-container {
-        max-width: 600px;
-        margin: 0 auto;
+        padding: 40px;
       }
+
       .profile-section {
-        border: 1px solid #ccc;
-        padding: 20px;
-        margin-bottom: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       }
+
+      .profile-section h2 {
+        color: #495057;
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #667eea;
+        position: relative;
+      }
+
+      .profile-section h2:after {
+        content: "";
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: #764ba2;
+      }
+
       .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 25px;
       }
+
       label {
         display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
+
       input,
       textarea,
       select {
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
+        padding: 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: white;
       }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
       button {
-        padding: 10px 15px;
-        margin: 5px;
+        padding: 15px 30px;
+        margin: 8px;
         cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
+
       .save-btn {
-        background-color: #4caf50;
+        background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
       }
+
+      .save-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+      }
+
       .cancel-btn {
-        background-color: #f44336;
+        background: linear-gradient(135deg, #dc3545, #e83e8c);
         color: white;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
       }
+
+      .cancel-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+      }
+
       .success-msg {
-        color: green;
-        margin-top: 10px;
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border-left: 4px solid #28a745;
+        font-weight: 600;
       }
+
       .error-msg {
-        color: red;
-        margin-top: 10px;
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        color: #721c24;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border-left: 4px solid #dc3545;
+        font-weight: 600;
       }
+
       .password-section {
-        border-top: 2px solid #eee;
-        padding-top: 20px;
-        margin-top: 20px;
+        border-top: 3px solid #667eea;
+        padding-top: 30px;
+        margin-top: 30px;
       }
+
       .skill-tag {
         display: inline-block;
-        background-color: #e3f2fd;
-        color: #1976d2;
-        padding: 4px 8px;
-        margin: 2px;
-        border-radius: 12px;
-        font-size: 12px;
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        color: #1565c0;
+        padding: 8px 16px;
+        margin: 4px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(21, 101, 192, 0.2);
+        transition: all 0.3s ease;
       }
+
+      .skill-tag:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+      }
+
       .skill-input {
         display: flex;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        gap: 15px;
       }
+
       .skill-input input {
         flex: 1;
-        margin-right: 10px;
       }
-      .experience-item {
-        border: 1px solid #eee;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 4px;
+
+      .skill-input button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 15px 20px;
+        margin: 0;
       }
+
+      .experience-item,
       .education-item {
-        border: 1px solid #eee;
+        background: white;
+        border: 2px solid #e9ecef;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .experience-item:hover,
+      .education-item:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .add-section-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 100%;
         padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 4px;
+        margin-top: 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .add-section-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .profile-container {
+          padding: 20px;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .skill-input {
+          flex-direction: column;
+          gap: 10px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="header">
-      <h1>Profile Management</h1>
-      <div>
-        <button onclick="navigateToPage('/dashboard')">Dashboard</button>
-        <button onclick="navigateToPage('/browse-jobs')">Browse Jobs</button>
-        <button onclick="logout()">Logout</button>
-      </div>
-    </div>
-
-    <div class="profile-container">
-      <div class="profile-section">
-        <h2>Personal Information</h2>
-        <form id="profileForm">
-          <div class="form-group">
-            <label for="fullName">Full Name:</label>
-            <input type="text" id="fullName" name="fullName" required />
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required readonly />
-          </div>
-
-          <div class="form-group">
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" />
-          </div>
-
-          <div class="form-group">
-            <label for="address">Address:</label>
-            <textarea id="address" name="address" rows="3"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="dateOfBirth">Date of Birth:</label>
-            <input type="date" id="dateOfBirth" name="dateOfBirth" />
-          </div>
-
-          <div class="form-group">
-            <label for="linkedinUrl">LinkedIn Profile:</label>
-            <input
-              type="url"
-              id="linkedinUrl"
-              name="linkedinUrl"
-              placeholder="https://linkedin.com/in/yourprofile"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="portfolioUrl">Portfolio/Website:</label>
-            <input
-              type="url"
-              id="portfolioUrl"
-              name="portfolioUrl"
-              placeholder="https://yourportfolio.com"
-            />
-          </div>
-
-          <button type="button" onclick="updateProfile()" class="save-btn">
-            Update Profile
+    <div class="container">
+      <div class="header">
+        <h1>Profile Management</h1>
+        <div class="header-buttons">
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/dashboard')"
+          >
+            Dashboard
           </button>
-          <div id="profileMessage"></div>
-        </form>
-      </div>
-
-      <div class="profile-section">
-        <h2>Professional Summary</h2>
-        <div class="form-group">
-          <label for="summary">Professional Summary:</label>
-          <textarea
-            id="summary"
-            rows="5"
-            placeholder="Brief description of your professional background and career objectives..."
-          ></textarea>
-        </div>
-        <button type="button" onclick="updateSummary()" class="save-btn">
-          Update Summary
-        </button>
-        <div id="summaryMessage"></div>
-      </div>
-
-      <div class="profile-section">
-        <h2>Skills</h2>
-        <div class="form-group">
-          <label>Add Skill:</label>
-          <div class="skill-input">
-            <input type="text" id="newSkill" placeholder="Enter a skill..." />
-            <button type="button" onclick="addSkill()">Add</button>
-          </div>
-          <div id="skillsList"></div>
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/browse-jobs')"
+          >
+            Browse Jobs
+          </button>
+          <button class="btn btn-primary" onclick="logout()">Logout</button>
         </div>
       </div>
 
-      <div class="profile-section">
-        <h2>Work Experience</h2>
-        <div id="experienceList"></div>
-        <button type="button" onclick="addExperience()">Add Experience</button>
-      </div>
-
-      <div class="profile-section">
-        <h2>Education</h2>
-        <div id="educationList"></div>
-        <button type="button" onclick="addEducation()">Add Education</button>
-      </div>
-
-      <div class="profile-section">
-        <div class="password-section">
-          <h2>Change Password</h2>
-          <form id="passwordForm">
+      <div class="profile-container">
+        <div class="profile-section">
+          <h2>Personal Information</h2>
+          <form id="profileForm">
             <div class="form-group">
-              <label for="currentPassword">Current Password:</label>
+              <label for="fullName">Full Name:</label>
+              <input type="text" id="fullName" name="fullName" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" required readonly />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number:</label>
+              <input type="tel" id="phone" name="phone" />
+            </div>
+
+            <div class="form-group">
+              <label for="address">Address:</label>
+              <textarea id="address" name="address" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="dateOfBirth">Date of Birth:</label>
+              <input type="date" id="dateOfBirth" name="dateOfBirth" />
+            </div>
+
+            <div class="form-group">
+              <label for="linkedinUrl">LinkedIn Profile:</label>
               <input
-                type="password"
-                id="currentPassword"
-                name="currentPassword"
-                required
+                type="url"
+                id="linkedinUrl"
+                name="linkedinUrl"
+                placeholder="https://linkedin.com/in/yourprofile"
               />
             </div>
 
             <div class="form-group">
-              <label for="newPassword">New Password:</label>
+              <label for="portfolioUrl">Portfolio/Website:</label>
               <input
-                type="password"
-                id="newPassword"
-                name="newPassword"
-                required
-                minlength="6"
+                type="url"
+                id="portfolioUrl"
+                name="portfolioUrl"
+                placeholder="https://yourportfolio.com"
               />
             </div>
 
-            <div class="form-group">
-              <label for="confirmPassword">Confirm New Password:</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                required
-                minlength="6"
-              />
-            </div>
-
-            <button type="button" onclick="changePassword()" class="save-btn">
-              Change Password
+            <button type="button" onclick="updateProfile()" class="save-btn">
+              Update Profile
             </button>
-            <div id="passwordMessage"></div>
+            <div id="profileMessage"></div>
           </form>
         </div>
-      </div>
 
-      <div class="profile-section">
-        <h2>Account Statistics</h2>
-        <div id="stats">
-          <p>
-            <strong>Total Applications:</strong>
-            <span id="totalApplications">Loading...</span>
-          </p>
-          <p>
-            <strong>Applications This Month:</strong>
-            <span id="monthlyApplications">Loading...</span>
-          </p>
-          <p>
-            <strong>Shortlisted:</strong>
-            <span id="shortlistedCount">Loading...</span>
-          </p>
-          <p><strong>Hired:</strong> <span id="hiredCount">Loading...</span></p>
-          <p>
-            <strong>Member Since:</strong>
-            <span id="memberSince">Loading...</span>
-          </p>
+        <div class="profile-section">
+          <h2>Professional Summary</h2>
+          <div class="form-group">
+            <label for="summary">Professional Summary:</label>
+            <textarea
+              id="summary"
+              rows="5"
+              placeholder="Brief description of your professional background and career objectives..."
+            ></textarea>
+          </div>
+          <button type="button" onclick="updateSummary()" class="save-btn">
+            Update Summary
+          </button>
+          <div id="summaryMessage"></div>
+        </div>
+
+        <div class="profile-section">
+          <h2>Skills</h2>
+          <div class="form-group">
+            <label>Add Skill:</label>
+            <div class="skill-input">
+              <input type="text" id="newSkill" placeholder="Enter a skill..." />
+              <button type="button" onclick="addSkill()">Add</button>
+            </div>
+            <div id="skillsList"></div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h2>Work Experience</h2>
+          <div id="experienceList"></div>
+          <button type="button" onclick="addExperience()">
+            Add Experience
+          </button>
+        </div>
+
+        <div class="profile-section">
+          <h2>Education</h2>
+          <div id="educationList"></div>
+          <button type="button" onclick="addEducation()">Add Education</button>
+        </div>
+
+        <div class="profile-section">
+          <div class="password-section">
+            <h2>Change Password</h2>
+            <form id="passwordForm">
+              <div class="form-group">
+                <label for="currentPassword">Current Password:</label>
+                <input
+                  type="password"
+                  id="currentPassword"
+                  name="currentPassword"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="newPassword">New Password:</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                  required
+                  minlength="6"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword">Confirm New Password:</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  required
+                  minlength="6"
+                />
+              </div>
+
+              <button type="button" onclick="changePassword()" class="save-btn">
+                Change Password
+              </button>
+              <div id="passwordMessage"></div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
 
-    <script>
-      let currentApplicant = null;
-      let skills = [];
-      let experiences = [];
-      let educations = [];
+      <script>
+        let currentApplicant = null;
+        let skills = [];
+        let experiences = [];
+        let educations = [];
 
-      // JWT utility functions
-      function getJwtToken() {
-        return (
-          localStorage.getItem("authToken") ||
-          localStorage.getItem("jwtToken") ||
-          sessionStorage.getItem("authToken")
-        );
-      }
-
-      function setJwtToken(token) {
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("jwtToken", token);
-      }
-
-      function removeJwtToken() {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("jwtToken");
-        sessionStorage.removeItem("authToken");
-      }
-
-      function getAuthHeaders() {
-        const token = getJwtToken();
-        return token ? { Authorization: `Bearer ${token}` } : {};
-      }
-
-      function navigateToPage(page) {
-        const token = getJwtToken();
-        if (token) {
-          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
-        } else {
-          window.location.href = page;
+        // JWT utility functions
+        function getJwtToken() {
+          return (
+            localStorage.getItem("authToken") ||
+            localStorage.getItem("jwtToken") ||
+            sessionStorage.getItem("authToken")
+          );
         }
-      }
 
-      window.addEventListener("load", async function () {
-        // Load profile data
-        await loadProfile();
-      });
+        function setJwtToken(token) {
+          localStorage.setItem("authToken", token);
+          localStorage.setItem("jwtToken", token);
+        }
 
-      async function loadProfile() {
-        try {
-          const response = await fetch("/api/auth/current", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              ...getAuthHeaders(),
-            },
-          });
-          if (response.ok) {
-            const applicant = await response.json();
+        function removeJwtToken() {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("jwtToken");
+          sessionStorage.removeItem("authToken");
+        }
 
-            document.getElementById("fullName").value =
-              applicant.fullName || "";
-            document.getElementById("email").value = applicant.email || "";
-            document.getElementById("phone").value = applicant.phone || "";
-            document.getElementById("address").value = applicant.address || "";
-            document.getElementById("dateOfBirth").value =
-              applicant.dateOfBirth || "";
-            document.getElementById("linkedinUrl").value =
-              applicant.linkedinUrl || "";
-            document.getElementById("portfolioUrl").value =
-              applicant.portfolioUrl || "";
-            document.getElementById("summary").value = applicant.summary || "";
+        function getAuthHeaders() {
+          const token = getJwtToken();
+          return token ? { Authorization: `Bearer ${token}` } : {};
+        }
 
-            // Load skills, experience, education if stored in applicant object
-            skills = applicant.skills || [];
-            experiences = applicant.experiences || [];
-            educations = applicant.educations || [];
+        function navigateToPage(page) {
+          const token = getJwtToken();
+          if (token) {
+            window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+          } else {
+            window.location.href = page;
+          }
+        }
 
+        window.addEventListener("load", async function () {
+          // Load profile data
+          await loadProfile();
+        });
+
+        async function loadProfile() {
+          try {
+            const response = await fetch("/api/auth/current", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+            });
+            if (response.ok) {
+              const applicant = await response.json();
+
+              document.getElementById("fullName").value =
+                applicant.fullName || "";
+              document.getElementById("email").value = applicant.email || "";
+              document.getElementById("phone").value = applicant.phone || "";
+              document.getElementById("address").value =
+                applicant.address || "";
+              document.getElementById("dateOfBirth").value =
+                applicant.dateOfBirth || "";
+              document.getElementById("linkedinUrl").value =
+                applicant.linkedinUrl || "";
+              document.getElementById("portfolioUrl").value =
+                applicant.portfolioUrl || "";
+              document.getElementById("summary").value =
+                applicant.summary || "";
+
+              // Load skills, experience, education if stored in applicant object
+              skills = applicant.skills || [];
+              experiences = applicant.experiences || [];
+              educations = applicant.educations || [];
+
+              displaySkills();
+              displayExperiences();
+              displayEducations();
+            } else {
+              showMessage(
+                "profileMessage",
+                "Failed to load profile data",
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "profileMessage",
+              "Error loading profile: " + error.message,
+              "error"
+            );
+          }
+        }
+
+        async function loadStats() {
+          try {
+            const response = await fetch("/api/applications/my-applications", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+            });
+            if (response.ok) {
+              const applications = await response.json();
+
+              document.getElementById("totalApplications").textContent =
+                applications.length;
+
+              const thisMonth = new Date();
+              thisMonth.setDate(1);
+              const monthlyApps = applications.filter(
+                (app) => new Date(app.appliedDate) >= thisMonth
+              ).length;
+              document.getElementById("monthlyApplications").textContent =
+                monthlyApps;
+
+              const shortlisted = applications.filter(
+                (app) => app.status === "SHORTLISTED"
+              ).length;
+              document.getElementById("shortlistedCount").textContent =
+                shortlisted;
+
+              const hired = applications.filter(
+                (app) => app.status === "HIRED"
+              ).length;
+              document.getElementById("hiredCount").textContent = hired;
+            }
+
+            if (currentApplicant && currentApplicant.createdDate) {
+              document.getElementById("memberSince").textContent = new Date(
+                currentApplicant.createdDate
+              ).toLocaleDateString();
+            } else {
+              document.getElementById("memberSince").textContent = "N/A";
+            }
+          } catch (error) {
+            console.error("Error loading statistics:", error);
+          }
+        }
+
+        async function updateProfile() {
+          const profileData = {
+            fullName: document.getElementById("fullName").value,
+            phone: document.getElementById("phone").value,
+            address: document.getElementById("address").value,
+            dateOfBirth: document.getElementById("dateOfBirth").value,
+            linkedinUrl: document.getElementById("linkedinUrl").value,
+            portfolioUrl: document.getElementById("portfolioUrl").value,
+            skills: skills,
+            experiences: experiences,
+            educations: educations,
+          };
+
+          try {
+            const response = await fetch("/api/auth/profile", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+              body: JSON.stringify(profileData),
+            });
+
+            if (response.ok) {
+              showMessage(
+                "profileMessage",
+                "Profile updated successfully!",
+                "success"
+              );
+            } else {
+              const error = await response.text();
+              showMessage(
+                "profileMessage",
+                "Failed to update profile: " + error,
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "profileMessage",
+              "Error updating profile: " + error.message,
+              "error"
+            );
+          }
+        }
+
+        async function updateSummary() {
+          const summary = document.getElementById("summary").value;
+
+          try {
+            const response = await fetch("/api/auth/profile", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+              body: JSON.stringify({ summary: summary }),
+            });
+
+            if (response.ok) {
+              showMessage(
+                "summaryMessage",
+                "Summary updated successfully!",
+                "success"
+              );
+            } else {
+              const error = await response.text();
+              showMessage(
+                "summaryMessage",
+                "Failed to update summary: " + error,
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "summaryMessage",
+              "Error updating summary: " + error.message,
+              "error"
+            );
+          }
+        }
+
+        function addSkill() {
+          const skillInput = document.getElementById("newSkill");
+          const skill = skillInput.value.trim();
+
+          if (skill && !skills.includes(skill)) {
+            skills.push(skill);
+            skillInput.value = "";
             displaySkills();
-            displayExperiences();
-            displayEducations();
-          } else {
-            showMessage(
-              "profileMessage",
-              "Failed to load profile data",
-              "error"
-            );
+            updateProfile();
           }
-        } catch (error) {
-          showMessage(
-            "profileMessage",
-            "Error loading profile: " + error.message,
-            "error"
-          );
         }
-      }
 
-      async function loadStats() {
-        try {
-          const response = await fetch("/api/applications/my-applications", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              ...getAuthHeaders(),
-            },
-          });
-          if (response.ok) {
-            const applications = await response.json();
-
-            document.getElementById("totalApplications").textContent =
-              applications.length;
-
-            const thisMonth = new Date();
-            thisMonth.setDate(1);
-            const monthlyApps = applications.filter(
-              (app) => new Date(app.appliedDate) >= thisMonth
-            ).length;
-            document.getElementById("monthlyApplications").textContent =
-              monthlyApps;
-
-            const shortlisted = applications.filter(
-              (app) => app.status === "SHORTLISTED"
-            ).length;
-            document.getElementById("shortlistedCount").textContent =
-              shortlisted;
-
-            const hired = applications.filter(
-              (app) => app.status === "HIRED"
-            ).length;
-            document.getElementById("hiredCount").textContent = hired;
-          }
-
-          if (currentApplicant && currentApplicant.createdDate) {
-            document.getElementById("memberSince").textContent = new Date(
-              currentApplicant.createdDate
-            ).toLocaleDateString();
-          } else {
-            document.getElementById("memberSince").textContent = "N/A";
-          }
-        } catch (error) {
-          console.error("Error loading statistics:", error);
-        }
-      }
-
-      async function updateProfile() {
-        const profileData = {
-          fullName: document.getElementById("fullName").value,
-          phone: document.getElementById("phone").value,
-          address: document.getElementById("address").value,
-          dateOfBirth: document.getElementById("dateOfBirth").value,
-          linkedinUrl: document.getElementById("linkedinUrl").value,
-          portfolioUrl: document.getElementById("portfolioUrl").value,
-          skills: skills,
-          experiences: experiences,
-          educations: educations,
-        };
-
-        try {
-          const response = await fetch("/api/auth/profile", {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              ...getAuthHeaders(),
-            },
-            body: JSON.stringify(profileData),
-          });
-
-          if (response.ok) {
-            showMessage(
-              "profileMessage",
-              "Profile updated successfully!",
-              "success"
-            );
-          } else {
-            const error = await response.text();
-            showMessage(
-              "profileMessage",
-              "Failed to update profile: " + error,
-              "error"
-            );
-          }
-        } catch (error) {
-          showMessage(
-            "profileMessage",
-            "Error updating profile: " + error.message,
-            "error"
-          );
-        }
-      }
-
-      async function updateSummary() {
-        const summary = document.getElementById("summary").value;
-
-        try {
-          const response = await fetch("/api/auth/profile", {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              ...getAuthHeaders(),
-            },
-            body: JSON.stringify({ summary: summary }),
-          });
-
-          if (response.ok) {
-            showMessage(
-              "summaryMessage",
-              "Summary updated successfully!",
-              "success"
-            );
-          } else {
-            const error = await response.text();
-            showMessage(
-              "summaryMessage",
-              "Failed to update summary: " + error,
-              "error"
-            );
-          }
-        } catch (error) {
-          showMessage(
-            "summaryMessage",
-            "Error updating summary: " + error.message,
-            "error"
-          );
-        }
-      }
-
-      function addSkill() {
-        const skillInput = document.getElementById("newSkill");
-        const skill = skillInput.value.trim();
-
-        if (skill && !skills.includes(skill)) {
-          skills.push(skill);
-          skillInput.value = "";
+        function removeSkill(skill) {
+          skills = skills.filter((s) => s !== skill);
           displaySkills();
           updateProfile();
         }
-      }
 
-      function removeSkill(skill) {
-        skills = skills.filter((s) => s !== skill);
-        displaySkills();
-        updateProfile();
-      }
+        function displaySkills() {
+          const skillsList = document.getElementById("skillsList");
+          skillsList.innerHTML = skills
+            .map(
+              (skill) =>
+                `<span class="skill-tag">${skill} <span onclick="removeSkill('${skill}')" style="cursor: pointer; margin-left: 5px;">×</span></span>`
+            )
+            .join("");
+        }
 
-      function displaySkills() {
-        const skillsList = document.getElementById("skillsList");
-        skillsList.innerHTML = skills
-          .map(
-            (skill) =>
-              `<span class="skill-tag">${skill} <span onclick="removeSkill('${skill}')" style="cursor: pointer; margin-left: 5px;">×</span></span>`
-          )
-          .join("");
-      }
+        function addExperience() {
+          const experience = {
+            id: Date.now(),
+            company: "",
+            position: "",
+            startDate: "",
+            endDate: "",
+            description: "",
+            current: false,
+          };
+          experiences.push(experience);
+          displayExperiences();
+        }
 
-      function addExperience() {
-        const experience = {
-          id: Date.now(),
-          company: "",
-          position: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-          current: false,
-        };
-        experiences.push(experience);
-        displayExperiences();
-      }
+        function removeExperience(id) {
+          experiences = experiences.filter((exp) => exp.id !== id);
+          displayExperiences();
+          updateProfile();
+        }
 
-      function removeExperience(id) {
-        experiences = experiences.filter((exp) => exp.id !== id);
-        displayExperiences();
-        updateProfile();
-      }
-
-      function displayExperiences() {
-        const experienceList = document.getElementById("experienceList");
-        experienceList.innerHTML = experiences
-          .map(
-            (exp) => `
+        function displayExperiences() {
+          const experienceList = document.getElementById("experienceList");
+          experienceList.innerHTML = experiences
+            .map(
+              (exp) => `
                 <div class="experience-item">
                     <div class="form-group">
                         <label>Company:</label>
                         <input type="text" value="${
                           exp.company
                         }" onchange="updateExperience(${
-              exp.id
-            }, 'company', this.value)">
+                exp.id
+              }, 'company', this.value)">
                     </div>
                     <div class="form-group">
                         <label>Position:</label>
                         <input type="text" value="${
                           exp.position
                         }" onchange="updateExperience(${
-              exp.id
-            }, 'position', this.value)">
+                exp.id
+              }, 'position', this.value)">
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <div class="form-group" style="flex: 1;">
@@ -570,16 +770,16 @@
                             <input type="date" value="${
                               exp.startDate
                             }" onchange="updateExperience(${
-              exp.id
-            }, 'startDate', this.value)">
+                exp.id
+              }, 'startDate', this.value)">
                         </div>
                         <div class="form-group" style="flex: 1;">
                             <label>End Date:</label>
                             <input type="date" value="${
                               exp.endDate
                             }" onchange="updateExperience(${
-              exp.id
-            }, 'endDate', this.value)" ${exp.current ? "disabled" : ""}>
+                exp.id
+              }, 'endDate', this.value)" ${exp.current ? "disabled" : ""}>
                         </div>
                     </div>
                     <div class="form-group">
@@ -587,8 +787,8 @@
                             <input type="checkbox" ${
                               exp.current ? "checked" : ""
                             } onchange="updateExperience(${
-              exp.id
-            }, 'current', this.checked)">
+                exp.id
+              }, 'current', this.checked)">
                             Currently working here
                         </label>
                     </div>
@@ -597,54 +797,54 @@
                         <textarea rows="3" onchange="updateExperience(${
                           exp.id
                         }, 'description', this.value)">${
-              exp.description
-            }</textarea>
+                exp.description
+              }</textarea>
                     </div>
                     <button type="button" onclick="removeExperience(${
                       exp.id
                     })" class="cancel-btn">Remove</button>
                 </div>
             `
-          )
-          .join("");
-      }
+            )
+            .join("");
+        }
 
-      function updateExperience(id, field, value) {
-        const exp = experiences.find((e) => e.id === id);
-        if (exp) {
-          exp[field] = value;
-          if (field === "current" && value) {
-            exp.endDate = "";
+        function updateExperience(id, field, value) {
+          const exp = experiences.find((e) => e.id === id);
+          if (exp) {
+            exp[field] = value;
+            if (field === "current" && value) {
+              exp.endDate = "";
+            }
+            updateProfile();
           }
+        }
+
+        function addEducation() {
+          const education = {
+            id: Date.now(),
+            institution: "",
+            degree: "",
+            fieldOfStudy: "",
+            startDate: "",
+            endDate: "",
+            gpa: "",
+          };
+          educations.push(education);
+          displayEducations();
+        }
+
+        function removeEducation(id) {
+          educations = educations.filter((edu) => edu.id !== id);
+          displayEducations();
           updateProfile();
         }
-      }
 
-      function addEducation() {
-        const education = {
-          id: Date.now(),
-          institution: "",
-          degree: "",
-          fieldOfStudy: "",
-          startDate: "",
-          endDate: "",
-          gpa: "",
-        };
-        educations.push(education);
-        displayEducations();
-      }
-
-      function removeEducation(id) {
-        educations = educations.filter((edu) => edu.id !== id);
-        displayEducations();
-        updateProfile();
-      }
-
-      function displayEducations() {
-        const educationList = document.getElementById("educationList");
-        educationList.innerHTML = educations
-          .map(
-            (edu) => `
+        function displayEducations() {
+          const educationList = document.getElementById("educationList");
+          educationList.innerHTML = educations
+            .map(
+              (edu) => `
                 <div class="education-item">
                     <div class="form-group">
                         <label>Institution:</label>
@@ -675,93 +875,99 @@
                     <button type="button" onclick="removeEducation(${edu.id})" class="cancel-btn">Remove</button>
                 </div>
             `
-          )
-          .join("");
-      }
-
-      function updateEducation(id, field, value) {
-        const edu = educations.find((e) => e.id === id);
-        if (edu) {
-          edu[field] = value;
-          updateProfile();
-        }
-      }
-
-      async function changePassword() {
-        const currentPassword =
-          document.getElementById("currentPassword").value;
-        const newPassword = document.getElementById("newPassword").value;
-        const confirmPassword =
-          document.getElementById("confirmPassword").value;
-
-        if (newPassword !== confirmPassword) {
-          showMessage("passwordMessage", "New passwords do not match", "error");
-          return;
+            )
+            .join("");
         }
 
-        if (newPassword.length < 6) {
-          showMessage(
-            "passwordMessage",
-            "Password must be at least 6 characters long",
-            "error"
-          );
-          return;
+        function updateEducation(id, field, value) {
+          const edu = educations.find((e) => e.id === id);
+          if (edu) {
+            edu[field] = value;
+            updateProfile();
+          }
         }
 
-        const passwordData = {
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-        };
+        async function changePassword() {
+          const currentPassword =
+            document.getElementById("currentPassword").value;
+          const newPassword = document.getElementById("newPassword").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
 
-        try {
-          const response = await fetch("/api/auth/change-password", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...getAuthHeaders(),
-            },
-            body: JSON.stringify(passwordData),
-          });
-
-          if (response.ok) {
+          if (newPassword !== confirmPassword) {
             showMessage(
               "passwordMessage",
-              "Password changed successfully!",
-              "success"
+              "New passwords do not match",
+              "error"
             );
-            document.getElementById("passwordForm").reset();
-          } else {
-            const error = await response.text();
+            return;
+          }
+
+          if (newPassword.length < 6) {
             showMessage(
               "passwordMessage",
-              "Failed to change password: " + error,
+              "Password must be at least 6 characters long",
+              "error"
+            );
+            return;
+          }
+
+          const passwordData = {
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+          };
+
+          try {
+            const response = await fetch("/api/auth/change-password", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+              body: JSON.stringify(passwordData),
+            });
+
+            if (response.ok) {
+              showMessage(
+                "passwordMessage",
+                "Password changed successfully!",
+                "success"
+              );
+              document.getElementById("passwordForm").reset();
+            } else {
+              const error = await response.text();
+              showMessage(
+                "passwordMessage",
+                "Failed to change password: " + error,
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "passwordMessage",
+              "Error changing password: " + error.message,
               "error"
             );
           }
-        } catch (error) {
-          showMessage(
-            "passwordMessage",
-            "Error changing password: " + error.message,
-            "error"
-          );
         }
-      }
 
-      function showMessage(elementId, message, type) {
-        const messageDiv = document.getElementById(elementId);
-        messageDiv.textContent = message;
-        messageDiv.className = type === "success" ? "success-msg" : "error-msg";
+        function showMessage(elementId, message, type) {
+          const messageDiv = document.getElementById(elementId);
+          messageDiv.textContent = message;
+          messageDiv.className =
+            type === "success" ? "success-msg" : "error-msg";
 
-        setTimeout(() => {
-          messageDiv.textContent = "";
-          messageDiv.className = "";
-        }, 5000);
-      }
+          setTimeout(() => {
+            messageDiv.textContent = "";
+            messageDiv.className = "";
+          }, 5000);
+        }
 
-      async function logout() {
-        removeJwtToken();
-        window.location.href = "/login";
-      }
-    </script>
+        async function logout() {
+          removeJwtToken();
+          window.location.href = "/login";
+        }
+      </script>
+    </div>
   </body>
 </html>
