@@ -181,6 +181,197 @@
         margin-right: 15px;
         font-size: 0.875rem;
       }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .chart-container {
+        background: white;
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+        margin-bottom: 20px;
+      }
+
+      .chart-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 15px;
+      }
+
+      .chart {
+        height: 300px;
+        display: flex;
+        align-items: end;
+        justify-content: space-around;
+        border-bottom: 2px solid #e9ecef;
+        border-left: 2px solid #e9ecef;
+        padding: 10px;
+        position: relative;
+      }
+
+      .chart-bar {
+        background: #495057;
+        width: 40px;
+        margin: 0 5px;
+        border-radius: 4px 4px 0 0;
+        position: relative;
+        transition: background-color 0.3s ease;
+      }
+
+      .chart-bar:hover {
+        background: #343a40;
+      }
+
+      .chart-bar-label {
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.75rem;
+        color: #6c757d;
+        text-align: center;
+        width: 60px;
+      }
+
+      .chart-bar-value {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.75rem;
+        color: #495057;
+        font-weight: 500;
+      }
+
+      .recent-applications {
+        background: white;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+        overflow: hidden;
+      }
+
+      .recent-applications-header {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e9ecef;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .application-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .application-item:last-child {
+        border-bottom: none;
+      }
+
+      .application-info h4 {
+        margin: 0 0 5px 0;
+        color: #495057;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .application-info p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.75rem;
+      }
+
+      .application-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+      }
+
+      .status-reviewed {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+
+      .status-shortlisted {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .btn-create-job {
+        background: #28a745;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+
+      .btn-create-job:hover {
+        background: #218838;
+        color: white;
+      }
+
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      .status-open {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .status-closed {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
     </style>
   </head>
   <body>
@@ -189,6 +380,12 @@
         <h1>Job Portal - Employer Dashboard</h1>
         <div class="header-buttons">
           <span id="welcomeMessage"></span>
+          <button
+            class="btn btn-primary"
+            onclick="navigateToPage('/create-job')"
+          >
+            Create New Job
+          </button>
           <button
             class="btn btn-primary"
             onclick="navigateToPage('/job-listings')"
@@ -202,43 +399,51 @@
         </div>
       </div>
 
-      <!-- Create New Job Section -->
+      <!-- Dashboard Overview -->
       <div class="section">
-        <h2>Create New Job</h2>
-        <form id="createJobForm">
-          <div class="form-group">
-            <label for="jobTitle">Job Title:</label>
-            <input type="text" id="jobTitle" required />
+        <h2>Dashboard Overview</h2>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="totalJobs">0</div>
+            <div class="stat-label">Total Jobs Posted</div>
           </div>
-          <div class="form-group">
-            <label for="jobDescription">Description:</label>
-            <textarea id="jobDescription" rows="3" required></textarea>
+          <div class="stat-card">
+            <div class="stat-number" id="activeJobs">0</div>
+            <div class="stat-label">Active Jobs</div>
           </div>
-          <div class="form-group">
-            <label for="jobLocation">Location:</label>
-            <input type="text" id="jobLocation" required />
+          <div class="stat-card">
+            <div class="stat-number" id="totalApplications">0</div>
+            <div class="stat-label">Total Applications</div>
           </div>
-          <div class="form-group">
-            <label for="jobCompany">Company:</label>
-            <input type="text" id="jobCompany" required />
+          <div class="stat-card">
+            <div class="stat-number" id="newApplications">0</div>
+            <div class="stat-label">New Applications (This Week)</div>
           </div>
-          <div class="form-group">
-            <label for="jobSalaryMin">Minimum Salary:</label>
-            <input type="number" id="jobSalaryMin" step="0.01" />
+        </div>
+
+        <!-- Applications Chart -->
+        <div class="chart-container">
+          <div class="chart-title">Applications Per Job</div>
+          <div class="chart" id="applicationsChart">
+            <!-- Chart bars will be dynamically generated -->
           </div>
-          <div class="form-group">
-            <label for="jobSalaryMax">Maximum Salary:</label>
-            <input type="number" id="jobSalaryMax" step="0.01" />
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="recent-applications">
+          <div class="recent-applications-header">Recent Applications</div>
+          <div id="recentApplicationsList">
+            <!-- Recent applications will be loaded here -->
           </div>
-          <button type="button" class="btn btn-success" onclick="createJob()">
-            Create Job
-          </button>
-        </form>
+        </div>
       </div>
 
       <!-- My Jobs Section -->
       <div class="section">
-        <h2>My Jobs</h2>
+        <h2>My Job Postings</h2>
+        <a href="/create-job" class="btn-create-job">+ Create New Job</a>
         <div id="jobsList"></div>
       </div>
     </div>
@@ -322,7 +527,7 @@
             document.getElementById(
               "welcomeMessage"
             ).textContent = `Welcome, ${userName}!`;
-            await loadJobs();
+            await loadDashboardData();
             return;
           }
 
@@ -361,7 +566,7 @@
             document.getElementById(
               "welcomeMessage"
             ).textContent = `Welcome, ${userData.name}!`;
-            await loadJobs();
+            await loadDashboardData();
           } else {
             throw new Error("Invalid token");
           }
@@ -370,6 +575,21 @@
           window.location.href = "http://localhost:8083/auth/login";
         }
       });
+
+      async function loadDashboardData() {
+        if (!currentEmployerId) return;
+
+        try {
+          // Load jobs and their statistics
+          await Promise.all([
+            loadJobs(),
+            loadJobStatistics(),
+            loadRecentApplications(),
+          ]);
+        } catch (error) {
+          console.error("Failed to load dashboard data:", error);
+        }
+      }
 
       async function loadJobs() {
         if (!currentEmployerId) return;
@@ -384,10 +604,210 @@
           if (response.ok) {
             const jobs = await response.json();
             displayJobs(jobs);
+            return jobs;
           }
         } catch (error) {
           console.error("Failed to load jobs:", error);
+          return [];
         }
+      }
+
+      async function loadJobStatistics() {
+        if (!currentEmployerId) return;
+
+        try {
+          const response = await fetch(
+            `/api/employers/${currentEmployerId}/jobs`,
+            {
+              headers: getAuthHeaders(),
+            }
+          );
+
+          if (response.ok) {
+            const jobs = await response.json();
+
+            // Calculate statistics
+            const totalJobs = jobs.length;
+            const activeJobs = jobs.filter(
+              (job) => job.status === "OPEN"
+            ).length;
+
+            // Load application counts for each job
+            let totalApplications = 0;
+            let newApplications = 0;
+            const applicationData = [];
+
+            for (const job of jobs) {
+              try {
+                const appResponse = await fetch(
+                  `/api/jobs/${job.jobId}/applications`,
+                  {
+                    headers: getAuthHeaders(),
+                  }
+                );
+                if (appResponse.ok) {
+                  const applications = await appResponse.json();
+                  totalApplications += applications.length;
+
+                  // Count new applications (last 7 days)
+                  const weekAgo = new Date();
+                  weekAgo.setDate(weekAgo.getDate() - 7);
+                  const newApps = applications.filter(
+                    (app) => new Date(app.appliedDate) > weekAgo
+                  ).length;
+                  newApplications += newApps;
+
+                  applicationData.push({
+                    jobTitle:
+                      job.title.length > 15
+                        ? job.title.substring(0, 15) + "..."
+                        : job.title,
+                    applications: applications.length,
+                  });
+                }
+              } catch (error) {
+                console.error(
+                  `Failed to load applications for job ${job.jobId}:`,
+                  error
+                );
+              }
+            }
+
+            // Update statistics
+            document.getElementById("totalJobs").textContent = totalJobs;
+            document.getElementById("activeJobs").textContent = activeJobs;
+            document.getElementById("totalApplications").textContent =
+              totalApplications;
+            document.getElementById("newApplications").textContent =
+              newApplications;
+
+            // Create chart
+            createApplicationsChart(applicationData);
+          }
+        } catch (error) {
+          console.error("Failed to load job statistics:", error);
+        }
+      }
+
+      function createApplicationsChart(data) {
+        const chartContainer = document.getElementById("applicationsChart");
+        chartContainer.innerHTML = "";
+
+        if (data.length === 0) {
+          chartContainer.innerHTML =
+            '<p style="text-align: center; color: #6c757d; margin: 50px 0;">No job data available</p>';
+          return;
+        }
+
+        const maxApplications = Math.max(
+          ...data.map((item) => item.applications),
+          1
+        );
+
+        data.slice(0, 8).forEach((item) => {
+          // Show only first 8 jobs
+          const bar = document.createElement("div");
+          bar.className = "chart-bar";
+          const height = (item.applications / maxApplications) * 250; // 250px max height
+          bar.style.height = `${height}px`;
+
+          const label = document.createElement("div");
+          label.className = "chart-bar-label";
+          label.textContent = item.jobTitle;
+
+          const value = document.createElement("div");
+          value.className = "chart-bar-value";
+          value.textContent = item.applications;
+
+          bar.appendChild(value);
+          bar.appendChild(label);
+          chartContainer.appendChild(bar);
+        });
+      }
+
+      async function loadRecentApplications() {
+        if (!currentEmployerId) return;
+
+        try {
+          const response = await fetch(
+            `/api/employers/${currentEmployerId}/jobs`,
+            {
+              headers: getAuthHeaders(),
+            }
+          );
+
+          if (response.ok) {
+            const jobs = await response.json();
+            const allApplications = [];
+
+            for (const job of jobs) {
+              try {
+                const appResponse = await fetch(
+                  `/api/jobs/${job.jobId}/applications`,
+                  {
+                    headers: getAuthHeaders(),
+                  }
+                );
+                if (appResponse.ok) {
+                  const applications = await appResponse.json();
+                  applications.forEach((app) => {
+                    allApplications.push({
+                      ...app,
+                      jobTitle: job.title,
+                    });
+                  });
+                }
+              } catch (error) {
+                console.error(
+                  `Failed to load applications for job ${job.jobId}:`,
+                  error
+                );
+              }
+            }
+
+            // Sort by application date (most recent first)
+            allApplications.sort(
+              (a, b) => new Date(b.appliedDate) - new Date(a.appliedDate)
+            );
+
+            displayRecentApplications(allApplications.slice(0, 5)); // Show last 5 applications
+          }
+        } catch (error) {
+          console.error("Failed to load recent applications:", error);
+        }
+      }
+
+      function displayRecentApplications(applications) {
+        const container = document.getElementById("recentApplicationsList");
+        container.innerHTML = "";
+
+        if (applications.length === 0) {
+          container.innerHTML =
+            '<div style="padding: 20px; text-align: center; color: #6c757d;">No recent applications</div>';
+          return;
+        }
+
+        applications.forEach((app) => {
+          const item = document.createElement("div");
+          item.className = "application-item";
+
+          const statusClass = app.status
+            ? `status-${app.status.toLowerCase()}`
+            : "status-pending";
+
+          item.innerHTML = `
+            <div class="application-info">
+              <h4>${app.applicantName || "Anonymous"}</h4>
+              <p>Applied for: ${app.jobTitle}</p>
+              <p>Date: ${new Date(app.appliedDate).toLocaleDateString()}</p>
+            </div>
+            <div class="application-status ${statusClass}">
+              ${app.status || "Pending"}
+            </div>
+          `;
+
+          container.appendChild(item);
+        });
       }
 
       function displayJobs(jobs) {
@@ -395,72 +815,82 @@
         jobsList.innerHTML = "";
 
         if (jobs.length === 0) {
-          jobsList.innerHTML = "<p>No jobs posted yet.</p>";
+          jobsList.innerHTML =
+            "<p>No jobs posted yet. <a href='/create-job'>Create your first job</a></p>";
           return;
         }
 
-        jobs.forEach((job) => {
+        jobs.forEach(async (job) => {
           const jobDiv = document.createElement("div");
           jobDiv.className = "job-item";
+
+          // Get application count for this job
+          let applicationCount = 0;
+          try {
+            const appResponse = await fetch(
+              `/api/jobs/${job.jobId}/applications`,
+              {
+                headers: getAuthHeaders(),
+              }
+            );
+            if (appResponse.ok) {
+              const applications = await appResponse.json();
+              applicationCount = applications.length;
+            }
+          } catch (error) {
+            console.error(
+              `Failed to load applications for job ${job.jobId}:`,
+              error
+            );
+          }
+
           jobDiv.innerHTML = `
-                    <h4>${job.title}</h4>
-                    <p><strong>Company:</strong> ${job.company}</p>
-                    <p><strong>Description:</strong> ${job.description}</p>
-                    <p><strong>Location:</strong> ${job.location}</p>
-                    <p><strong>Salary:</strong> $${
-                      job.salaryMin && job.salaryMax
-                        ? `${job.salaryMin} - ${job.salaryMax}`
-                        : job.salaryMin
-                        ? `${job.salaryMin}+`
-                        : job.salaryMax
-                        ? `Up to ${job.salaryMax}`
-                        : "Not specified"
-                    }</p>
-                    <p><strong>Status:</strong> ${job.status}</p>
-                    <p><strong>Posted:</strong> ${job.postedDate}</p>
-                    <button onclick="editJob(${job.jobId})">Edit Job</button>
-                    <button onclick="viewApplications(${
-                      job.jobId
-                    })">View Applications</button>
-                    <button onclick="deleteJob(${job.jobId})">Delete</button>
-                `;
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+              <div>
+                <h3>${job.title}</h3>
+                <p><strong>Company:</strong> ${job.company}</p>
+              </div>
+              <div style="text-align: right;">
+                <div style="background: #e9ecef; padding: 8px 12px; border-radius: 4px; margin-bottom: 5px;">
+                  <strong>${applicationCount}</strong> Application${
+            applicationCount !== 1 ? "s" : ""
+          }
+                </div>
+                <div class="status-badge ${
+                  job.status === "OPEN" ? "status-open" : "status-closed"
+                }">
+                  ${job.status}
+                </div>
+              </div>
+            </div>
+            <p><strong>Description:</strong> ${job.description}</p>
+            <p><strong>Location:</strong> ${job.location}</p>
+            <p><strong>Salary:</strong> $${
+              job.salaryMin && job.salaryMax
+                ? `${job.salaryMin} - ${job.salaryMax}`
+                : job.salaryMin
+                ? `${job.salaryMin}+`
+                : job.salaryMax
+                ? `Up to ${job.salaryMax}`
+                : "Not specified"
+            }</p>
+            <p><strong>Posted:</strong> ${new Date(
+              job.postedDate
+            ).toLocaleDateString()}</p>
+            <div class="job-actions">
+              <button class="btn btn-secondary" onclick="editJob(${
+                job.jobId
+              })">Edit Job</button>
+              <button class="btn btn-primary" onclick="viewApplications(${
+                job.jobId
+              })">View Applications (${applicationCount})</button>
+              <button class="btn btn-danger" onclick="deleteJob(${
+                job.jobId
+              })">Delete</button>
+            </div>
+          `;
           jobsList.appendChild(jobDiv);
         });
-      }
-
-      async function createJob() {
-        const jobData = {
-          title: document.getElementById("jobTitle").value,
-          description: document.getElementById("jobDescription").value,
-          location: document.getElementById("jobLocation").value,
-          company: document.getElementById("jobCompany").value,
-          salaryMin:
-            parseFloat(document.getElementById("jobSalaryMin").value) || null,
-          salaryMax:
-            parseFloat(document.getElementById("jobSalaryMax").value) || null,
-        };
-
-        try {
-          const response = await fetch("/api/jobs", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...getAuthHeaders(),
-            },
-            body: JSON.stringify(jobData),
-          });
-
-          if (response.ok) {
-            alert("Job created successfully!");
-            document.getElementById("createJobForm").reset();
-            await loadJobs();
-          } else {
-            const error = await response.text();
-            alert("Failed to create job: " + error);
-          }
-        } catch (error) {
-          alert("Failed to create job: " + error.message);
-        }
       }
 
       function editJob(jobId) {
@@ -484,7 +914,7 @@
           });
           if (response.ok) {
             alert("Job deleted successfully!");
-            await loadJobs();
+            await loadDashboardData(); // Reload all dashboard data
           } else {
             alert("Failed to delete job");
           }
@@ -494,18 +924,13 @@
       }
 
       async function viewApplications(jobId) {
-        try {
-          const response = await fetch(`/api/jobs/${jobId}/applications`, {
-            headers: getAuthHeaders(),
-          });
-          if (response.ok) {
-            const applications = await response.json();
-            alert(`Applications for this job: ${applications.length}`);
-          } else {
-            alert("Failed to load applications");
-          }
-        } catch (error) {
-          alert("Failed to load applications: " + error.message);
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `/job-listings?jobId=${jobId}&token=${encodeURIComponent(
+            token
+          )}`;
+        } else {
+          window.location.href = `/job-listings?jobId=${jobId}`;
         }
       }
 
