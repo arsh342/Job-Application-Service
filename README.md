@@ -1,29 +1,49 @@
 # Job Portal Microservices System
 
-## � **Project Overview**
+## 📋 Table of Contents
 
-This project demonstrates a real-world **Job Portal System** built using **Spring Boot Microservices Architecture**. It showcases modern software engineering practices including microservices design, JWT authentication, RESTful APIs, and database management.
+- [Project Overview](#project-overview)
+- [System Architecture](#system-architecture)
+- [Services Overview](#services-overview)
+- [Authentication Service (Port 8083)](#authentication-service-port-8083)
+- [Job Service (Port 8081)](#job-service-port-8081)
+- [Application Service (Port 8082)](#application-service-port-8082)
+- [Inter-Service Communication Flow](#inter-service-communication-flow)
+- [API Documentation](#api-documentation)
+- [Database Schema](#database-schema)
+- [Setup & Installation](#setup--installation)
+- [User Workflows](#user-workflows)
+- [Security Implementation](#security-implementation)
+- [Troubleshooting](#troubleshooting)
+- [Development Guidelines](#development-guidelines)
 
-### **What This Project Does**
+## 🎯 Project Overview
 
-- **For Job Seekers**: Browse jobs, apply to positions, track application status
-- **For Employers**: Post job openings, manage applications, hire candidates
-- **For System**: Secure authentication, data management, and service communication
+The **Job Portal Microservices System** is a comprehensive, enterprise-grade job application platform built using Spring Boot microservices architecture. This system demonstrates modern software engineering practices with JWT-based authentication, RESTful APIs, and independent service deployment.
 
-### **Why Microservices?**
+### Key Features
 
-Instead of building one large application (monolith), this project splits functionality into smaller, independent services that communicate with each other. This approach offers:
+- **Multi-role Support**: Separate interfaces for Job Seekers and Employers
+- **Secure Authentication**: JWT token-based authentication across all services
+- **Real-time Communication**: Seamless inter-service communication via REST APIs
+- **Scalable Architecture**: Independent services that can be scaled individually
+- **Modern UI**: Responsive web interface with professional design
 
-- **Scalability**: Each service can be scaled independently
-- **Maintainability**: Easier to update and fix individual services
-- **Technology Flexibility**: Different services can use different technologies
-- **Fault Isolation**: If one service fails, others continue working
+### Technology Stack
 
----
+| Component      | Technology             | Version     |
+| -------------- | ---------------------- | ----------- |
+| **Framework**  | Spring Boot            | 3.5.5       |
+| **Language**   | Java                   | 21          |
+| **Security**   | Spring Security + JWT  | JJWT 0.11.5 |
+| **Database**   | MySQL                  | 8.0+        |
+| **ORM**        | Hibernate/JPA          | -           |
+| **Build Tool** | Maven                  | 3.6+        |
+| **Frontend**   | Thymeleaf + HTML5/CSS3 | -           |
 
-## 🏗️ **System Architecture**
+## 🏗️ System Architecture
 
-### **Three Independent Services**
+### Microservices Design Pattern
 
 ```
 ┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
@@ -31,608 +51,378 @@ Instead of building one large application (monolith), this project splits functi
 │      SERVICE        │    │                     │    │    SERVICE          │
 │   (Port 8083)       │    │   (Port 8081)       │    │  (Port 8082)        │
 │                     │    │                     │    │                     │
-│ • User Registration │    │ • Job Posting       │    │ • Job Applications  │
-│ • Login/Logout      │    │ • Job Management    │    │ • Application       │
-│ • JWT Token Issue   │    │ • Job Search        │    │   Tracking          │
-│ • User Validation   │    │ • Employer Portal   │    │ • Job Seeker Portal │
+│ • User Management   │    │ • Job Posting       │    │ • Job Applications  │
+│ • JWT Token Issue   │    │ • Job Management    │    │ • Application       │
+│ • Authentication    │    │ • Employer Portal   │    │   Tracking          │
+│ • User Validation   │    │ • Job Search        │    │ • Job Seeker Portal │
 └─────────────────────┘    └─────────────────────┘    └─────────────────────┘
          │                           │                           │
-         │◄────── Validates Tokens ──┤                           │
+         │◄────── Token Validation ──┤                           │
          │                           │                           │
-         │◄────── Validates Tokens ──┼───────────────────────────┤
+         │◄────── Token Validation ──┼───────────────────────────┤
          │                           │                           │
-         │                           │◄───── Fetches Job Data ───┤
+         │                           │◄───── Job Data Fetch ─────┤
 ```
 
-### **How Services Communicate**
+### Service Independence Benefits
 
-1. **Authentication Flow**: Users log in through Authentication Service, receive JWT token
-2. **Token Validation**: Other services validate tokens with Authentication Service
-3. **Data Exchange**: Application Service fetches job details from Job Service
-4. **Secure Access**: All sensitive operations require valid authentication
+- **Scalability**: Each service can be scaled based on demand
+- **Technology Flexibility**: Services can use different tech stacks
+- **Fault Isolation**: Service failures don't cascade to others
+- **Independent Deployment**: Update services without affecting others
 
----
+## 📊 Services Overview
 
-## 🎯 **Learning Objectives Demonstrated**
+### Service Distribution
 
-### **1. Microservices Architecture**
+| Service            | Port | Database                    | Primary Function         | User Role   |
+| ------------------ | ---- | --------------------------- | ------------------------ | ----------- |
+| **Authentication** | 8083 | `job_portal_auth_db`        | User management & JWT    | All Users   |
+| **Job**            | 8081 | `job_portal_job_db`         | Job posting & management | Employers   |
+| **Application**    | 8082 | `job_portal_application_db` | Application tracking     | Job Seekers |
 
-- ✅ Service decomposition and separation of concerns
-- ✅ Inter-service communication using REST APIs
-- ✅ Independent deployment and scaling
-- ✅ Database per service pattern
+### Communication Matrix
 
-### **2. Spring Boot Framework**
+- **Authentication Service**: Provides token validation to all services
+- **Job Service**: Supplies job data to Application Service
+- **Application Service**: Manages applications and fetches job details
 
-- ✅ Spring Boot application development
-- ✅ Spring Security for authentication
-- ✅ Spring Data JPA for database operations
-- ✅ Spring Web for REST API development
+## 🔐 Authentication Service (Port 8083)
 
-### **3. Security Implementation**
+### Core Functions
 
-- ✅ JWT (JSON Web Token) authentication
-- ✅ Password encryption using BCrypt
-- ✅ Role-based access control
-- ✅ API endpoint protection
+The Authentication Service serves as the central identity management system, handling user registration, login, and token validation across the entire platform.
 
-### **4. Database Management**
+### Key Components & Files
 
-- ✅ MySQL database integration
-- ✅ JPA/Hibernate ORM mapping
-- ✅ Database schema design
-- ✅ Relational data modeling
+#### **Main Application Class**
 
-### **5. Software Engineering Practices**
+- **File**: `AuthenticationApplication.java`
+- **Function**: Spring Boot application entry point with `@SpringBootApplication`
+- **Purpose**: Initializes the authentication service with all configurations
 
-- ✅ RESTful API design
-- ✅ Error handling and validation
-- ✅ Logging and debugging
-- ✅ Documentation and testing
+#### **Security Configuration**
 
----
+- **File**: `SecurityConfig.java`
+- **Function**: Configures Spring Security with JWT authentication
+- **Features**:
+  - JWT token validation filter
+  - CORS configuration for cross-origin requests
+  - Public endpoint access (login, register)
+  - Protected route security
 
-## 💻 **Technologies Used**
+#### **JWT Utility**
 
-| Category              | Technology              | Purpose                          |
-| --------------------- | ----------------------- | -------------------------------- |
-| **Backend Framework** | Spring Boot 3.5.5       | Main application framework       |
-| **Security**          | Spring Security + JWT   | Authentication and authorization |
-| **Database**          | MySQL 8.0+              | Data storage and management      |
-| **ORM**               | Hibernate/JPA           | Object-relational mapping        |
-| **Build Tool**        | Maven                   | Dependency management and builds |
-| **Frontend**          | HTML5, CSS3, JavaScript | User interface                   |
-| **Communication**     | REST APIs               | Inter-service communication      |
-| **Development**       | Java 17+                | Programming language             |
+- **File**: `JwtUtil.java`
+- **Function**: Handles JWT token generation, validation, and parsing
+- **Operations**:
+  - Generate tokens with user information
+  - Extract claims from tokens
+  - Validate token expiration and signature
+  - Parse user details from tokens
 
----
+#### **User Entity**
 
-## 🚀 **How to Run This Project**
+- **File**: `User.java`
+- **Structure**:
+  ```java
+  @Entity
+  public class User implements UserDetails {
+      @Id @GeneratedValue private Long id;
+      @Column(unique = true) private String email;
+      private String password; // BCrypt encrypted
+      private String name;
+      @Enumerated private UserType userType; // EMPLOYER/JOB_SEEKER
+      private Long externalUserId; // Reference to other services
+      private String companyName; // For employers
+  }
+  ```
 
-### **Prerequisites** (What You Need Installed)
+#### **Authentication Controller**
 
-```bash
-# Check if you have these installed:
-java -version    # Should show Java 17 or higher
-mvn -version     # Should show Maven 3.6+
-mysql --version  # Should show MySQL 8.0+
-```
+- **File**: `AuthController.java`
+- **Endpoints**:
+  - `POST /api/auth/register` - User registration
+  - `POST /api/auth/login` - User authentication
+  - `POST /api/auth/validate` - Token validation
+- **Features**: Input validation, error handling, response formatting
 
-### **Step 1: Setup Database**
+#### **Authentication Service**
 
-```sql
--- Create databases in MySQL
-CREATE DATABASE job_portal_auth_db;
-CREATE DATABASE job_portal_job_db;
-CREATE DATABASE job_portal_application_db;
+- **File**: `AuthService.java`
+- **Functions**:
+  - User registration with password encryption
+  - Login authentication with JWT generation
+  - Token validation with user information retrieval
+  - Password encoding using BCrypt
 
--- Create user (optional)
-CREATE USER 'jobportal'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON job_portal_*.* TO 'jobportal'@'localhost';
-```
+#### **User Repository**
 
-### **Step 2: Configure Database Connection**
+- **File**: `UserRepository.java`
+- **Interface**: Extends `JpaRepository<User, Long>`
+- **Queries**: Custom finder methods for user lookup
 
-Update `application.properties` in each service:
+#### **Web Controller**
 
-```properties
-spring.datasource.username=root
-spring.datasource.password=your_mysql_password
-```
+- **File**: `WebController.java`
+- **Purpose**: Handles web page routing for authentication UI
+- **Templates**: login.html, register.html, dashboard.html
 
-### **Step 3: Start Services** (IMPORTANT: Start in this order!)
+### Service Workflow
 
-**Terminal 1 - Authentication Service:**
+1. **Registration**: User submits details → Password encrypted → User saved → Success response
+2. **Login**: Credentials validated → JWT generated → Token returned
+3. **Validation**: Token received → Signature verified → User details extracted → Validation response
 
-```bash
-cd Authentication
-./mvnw spring-boot:run
-# Wait for "Started AuthenticationApplication" message
-```
+## 💼 Job Service (Port 8081)
 
-**Terminal 2 - Job Service:**
+### Core Functions
 
-```bash
-cd Job
-./mvnw spring-boot:run
-# Wait for "Started JobApplication" message
-```
+The Job Service manages all job-related operations, providing employers with tools to post, update, and manage job listings while offering public access to job browsing.
 
-**Terminal 3 - Application Service:**
+### Key Components & Files
 
-```bash
-cd Application
-./mvnw spring-boot:run
-# Wait for "Started Application" message
-```
+#### **Main Application Class**
 
-### **Step 4: Access the Application**
+- **File**: `JobApplication.java`
+- **Function**: Spring Boot application with `@EnableFeignClients`
+- **Purpose**: Enables communication with other services via Feign
 
-- **Main Portal**: http://localhost:8083
-- **Register New User**: http://localhost:8083/register
-- **Employer Dashboard**: http://localhost:8081/dashboard
-- **Job Seeker Dashboard**: http://localhost:8082/dashboard
+#### **Job Entity**
 
----
+- **File**: `Job.java`
+- **Structure**:
+  ```java
+  @Entity
+  public class Job {
+      @Id @GeneratedValue private Long jobId;
+      private String title, description, location, company;
+      private Double salaryMin, salaryMax;
+      @Enumerated private JobStatus status; // OPEN/CLOSED
+      private Long employerId;
+      private LocalDate postedDate;
+  }
+  ```
 
-- **🔐 Login**: http://localhost:8083/login
+#### **Job Controller**
 
-## 🎓 **Project Features & Functionality**
+- **File**: `JobController.java`
+- **Endpoints**:
+  - `GET /api/jobs` - Public job browsing
+  - `POST /api/jobs` - Create job (Employer)
+  - `PUT /api/jobs/{id}` - Update job (Employer)
+  - `DELETE /api/jobs/{id}` - Delete job (Employer)
+- **Features**: Authentication validation, employer authorization
 
-### **What Users Can Do**
+#### **Job Service**
 
-#### **Job Seekers** 👨‍💼
+- **File**: `JobService.java`
+- **Functions**:
+  - Job creation with employer validation
+  - Job updates with ownership verification
+  - Job search and filtering
+  - Application count retrieval
 
-```
-1. Register Account → Browse Jobs → Apply for Positions → Track Applications
-```
+#### **Authentication Client**
 
-- Create profile with personal information
-- Search and filter job listings
-- Submit applications with cover letters
-- View application status (Applied, Reviewed, Hired, etc.)
-- Track application history
+- **File**: `AuthServiceClient.java`
+- **Purpose**: Communicates with Authentication Service for token validation
+- **Methods**: Validate tokens, retrieve user information
 
-#### **Employers** 🏢
+#### **Web Controller**
 
-```
-1. Register Company → Post Jobs → Review Applications → Hire Candidates
-```
+- **File**: `WebController.java`
+- **Purpose**: Handles employer dashboard and job management UI
+- **Templates**: dashboard.html, create-job.html, job-listings.html
 
-- Create employer profile
-- Post job openings with detailed descriptions
-- Manage job listings (edit, delete, activate/deactivate)
-- Review incoming applications
-- Update application status
+### Service Workflow
 
-#### **System Features** ⚙️
+1. **Job Creation**: Employer authenticated → Job data validated → Job saved → Success response
+2. **Job Browsing**: Public access → Jobs retrieved → Formatted response
+3. **Job Management**: Employer authenticated → Ownership verified → Operation performed
 
-- Secure user authentication with JWT tokens
-- Real-time data synchronization between services
-- Responsive web interface for all devices
-- Comprehensive error handling and validation
+## 📋 Application Service (Port 8082)
 
----
+### Core Functions
 
-## 🔐 **Security & Authentication Explained**
+The Application Service handles job applications, tracking application status, and providing job seekers with application management tools.
 
-### **How Security Works in This Project**
+### Key Components & Files
 
-1. **User Registration**: Password is encrypted using BCrypt (industry standard)
-2. **Login Process**: User credentials are verified, JWT token is issued
-3. **Token Usage**: Each request includes the token for identity verification
-4. **Service Communication**: Services validate tokens before processing requests
-5. **Role-Based Access**: Different user types have different permissions
+#### **Main Application Class**
 
-### **JWT (JSON Web Token) - Simplified**
+- **File**: `Application.java`
+- **Function**: Spring Boot application with `@EnableFeignClients`
+- **Purpose**: Enables inter-service communication
 
-Think of JWT like a digital ID card:
+#### **Application Entity**
 
-- Contains user information (name, role, ID)
-- Has an expiration date
-- Cannot be forged (cryptographically signed)
-- Services can read the "ID card" to know who you are
+- **File**: `JobApplication.java`
+- **Structure**:
+  ```java
+  @Entity
+  public class JobApplication {
+      @Id @GeneratedValue private Long applicationId;
+      private Long jobId, applicantId;
+      private String coverLetter;
+      @Enumerated private ApplicationStatus status; // APPLIED/SHORTLISTED/etc.
+      private LocalDate appliedDate;
+  }
+  ```
 
----
+#### **Application Controller**
 
-## 🗄️ **Database Design & Schema**
+- **File**: `ApplicationController.java`
+- **Endpoints**:
+  - `POST /api/applications` - Apply to job
+  - `GET /api/applications/my-applications` - Get user's applications
+  - `PUT /api/applications/{id}/status` - Update status (Employer)
+- **Features**: Authentication, authorization, data validation
 
-### **Three Separate Databases** (Microservices Best Practice)
+#### **Application Service**
 
-#### **Authentication Database**
+- **File**: `JobApplicationService.java`
+- **Functions**:
+  - Application creation with duplicate prevention
+  - Status updates with permission checks
+  - Application retrieval with job details
 
-```sql
-Users Table:
-- id (Primary Key)
-- username, email, password (encrypted)
-- role (JOB_SEEKER, EMPLOYER, ADMIN)
-- personal information (first_name, last_name)
-- timestamps (created_at, updated_at)
-```
+#### **Service Clients**
 
-#### **Job Database**
+- **Files**: `AuthServiceClient.java`, `JobServiceClient.java`
+- **Purpose**:
+  - Auth client: Token validation and user info
+  - Job client: Fetch job details for applications
 
-```sql
-Jobs Table:
-- id (Primary Key)
-- job details (title, description, company, location)
-- requirements (skills_required, experience_level)
-- employer_id (links to user in auth database)
-- status information (is_active, timestamps)
-```
+#### **Web Controller**
 
-#### **Application Database**
+- **File**: Handles job seeker UI routing
+- **Templates**: dashboard.html, browse-jobs.html, my-applications.html
 
-```sql
-Applications Table:
-- id (Primary Key)
-- job_id (links to job in job database)
-- applicant_id (links to user in auth database)
-- application_status (APPLIED, REVIEWED, HIRED, etc.)
-- documents (cover_letter, resume_path)
-- timestamps (applied_at, updated_at)
-```
+### Service Workflow
 
----
+1. **Job Application**: User authenticated → Application created → Job details fetched → Success response
+2. **Application Tracking**: User authenticated → Applications retrieved → Job info enriched → Response formatted
+3. **Status Updates**: Employer authenticated → Permissions verified → Status updated
 
-## � **How Services Work Together**
-
-### **Real-World Scenario: Job Application Process**
-
-```
-1. Job Seeker logs in
-   → Authentication Service: Validates credentials, issues JWT token
-
-2. Job Seeker browses jobs
-   → Job Service: Returns public job listings (no auth needed)
-
-3. Job Seeker applies for a job
-   → Application Service:
-     • Validates JWT token with Authentication Service
-     • Fetches job details from Job Service
-     • Creates application record
-
-4. Employer reviews applications
-   → Application Service:
-     • Validates employer token
-     • Returns applications for their jobs
-     • Allows status updates
-```
-
-### **Service Independence**
-
-Each service can be:
-
-- Developed by different teams
-- Updated independently
-- Scaled based on demand
-- Use different databases
-- Deploy separately
-
----
-
-## 🛠️ **Technical Implementation Details**
-
-### **Spring Boot Components Used**
-
-| Component           | Purpose                        | Example Usage                               |
-| ------------------- | ------------------------------ | ------------------------------------------- |
-| **Spring Security** | Authentication & Authorization | JWT token validation, password encryption   |
-| **Spring Data JPA** | Database Operations            | Save user, find jobs, update applications   |
-| **Spring Web**      | REST API Creation              | Handle HTTP requests, return JSON responses |
-| **Thymeleaf**       | Web Templates                  | Render HTML pages with dynamic content      |
-| **OpenFeign**       | Service Communication          | Authentication service calls Job service    |
-
-### **Key Design Patterns**
-
-#### **1. Repository Pattern**
-
-```java
-// Clean separation between business logic and data access
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
-}
-```
-
-#### **2. Service Layer Pattern**
-
-```java
-// Business logic separated from controllers
-@Service
-public class JobService {
-    public Job createJob(Job job, String employerId) {
-        // Validation, business rules, save to database
-    }
-}
-```
-
-#### **3. DTO (Data Transfer Object) Pattern**
-
-```java
-// Safe data transfer between services
-public class JobDTO {
-    private String title;
-    private String company;
-    // Only necessary fields, no sensitive data
-}
-```
-
----
-
-## 🚀 **Startup Instructions for Evaluation**
-
-### **For Professors/Evaluators**
-
-#### **Quick Demo Setup** (5 minutes)
-
-```bash
-# 1. Start MySQL server (make sure it's running)
-sudo systemctl start mysql
-
-# 2. Create databases (run once)
-mysql -u root -p
-CREATE DATABASE job_portal_auth_db;
-CREATE DATABASE job_portal_job_db;
-CREATE DATABASE job_portal_application_db;
-exit;
-
-# 3. Start services (3 separate terminals)
-# Terminal 1:
-cd Authentication && ./mvnw spring-boot:run
-
-# Terminal 2:
-cd Job && ./mvnw spring-boot:run
-
-# Terminal 3:
-cd Application && ./mvnw spring-boot:run
-
-# 4. Open browser and visit:
-# http://localhost:8083 (Main portal)
-```
-
-#### **Demo Workflow for Evaluation**
-
-1. **Register** a job seeker account
-2. **Register** an employer account
-3. **Login as employer** → Post a job
-4. **Login as job seeker** → Browse and apply for the job
-5. **Login as employer** → Review applications and update status
-6. **Login as job seeker** → Check application status
-
----
-
-## 📊 **Learning Outcomes & Academic Value**
-
-### **Software Engineering Concepts Demonstrated**
-
-#### **1. System Design**
-
-- ✅ **Microservices Architecture**: Breaking monolith into smaller services
-- ✅ **Database Design**: Normalized tables, relationships, constraints
-- ✅ **API Design**: RESTful endpoints, HTTP methods, status codes
-- ✅ **Security Design**: Authentication, authorization, data protection
-
-#### **2. Programming Practices**
-
-- ✅ **Object-Oriented Programming**: Classes, inheritance, encapsulation
-- ✅ **SOLID Principles**: Single responsibility, dependency injection
-- ✅ **Error Handling**: Try-catch blocks, custom exceptions, validation
-- ✅ **Code Organization**: Packages, layers, separation of concerns
-
-#### **3. Technology Integration**
-
-- ✅ **Framework Usage**: Spring Boot ecosystem
-- ✅ **Database Operations**: CRUD operations, queries, transactions
-- ✅ **Web Development**: HTTP, REST, JSON, HTML/CSS
-- ✅ **Security Implementation**: Encryption, tokens, authentication
-
-#### **4. Industry Best Practices**
-
-- ✅ **Version Control**: Git repository structure
-- ✅ **Documentation**: README, code comments, API documentation
-- ✅ **Testing**: Unit tests, integration tests
-- ✅ **Configuration Management**: Properties files, environment setup
-
----
-
-## 🏆 **Project Complexity & Scope**
-
-### **Why This Project Stands Out**
-
-#### **Technical Complexity** ⭐⭐⭐⭐⭐
-
-- Multiple independent services
-- Inter-service communication
-- JWT authentication implementation
-- Database relationships across services
-- Real-time web interface
-
-#### **Real-World Relevance** ⭐⭐⭐⭐⭐
-
-- Based on actual job portal functionality
-- Industry-standard security practices
-- Microservices architecture (used by Netflix, Amazon, etc.)
-- Modern web development stack
-
-#### **Learning Depth** ⭐⭐⭐⭐⭐
-
-- Full-stack development
-- Backend and frontend integration
-- Database design and management
-- Security implementation
-- System architecture design
-
----
-
-## 🎯 **Future Enhancements for Advanced Learning**
-
-### **Next Level Features**
-
-1. **Docker Containerization**: Package each service in containers
-2. **Cloud Deployment**: Deploy on AWS/Azure/Google Cloud
-3. **Message Queues**: Async communication between services
-4. **Monitoring**: Health checks, performance metrics
-5. **Testing**: Comprehensive test suites
-6. **CI/CD Pipeline**: Automated build and deployment
-
-### **Additional Microservices**
-
-1. **Notification Service**: Email/SMS notifications
-2. **File Service**: Resume/document management
-3. **Analytics Service**: Job market insights
-4. **Payment Service**: Premium job postings
-5. **Chat Service**: Real-time messaging
-
----
-
-- **👔 Job Seeker Dashboard**: http://localhost:8082/dashboard
-- **🔍 Browse Jobs**: http://localhost:8082/browse-jobs
-- **📋 My Applications**: http://localhost:8082/my-applications
-
-## Features
-
-### Authentication Service (Port 8083)
-
-- **Centralized Authentication**: Single sign-on for all services
-- **User Registration**: Support for both Employers and Job Seekers
-- **JWT Token Management**: Secure token generation and validation
-- **User Profile Management**: Update personal information and preferences
-- **Role-based Access Control**: Different permissions for Employers and Job Seekers
-- **Password Security**: BCrypt encryption for secure password storage
-- **Session Management**: Secure login/logout functionality
-
-### Job Service (Port 8081) - Employer Operations
-
-- **Job Management**: Complete CRUD operations for job postings
-- **Advanced Search**: Filter jobs by title, location, company, salary range
-- **Application Tracking**: View and manage applications for posted jobs
-- **Job Status Control**: Open/Close job postings
-- **Dashboard**: Modern UI for managing all job-related activities
-- **Company Branding**: Associate jobs with company information
-- **Salary Management**: Support for salary ranges and compensation details
-
-### Application Service (Port 8082) - Job Seeker Operations
-
-- **Job Application**: Apply to jobs with cover letters and additional notes
-- **Application Tracking**: Monitor application status and progress
-- **Browse Jobs**: Search and filter available job opportunities
-- **Profile Management**: Maintain skills, education, and resume information
-- **Application Statistics**: View comprehensive application analytics
-- **Status Updates**: Real-time tracking of application progress
-- **Withdraw Applications**: Remove applications when needed
-
-## Technologies Used
-
-- **Backend Framework**: Spring Boot 3.5.5
-- **Security**: Spring Security with JWT authentication
-- **Database**: MySQL 8.0+ with Spring Data JPA
-- **ORM**: Hibernate for object-relational mapping
-- **Inter-service Communication**: RESTful APIs with HTTP client
-- **Frontend**: Modern HTML5, CSS3, JavaScript (ES6+)
-- **UI Framework**: Custom CSS with gradient designs and responsive layouts
-- **Authentication**: JWT (JSON Web Token) with JJWT 0.11.5
-- **Build Tool**: Maven for dependency management and builds
-- **API Documentation**: RESTful API design with comprehensive endpoints
-- **Password Encryption**: BCrypt for secure password hashing
-
-## 🛡️ Authentication & Security (Updated)
-
-This application implements a robust JWT-based authentication system with recent security enhancements:
+## 🔄 Inter-Service Communication Flow
 
 ### Authentication Flow
 
-1. **User Registration**: Users register through the Authentication Service
-2. **Login Process**: Credentials are validated and JWT token is generated
-3. **Token Distribution**: Token is shared across all services for authentication
-4. **Service Access**: Each service validates tokens with the Authentication Service
-5. **Session Management**: Tokens expire after 24 hours for security
-
-### 🔒 Security Features
-
-- **JWT Token Authentication**: Stateless authentication across all services
-- **Password Encryption**: BCrypt hashing with salt for password security
-- **Role-based Access Control**: Different permissions for Employers and Job Seekers
-- **Token Validation**: Real-time token verification with Authentication Service
-- **CORS Support**: Configured cross-origin resource sharing for frontend
-- **API Security**: Protected endpoints with Bearer token authentication
-- **Smart Endpoint Protection**: Public browsing vs. protected management operations
-
-### 🎯 Endpoint Security Configuration
-
-#### Public Endpoints (No Authentication Required)
-
-- `GET /api/jobs` - Browse all available jobs
-- `GET /api/jobs/all` - Get complete job listings
-- `GET /api/jobs/{id}` - View individual job details
-- Static resources (CSS, JS, images)
-- Health check endpoints
-
-#### Protected Endpoints (Authentication Required)
-
-- `POST /api/jobs` - Create new job (Employer only)
-- `PUT /api/jobs/{id}` - Update job (Employer only)
-- `DELETE /api/jobs/{id}` - Delete job (Employer only)
-- `POST /api/applications` - Apply to job (Job Seeker only)
-- `GET /api/applications/my-applications` - View user's applications
-- User profile and management endpoints
-
-### 🔧 Recent Security Improvements
-
-1. **Authentication Filter Optimization**: Fixed authentication bypass issues
-2. **Public Endpoint Configuration**: Properly separated public vs protected routes
-3. **Token Validation Enhancement**: Improved token handling across services
-4. **Debug Capabilities**: Enhanced debugging for authentication troubleshooting
-
-### Token Structure
-
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiJ9...",
-  "userId": 123,
-  "email": "user@example.com",
-  "name": "John Doe",
-  "userType": "EMPLOYER" | "JOB_SEEKER",
-  "externalUserId": 456,
-  "companyName": "TechCorp" // For employers only
-}
+```
+User Login Request → Authentication Service
+    ↓
+JWT Token Generated → User Details Retrieved
+    ↓
+Token Returned to Client → Stored in Browser
+    ↓
+Subsequent Requests → Token Attached in Header
+    ↓
+Service Receives Request → Validates Token with Auth Service
+    ↓
+User Context Established → Request Processed
 ```
 
-{
-"token": "eyJhbGciOiJIUzI1NiJ9...",
-"userId": 123,
-"email": "user@example.com",
-"name": "John Doe",
-"userType": "EMPLOYER" | "JOB_SEEKER",
-"externalUserId": 456,
-"companyName": "TechCorp" // For employers only
-}
+### Job Application Flow
 
-````
+```
+Job Seeker Browses Jobs → Job Service (Public)
+    ↓
+Selects Job → Applies via Application Service
+    ↓
+Application Service → Validates Token with Auth Service
+    ↓
+Fetches Job Details → From Job Service
+    ↓
+Creates Application → Saves to Database
+    ↓
+Success Response → Job Seeker Dashboard Updated
+```
 
-## Database Schema
+### Employer Management Flow
 
-### Authentication Service Database (`job_portal_auth_db`)
+```
+Employer Logs In → Authentication Service
+    ↓
+Accesses Dashboard → Job Service
+    ↓
+Creates Job Posting → Job Service Database
+    ↓
+Views Applications → Application Service Queries
+    ↓
+Updates Status → Application Service Database
+```
 
-#### Users Table
+## 📚 API Documentation
+
+### Authentication Service APIs
+
+#### Public Endpoints
+
+```http
+GET  /health                    # Service health check
+GET  /                          # Landing page
+GET  /login                     # Login page
+GET  /register                  # Registration page
+```
+
+#### Authentication APIs
+
+```http
+POST /api/auth/register         # Register new user
+POST /api/auth/login            # User login
+POST /api/auth/validate         # Validate JWT token
+```
+
+### Job Service APIs
+
+#### Public Endpoints
+
+```http
+GET  /api/jobs                  # Browse all jobs
+GET  /api/jobs/{id}             # Get specific job
+GET  /api/jobs/search           # Search jobs with filters
+```
+
+#### Protected Endpoints
+
+```http
+POST /api/jobs                  # Create job (Employer)
+PUT  /api/jobs/{id}             # Update job (Employer)
+DELETE /api/jobs/{id}           # Delete job (Employer)
+GET  /api/jobs/my-jobs          # Get employer's jobs
+```
+
+### Application Service APIs
+
+#### Protected Endpoints
+
+```http
+POST /api/applications          # Apply to job
+GET  /api/applications/my-applications  # Get user's applications
+PUT  /api/applications/{id}/status      # Update application status
+DELETE /api/applications/{id}           # Withdraw application
+```
+
+## 🗄️ Database Schema
+
+### Authentication Database (`job_portal_auth_db`)
 
 ```sql
 CREATE TABLE users (
-    user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     user_type ENUM('EMPLOYER', 'JOB_SEEKER') NOT NULL,
     external_user_id BIGINT,
-    company_name VARCHAR(255), -- For employers only
-    created_date DATE DEFAULT CURRENT_DATE,
-    updated_date DATE DEFAULT CURRENT_DATE
+    company_name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-````
+```
 
-### Job Service Database (`job_portal_job_db`)
-
-#### Jobs Table
+### Job Database (`job_portal_job_db`)
 
 ```sql
 CREATE TABLE jobs (
@@ -646,31 +436,28 @@ CREATE TABLE jobs (
     posted_date DATE DEFAULT CURRENT_DATE,
     status ENUM('OPEN', 'CLOSED') DEFAULT 'OPEN',
     employer_id BIGINT NOT NULL,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 ```
 
-### Application Service Database (`job_portal_application_db`)
-
-#### Applications Table
+### Application Database (`job_portal_application_db`)
 
 ```sql
-CREATE TABLE applications (
+CREATE TABLE job_applications (
     application_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     job_id BIGINT NOT NULL,
     applicant_id BIGINT NOT NULL,
-    cover_letter TEXT NOT NULL,
-    additional_notes TEXT,
+    cover_letter TEXT,
     status ENUM('APPLIED', 'SHORTLISTED', 'REJECTED', 'HIRED') DEFAULT 'APPLIED',
     applied_date DATE DEFAULT CURRENT_DATE,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY unique_job_applicant (job_id, applicant_id)
 );
 ```
 
-## Setup Instructions
+## 🚀 Setup & Installation
 
 ### Prerequisites
 
@@ -678,740 +465,162 @@ CREATE TABLE applications (
 - **Maven**: 3.6+ for dependency management
 - **MySQL**: 8.0+ database server
 - **Git**: For version control
-- **IDE**: IntelliJ IDEA, Eclipse, or VS Code (recommended)
 
 ### Database Setup
 
-1. **Install and start MySQL server**
-2. **Create databases** (auto-created if they don't exist):
-   ```sql
-   CREATE DATABASE job_portal_auth_db;
-   CREATE DATABASE job_portal_job_db;
-   CREATE DATABASE job_portal_application_db;
-   ```
-3. **Update database credentials** in each service's `application.properties`:
-   ```properties
-   spring.datasource.username=your_username
-   spring.datasource.password=your_password
-   spring.datasource.url=jdbc:mysql://localhost:3306/database_name
-   ```
+```sql
+-- Create databases
+CREATE DATABASE job_portal_auth_db;
+CREATE DATABASE job_portal_job_db;
+CREATE DATABASE job_portal_application_db;
 
-### Service Startup Sequence
-
-**IMPORTANT**: Services must be started in the correct order for proper functionality.
-
-#### Step 1: Start Authentication Service (Required First)
-
-```bash
-cd Authentication
-mvn clean compile
-mvn spring-boot:run
+-- Create user (optional)
+CREATE USER 'jobportal'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON job_portal_*.* TO 'jobportal'@'localhost';
 ```
 
-- Service will be available at: http://localhost:8083
-- Verify startup: http://localhost:8083/health
+### Service Configuration
 
-#### Step 2: Start Job Service
+Update `application.properties` in each service:
 
-```bash
-cd Job
-mvn clean compile
-mvn spring-boot:run
+```properties
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+spring.datasource.url=jdbc:mysql://localhost:3306/database_name
 ```
 
-- Service will be available at: http://localhost:8081
-- Employer Dashboard: http://localhost:8081/dashboard
-
-#### Step 3: Start Application Service
+### Startup Sequence
 
 ```bash
-cd Application
-mvn clean compile
-mvn spring-boot:run
+# Terminal 1: Authentication Service (Required First)
+cd Authentication && mvn spring-boot:run
+
+# Terminal 2: Job Service
+cd Job && mvn spring-boot:run
+
+# Terminal 3: Application Service
+cd Application && mvn spring-boot:run
 ```
 
-- Service will be available at: http://localhost:8082
-- Job Seeker Dashboard: http://localhost:8082/dashboard
+### Access URLs
 
-### Quick Start Guide
-
-1. **Clone the repository**:
-
-   ```bash
-   git clone https://github.com/arsh342/Job-Application-Service.git
-   cd Job-Application-Service
-   ```
-
-2. **Start all services** (in separate terminals):
-
-   ```bash
-   # Terminal 1 - Authentication Service
-   cd Authentication && mvn spring-boot:run
-
-   # Terminal 2 - Job Service
-   cd Job && mvn spring-boot:run
-
-   # Terminal 3 - Application Service
-   cd Application && mvn spring-boot:run
-   ```
-
-3. **Access the application**:
-   - Main Portal: http://localhost:8083
-   - Register as Employer or Job Seeker
-   - Start using the platform!
-
-### Accessing the Application
-
-- **Main Authentication Portal**: http://localhost:8083
-- **Job Seeker Dashboard**: http://localhost:8082/dashboard
+- **Authentication Portal**: http://localhost:8083
 - **Employer Dashboard**: http://localhost:8081/dashboard
-- **Browse Jobs**: http://localhost:8082/browse-jobs
-- **My Applications**: http://localhost:8082/my-applications
+- **Job Seeker Dashboard**: http://localhost:8082/dashboard
 
-## 📊 API Endpoints (Updated)
+## 👥 User Workflows
 
-### Authentication Service APIs (`http://localhost:8083`)
+### Job Seeker Journey
 
-#### Public Endpoints
+1. **Registration**: Create account as JOB_SEEKER
+2. **Authentication**: Login to receive JWT token
+3. **Job Discovery**: Browse available jobs
+4. **Application**: Apply with cover letter
+5. **Tracking**: Monitor application status
+6. **Management**: View and manage applications
 
-- `GET /` - Main landing page
-- `GET /login` - Login page
-- `GET /register` - Registration page
-- `GET /health` - Service health check
+### Employer Journey
 
-#### Authentication APIs
+1. **Registration**: Create account as EMPLOYER
+2. **Authentication**: Login to receive JWT token
+3. **Job Posting**: Create job listings
+4. **Management**: Update and manage jobs
+5. **Review**: View applications for jobs
+6. **Hiring**: Update application status
 
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login (returns JWT token)
-- `POST /api/auth/validate-token` - Validate JWT token
-- `GET /api/auth/profile` - Get user profile (requires token)
-- `PUT /api/auth/profile` - Update user profile (requires token)
+## 🔒 Security Implementation
 
-### Job Service APIs (`http://localhost:8081`)
+### JWT Authentication Flow
 
-#### Public Endpoints (✅ Recently Updated)
+1. **Token Generation**: User credentials validated → JWT created with user info
+2. **Token Storage**: Client stores token in localStorage/sessionStorage
+3. **Request Authorization**: Token attached to Authorization header
+4. **Token Validation**: Service validates token with Authentication Service
+5. **User Context**: User information extracted and made available
 
-- `GET /` - Employer landing page
-- `GET /dashboard` - Employer dashboard
-- `GET /debug` - **NEW**: Authentication debug tools
-- `GET /api/jobs` - Get all jobs (public browsing)
-- `GET /api/jobs/all` - Get all jobs (public browsing)
-- `GET /api/jobs/{jobId}` - Get specific job details (public)
+### Security Features
 
-#### Job Management APIs (🔒 Protected)
+- **Password Encryption**: BCrypt hashing for secure storage
+- **Token Expiration**: 24-hour token validity
+- **Role-based Access**: Different permissions for user types
+- **CORS Configuration**: Cross-origin request handling
+- **Input Validation**: Comprehensive request validation
 
-- `POST /api/jobs` - Create new job (Employer only)
-- `PUT /api/jobs/{jobId}` - **FIXED**: Update job (Employer only)
-- `DELETE /api/jobs/{jobId}` - Delete job (Employer only)
-- `GET /api/jobs/my-jobs` - Get jobs by current employer
-- `GET /api/jobs/{jobId}/applications` - Get applications for job
+## 🐛 Troubleshooting
 
-### Application Service APIs (`http://localhost:8082`)
+### Common Issues
 
-#### Public Endpoints
-
-- `GET /` - Job seeker landing page
-- `GET /dashboard` - Job seeker dashboard
-- `GET /browse-jobs` - Browse available jobs
-- `GET /my-applications` - View my applications page
-- `GET /profile` - Job seeker profile page
-
-#### Application Management APIs (🔒 Protected)
-
-- `POST /api/applications` - Apply to a job
-- `GET /api/applications/my-applications` - **UPDATED**: Get my applications (simplified)
-- `GET /api/applicants/{applicantId}/applications` - Get applications by applicant ID
-- `PUT /api/applications/{applicationId}` - Update application
-- `DELETE /api/applications/{applicationId}` - Withdraw application
-- `PUT /api/applications/{applicationId}/status` - Update application status (Employer only)
-
-### 🔧 Recent API Improvements
-
-1. **Simplified Authentication**: `/api/applications/my-applications` no longer requires URL parameters
-2. **Public Job Access**: Job browsing endpoints are now publicly accessible
-3. **Enhanced Debugging**: New debug endpoints for authentication troubleshooting
-4. **Fixed Job Updates**: Job management endpoints now properly handle authentication
-
-**Registration Request:**
-
-```json
-{
-  "email": "user@example.com",
-  "password": "securePassword123",
-  "name": "John Doe",
-  "userType": "EMPLOYER", // or "JOB_SEEKER"
-  "companyName": "TechCorp" // Required for employers only
-}
-```
-
-**Login Response:**
-
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiJ9...",
-  "userId": 123,
-  "email": "user@example.com",
-  "name": "John Doe",
-  "userType": "EMPLOYER",
-  "externalUserId": 456,
-  "companyName": "TechCorp"
-}
-```
-
-### Job Service APIs (`http://localhost:8081`)
-
-#### Public Endpoints
-
-- `GET /` - Employer landing page
-- `GET /dashboard` - Employer dashboard (requires authentication)
-- `GET /profile` - Employer profile page
-- `GET /job-details` - Job details page
-- `GET /api/jobs/all` - Get all jobs (public access)
-
-#### Job Management APIs (Protected)
-
-- `POST /api/jobs` - Create new job (Employer only)
-- `PUT /api/jobs/{jobId}` - Update job (Employer only)
-- `DELETE /api/jobs/{jobId}` - Delete job (Employer only)
-- `GET /api/jobs/{jobId}` - Get specific job details
-- `GET /api/jobs/employer/{employerId}` - Get jobs by employer
-- `GET /api/jobs/{jobId}/applications` - Get applications for job
-
-**Create Job Request:**
-
-```json
-{
-  "title": "Senior Software Engineer",
-  "description": "We are looking for an experienced software engineer...",
-  "location": "New York, NY",
-  "company": "TechCorp",
-  "salaryMin": 80000.0,
-  "salaryMax": 120000.0
-}
-```
-
-### Application Service APIs (`http://localhost:8082`)
-
-#### Public Endpoints
-
-- `GET /` - Job seeker landing page
-- `GET /dashboard` - Job seeker dashboard (requires authentication)
-- `GET /browse-jobs` - Browse available jobs
-- `GET /my-applications` - View my applications
-- `GET /profile` - Job seeker profile page
-
-#### Application Management APIs (Protected)
-
-- `POST /api/applications/apply` - Apply to a job
-- `GET /api/applications/my-applications` - Get my applications
-- `PUT /api/applications/{applicationId}` - Update application
-- `DELETE /api/applications/{applicationId}` - Withdraw application
-- `PUT /api/applications/{applicationId}/status` - Update application status (Employer only)
-
-**Apply to Job Request:**
-
-```json
-{
-  "jobId": 123,
-  "coverLetter": "I am excited to apply for this position...",
-  "additionalNotes": "I have 5 years of experience in Java development."
-}
-```
-
-## Authentication Usage Examples
-
-### 1. Register a new user:
+#### Service Startup Problems
 
 ```bash
-curl -X POST http://localhost:8083/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "employer@techcorp.com",
-    "password": "securePassword123",
-    "name": "John Doe",
-    "userType": "EMPLOYER",
-    "companyName": "TechCorp"
-  }'
+# Check Java version
+java -version
+
+# Check Maven version
+mvn -version
+
+# Verify MySQL connection
+mysql -u root -p -e "SHOW DATABASES;"
 ```
 
-### 2. Login to get JWT token:
+#### Authentication Issues
 
-```bash
-curl -X POST http://localhost:8083/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "employer@techcorp.com",
-    "password": "securePassword123"
-  }'
-```
+- Verify Authentication Service is running on port 8083
+- Check JWT token format: `Bearer <token>`
+- Use debug endpoints for token validation
 
-### 3. Use token for authenticated requests:
+#### Database Connection Issues
 
-```bash
-curl -X POST http://localhost:8081/api/jobs \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "title": "Software Engineer",
-    "description": "Java Developer position...",
-    "location": "New York, NY",
-    "company": "TechCorp",
-    "salaryMin": 80000,
-    "salaryMax": 120000
-  }'
-```
-
-### 4. Apply to a job:
-
-```bash
-curl -X POST http://localhost:8082/api/applications/apply \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "jobId": 1,
-    "coverLetter": "I am excited to apply for this position...",
-    "additionalNotes": "I have relevant experience..."
-  }'
-```
-
-## Data Models
-
-### User (Authentication Service)
-
-```java
-{
-    "userId": Long,
-    "email": String,
-    "password": String, // BCrypt encrypted
-    "name": String,
-    "userType": "EMPLOYER" | "JOB_SEEKER",
-    "externalUserId": Long, // Reference to Job/Application service
-    "companyName": String, // For employers only
-    "createdDate": LocalDate,
-    "updatedDate": LocalDate
-}
-```
-
-### Job (Job Service)
-
-```java
-{
-    "jobId": Long,
-    "title": String,
-    "description": String,
-    "location": String,
-    "company": String,
-    "salaryMin": Double,
-    "salaryMax": Double,
-    "postedDate": LocalDate,
-    "status": "OPEN" | "CLOSED",
-    "employerId": Long,
-    "createdDate": Timestamp,
-    "updatedDate": Timestamp
-}
-```
-
-### Application (Application Service)
-
-```java
-{
-    "applicationId": Long,
-    "jobId": Long,
-    "applicantId": Long,
-    "coverLetter": String,
-    "additionalNotes": String,
-    "status": "APPLIED" | "SHORTLISTED" | "REJECTED" | "HIRED",
-    "appliedDate": LocalDate,
-    "createdDate": Timestamp,
-    "updatedDate": Timestamp
-}
-```
-
-## Inter-Service Communication
-
-The microservices communicate through well-defined REST APIs:
-
-```
-Authentication Service (8083)
-    ↓ (Token Validation)
-Job Service (8081) ←→ Application Service (8082)
-    ↑                        ↑
-    └── Job Data Exchange ───┘
-```
-
-### Communication Patterns:
-
-1. **Authentication Flow**:
-
-   - All services validate tokens with Authentication Service
-   - Token contains user information and permissions
-
-2. **Job Data Sharing**:
-
-   - Application Service fetches job details from Job Service
-   - Job Service provides public job listings
-
-3. **Application Management**:
-   - Application Service manages all job applications
-   - Job Service can query applications for specific jobs
-
-## Security Implementation
-
-### Authentication Filter Chain
-
-```java
-@Configuration
-public class SecurityConfig {
-    // Custom authentication filter for JWT validation
-    // CORS configuration for cross-origin requests
-    // Public endpoints configuration
-    // Protected routes with role-based access
-}
-```
-
-### Token Validation Process
-
-1. **Request Interception**: Authentication filter intercepts all requests
-2. **Token Extraction**: Bearer token extracted from Authorization header
-3. **Service Validation**: Token validated with Authentication Service
-4. **User Context**: User information added to request context
-5. **Route Access**: Access granted based on user role and permissions
-
-## User Workflows
-
-### 1. Employer Workflow (Complete Journey)
-
-1. **Registration & Setup**:
-
-   - Visit http://localhost:8083/register
-   - Register as "EMPLOYER" with company details
-   - Login to receive JWT token
-   - Redirect to Job Service dashboard
-
-2. **Job Management**:
-
-   - Access dashboard at http://localhost:8081/dashboard
-   - Create job postings with detailed information
-   - Set salary ranges and job requirements
-   - Manage job status (Open/Closed)
-
-3. **Application Review**:
-   - View applications for each job posting
-   - Review candidate cover letters and notes
-   - Update application status (Shortlisted/Rejected/Hired)
-   - Track hiring progress
-
-### 2. Job Seeker Workflow (Complete Journey)
-
-1. **Registration & Profile**:
-
-   - Visit http://localhost:8083/register
-   - Register as "JOB_SEEKER" with personal details
-   - Login to receive JWT token
-   - Redirect to Application Service dashboard
-
-2. **Job Discovery**:
-
-   - Browse jobs at http://localhost:8082/browse-jobs
-   - Use advanced filters (location, company, salary)
-   - View detailed job descriptions
-   - Research company information
-
-3. **Application Process**:
-
-   - Apply to jobs with personalized cover letters
-   - Add additional notes and qualifications
-   - Track application status and progress
-   - Manage multiple applications
-
-4. **Application Management**:
-   - View all applications at http://localhost:8082/my-applications
-   - Monitor application statistics
-   - Withdraw applications when needed
-   - Update profile and qualifications
-
-## User Interface Features
-
-### Modern Design System
-
-- **Gradient Backgrounds**: Professional purple-blue gradient theme
-- **Card-based Layout**: Clean, modern card designs for content
-- **Responsive Design**: Mobile-friendly responsive layouts
-- **Interactive Elements**: Hover effects and smooth transitions
-- **Consistent Typography**: Professional font choices and hierarchy
-
-### Dashboard Features
-
-- **Real-time Statistics**: Application counts and success rates
-- **Quick Actions**: Fast access to common operations
-- **Search and Filters**: Advanced filtering capabilities
-- **Status Indicators**: Visual status badges and progress indicators
-
-## 🐛 Troubleshooting & Debug (Updated)
+- Ensure MySQL is running
+- Verify database credentials
+- Check database existence and permissions
 
 ### Debug Tools
 
-#### Job Service Debug Page
+- **Authentication Debug**: http://localhost:8081/debug
+- **Browser Console**: Check for JavaScript errors
+- **Application Logs**: Review service console output
 
-Access http://localhost:8081/debug for comprehensive authentication testing:
-
-- **Token Information**: View all stored tokens (localStorage, sessionStorage, URL)
-- **API Testing**: Test GET, POST, PUT operations with authentication
-- **Authentication Status**: Real-time token validation status
-- **Error Analysis**: Detailed error messages and status codes
-
-#### Console Debugging
-
-The dashboards now include enhanced console debugging:
-
-```javascript
-// Open browser console (F12) to see:
-"Loading applications..."
-"Auth token: Present" or "Auth token: Missing"
-"Response status: 200"
-"Applications received: [...]"
-```
-
-### Common Issues and Solutions
-
-#### 1. "Failed to update job: Authentication required"
-
-**✅ FIXED**: This was caused by misconfigured public endpoints
-**Solution**: Authentication filter now properly protects job management endpoints
-
-#### 2. "My Applications" not showing in dashboard
-
-**✅ FIXED**: Updated to use simplified `/api/applications/my-applications` endpoint
-**Solution**: Dashboard now uses direct authentication without URL parameters
-
-#### 3. Browse Jobs not loading
-
-**✅ FIXED**: Public endpoints now properly configured for job browsing
-**Solution**: GET endpoints for jobs are now publicly accessible
-
-#### 4. Service Startup Issues
-
-**Problem**: Service fails to start with "Ambiguous mapping" error
-**✅ FIXED**: Removed duplicate controllers
-**Solution**: Each service now has clean, non-conflicting controller mappings
-
-**Problem**: Service fails to start
-**Solutions**:
-
-- Check if MySQL is running
-- Verify database credentials in `application.properties`
-- Ensure ports 8081, 8082, 8083 are available
-- Check Java version (requires Java 17+)
-
-#### 5. Authentication Problems
-
-**Problem**: "Authentication required" errors
-**Solutions**:
-
-- Verify Authentication Service is running on port 8083
-- Check JWT token validity and expiration using debug page
-- Ensure proper token format: `Bearer <token>`
-- Use debug console to verify token presence
-
-#### 6. Dashboard Applications Not Loading
-
-**Problem**: Applications section shows "No applications yet" despite having applications
-**✅ FIXED**: Now uses proper authentication endpoint
-**Solutions**:
-
-- Check browser console for error messages
-- Verify token is present using debug tools
-- Ensure Application Service is running on port 8082
-- Use `/api/applications/my-applications` endpoint
-
-### Service Health Checks
-
-```bash
-# Check Authentication Service
-curl http://localhost:8083/health
-
-# Check Job Service
-curl http://localhost:8081/health
-
-# Check Application Service
-curl http://localhost:8082/health
-
-# Test Authentication (replace with actual token)
-curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8082/api/applications/my-applications
-```
-
-### Debug Workflow
-
-1. **Check Service Status**: Verify all three services are running
-2. **Test Authentication**: Use debug page to verify token functionality
-3. **Check Console Logs**: Open browser console for detailed error information
-4. **Verify Database**: Ensure MySQL is running and databases are accessible
-5. **Test API Endpoints**: Use debug tools to test specific API calls
-
-## Development Guidelines
+## 📝 Development Guidelines
 
 ### Project Structure
 
 ```
 Job-Application-Service/
-├── Authentication/          # Authentication Service (Port 8083)
-│   ├── src/main/java/
-│   │   └── com/service/auth/
-│   │       ├── controller/   # REST API controllers
-│   │       ├── model/       # JPA entities
-│   │       ├── repository/  # Data access layer
-│   │       ├── service/     # Business logic
-│   │       └── config/      # Security & configuration
+├── Authentication/          # Port 8083
+│   ├── src/main/java/com/service/authentication/
+│   │   ├── controller/     # REST controllers
+│   │   ├── entity/         # JPA entities
+│   │   ├── repository/     # Data access
+│   │   ├── service/        # Business logic
+│   │   ├── config/         # Security config
+│   │   └── util/           # JWT utilities
 │   └── src/main/resources/
-│       ├── templates/       # Thymeleaf HTML templates
+│       ├── templates/      # Thymeleaf views
 │       └── application.properties
-│
-├── Job/                     # Job Service (Port 8081)
-│   ├── src/main/java/
-│   │   └── com/service/job/
-│   │       ├── controller/   # Job management APIs
-│   │       ├── model/       # Job entities
-│   │       ├── repository/  # Job data access
-│   │       ├── service/     # Job business logic
-│   │       └── config/      # Authentication filter
-│   └── src/main/resources/
-│       ├── templates/       # Employer UI templates
-│       └── application.properties
-│
-├── Application/             # Application Service (Port 8082)
-│   ├── src/main/java/
-│   │   └── com/service/application/
-│   │       ├── controller/   # Application management APIs
-│   │       ├── model/       # Application entities
-│   │       ├── repository/  # Application data access
-│   │       ├── service/     # Application business logic
-│   │       └── config/      # Authentication filter
-│   └── src/main/resources/
-│       ├── templates/       # Job seeker UI templates
-│       └── application.properties
-│
-└── README.md               # This comprehensive documentation
+├── Job/                    # Port 8081
+├── Application/            # Port 8082
+└── README.md
 ```
 
 ### Code Standards
 
 - **Java 21**: Modern Java features and syntax
-- **Spring Boot 3.5.5**: Latest stable Spring Boot version
-- **RESTful APIs**: Follow REST principles for all endpoints
-- **Exception Handling**: Comprehensive error handling and validation
-- **Logging**: Structured logging for debugging and monitoring
-- **Security**: JWT-based authentication with role-based access
+- **RESTful APIs**: Consistent endpoint design
+- **Error Handling**: Comprehensive exception management
+- **Logging**: Structured logging with SLF4J
+- **Testing**: Unit and integration tests
 
-### Database Design Principles
+### API Design Principles
 
-- **Normalization**: Properly normalized database schema
-- **Indexes**: Optimized indexes for performance
-- **Constraints**: Foreign key relationships and data integrity
-- **Migrations**: Automatic schema creation with JPA/Hibernate
-
-### API Design Guidelines
-
-- **Consistent URLs**: RESTful URL patterns
+- **Consistent URLs**: RESTful resource naming
 - **HTTP Methods**: Proper use of GET, POST, PUT, DELETE
-- **Status Codes**: Appropriate HTTP status codes
-- **Request/Response**: Consistent JSON request/response formats
-- **Authentication**: Bearer token authentication for protected endpoints
-
-## Monitoring and Maintenance
-
-### Application Monitoring
-
-- **Health Endpoints**: Each service provides `/health` endpoint
-- **Logging**: Comprehensive application logging
-- **Error Tracking**: Structured error handling and reporting
-- **Performance**: Monitor response times and database queries
-
-### Security Monitoring
-
-- **Token Management**: Monitor JWT token usage and expiration
-- **Authentication Logs**: Track login attempts and failures
-- **Access Control**: Monitor unauthorized access attempts
-- **Password Security**: BCrypt encryption monitoring
-
-### Deployment Considerations
-
-- **Environment Variables**: Use environment-specific configuration
-- **Database Connections**: Connection pooling and optimization
-- **Service Discovery**: Consider service registry for production
-- **Load Balancing**: Multiple instance deployment support
-- **Container Support**: Docker-ready application structure
-
-## Contributing
-
-### Development Setup
-
-1. **Fork the repository**
-2. **Create feature branch**: `git checkout -b feature/new-feature`
-3. **Make changes**: Follow coding standards and conventions
-4. **Test thoroughly**: Ensure all services work correctly
-5. **Submit pull request**: With detailed description of changes
-
-### Code Review Guidelines
-
-- **Functionality**: Does the code work as expected?
-- **Security**: Are there any security vulnerabilities?
-- **Performance**: Is the code optimized for performance?
-- **Maintainability**: Is the code readable and well-documented?
-- **Testing**: Are appropriate tests included?
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support and questions:
-
-- **Issues**: Create GitHub issues for bugs and feature requests
-- **Documentation**: Refer to this comprehensive README
-- **Contact**: Reach out to the development team
+- **Status Codes**: Appropriate HTTP response codes
+- **Request/Response**: Standardized JSON formats
+- **Documentation**: Comprehensive API documentation
 
 ---
 
-## 📋 Changelog
-
-### Version 1.1.0 (September 2025) - Recent Updates
-
-#### 🔒 Authentication & Security Improvements
-
-- **Fixed job update authentication**: Resolved "Authentication required" error when updating jobs
-- **Optimized public endpoints**: Properly configured public vs protected routes
-- **Enhanced token validation**: Improved cross-service token handling
-- **Smart endpoint protection**: Balanced public browsing with secure management operations
-
-#### 🐛 Bug Fixes
-
-- **Resolved duplicate controllers**: Fixed "Ambiguous mapping" startup errors
-- **Fixed dashboard applications**: "My Applications" now loads correctly in dashboard
-- **Improved inter-service communication**: Services now communicate reliably
-- **Enhanced error handling**: Better error messages and debugging information
-
-#### 🛠️ Development Improvements
-
-- **Added debug tools**: Comprehensive authentication debugging at `/debug` endpoints
-- **Enhanced console logging**: Better frontend debugging with detailed console output
-- **Simplified API endpoints**: Streamlined application management APIs
-- **Updated documentation**: Comprehensive troubleshooting and setup guides
-
-#### 🎯 Feature Enhancements
-
-- **Improved user experience**: Faster loading and more reliable application features
-- **Better error feedback**: Clear error messages for authentication and API issues
-- **Enhanced dashboard**: More reliable data loading and display
-- **Streamlined workflows**: Simplified user flows for job seekers and employers
-
-### Version 1.0.0 (Initial Release)
-
-- **Core microservices architecture**: Three independent services with JWT authentication
-- **Complete job portal functionality**: Job posting, application management, user authentication
-- **Modern UI design**: Responsive design with professional gradient themes
-- **Comprehensive API coverage**: RESTful APIs for all major operations
-
 **Version**: 1.1.0  
-**Last Updated**: September 6, 2025  
-**Maintainers**: Development Team
+**Last Updated**: September 9, 2025  
+**Documentation**: Comprehensive service and API reference
