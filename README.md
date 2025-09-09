@@ -24,22 +24,28 @@ The **Job Portal Microservices System** is a comprehensive, enterprise-grade job
 ### Key Features
 
 - **Multi-role Support**: Separate interfaces for Job Seekers and Employers
-- **Secure Authentication**: JWT token-based authentication across all services
+- **Advanced Authentication**:
+  - JWT token-based authentication across all services
+  - **HTTP Cookie Persistence**: Automatic cookie setting for page reload authentication
+  - **Cross-Service Token Validation**: Real-time token verification
+  - **Seamless Navigation**: Token-based routing with URL parameter support
 - **Real-time Communication**: Seamless inter-service communication via REST APIs
 - **Scalable Architecture**: Independent services that can be scaled individually
 - **Modern UI**: Responsive web interface with professional design
+- **Enhanced Security**: Role-based access control with comprehensive endpoint protection
 
 ### Technology Stack
 
-| Component      | Technology             | Version     |
-| -------------- | ---------------------- | ----------- |
-| **Framework**  | Spring Boot            | 3.5.5       |
-| **Language**   | Java                   | 21          |
-| **Security**   | Spring Security + JWT  | JJWT 0.11.5 |
-| **Database**   | MySQL                  | 8.0+        |
-| **ORM**        | Hibernate/JPA          | -           |
-| **Build Tool** | Maven                  | 3.6+        |
-| **Frontend**   | Thymeleaf + HTML5/CSS3 | -           |
+| Component          | Technology             | Version       |
+| ------------------ | ---------------------- | ------------- |
+| **Framework**      | Spring Boot            | 3.5.5         |
+| **Language**       | Java                   | 21            |
+| **Security**       | Spring Security + JWT  | JJWT 0.11.5   |
+| **Database**       | MySQL                  | 8.0+          |
+| **ORM**            | Hibernate/JPA          | -             |
+| **Build Tool**     | Maven                  | 3.6+          |
+| **Frontend**       | Thymeleaf + HTML5/CSS3 | -             |
+| **Authentication** | HTTP Cookies + JWT     | Enhanced v1.1 |
 
 ## 🏗️ System Architecture
 
@@ -355,54 +361,314 @@ Updates Status → Application Service Database
 
 ## 📚 API Documentation
 
-### Authentication Service APIs
+All services support JWT-based authentication with HTTP cookies for seamless page reloads and navigation persistence.
 
-#### Public Endpoints
+### 🔐 Authentication Service (Port 8083)
+
+Base URL: `http://localhost:8083`
+
+#### **Web Pages (UI Routes)**
 
 ```http
-GET  /health                    # Service health check
-GET  /                          # Landing page
+GET  /                          # Home (redirects to login)
 GET  /login                     # Login page
 GET  /register                  # Registration page
+GET  /dashboard                 # User dashboard
+GET  /profile                   # User profile page
 ```
 
-#### Authentication APIs
+#### **REST API Endpoints**
 
 ```http
 POST /api/auth/register         # Register new user
-POST /api/auth/login            # User login
+POST /api/auth/login            # Authenticate user
 POST /api/auth/validate         # Validate JWT token
 ```
 
-### Job Service APIs
+#### **Request/Response Examples**
 
-#### Public Endpoints
+**User Registration:**
 
-```http
-GET  /api/jobs                  # Browse all jobs
-GET  /api/jobs/{id}             # Get specific job
-GET  /api/jobs/search           # Search jobs with filters
+```json
+POST /api/auth/register
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "John Doe",
+  "userType": "JOB_SEEKER", // or "EMPLOYER"
+  "companyName": "Company Inc" // Required for EMPLOYER
+}
+
+Response:
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "email": "user@example.com",
+  "name": "John Doe",
+  "userType": "JOB_SEEKER",
+  "userId": 1
+}
 ```
 
-#### Protected Endpoints
+**User Login:**
 
-```http
-POST /api/jobs                  # Create job (Employer)
-PUT  /api/jobs/{id}             # Update job (Employer)
-DELETE /api/jobs/{id}           # Delete job (Employer)
-GET  /api/jobs/my-jobs          # Get employer's jobs
+```json
+POST /api/auth/login
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+Response:
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "email": "user@example.com",
+  "name": "John Doe",
+  "userType": "JOB_SEEKER",
+  "userId": 1
+}
 ```
 
-### Application Service APIs
+### 💼 Job Service (Port 8081)
 
-#### Protected Endpoints
+Base URL: `http://localhost:8081`
+
+#### **Web Pages (UI Routes)**
 
 ```http
-POST /api/applications          # Apply to job
-GET  /api/applications/my-applications  # Get user's applications
-PUT  /api/applications/{id}/status      # Update application status
-DELETE /api/applications/{id}           # Withdraw application
+GET  /                          # Home (redirects to dashboard)
+GET  /login-redirect            # Login redirect page
+GET  /dashboard                 # Employer dashboard
+GET  /job-listings              # Employer's job listings
+GET  /jobs                      # Public job browsing (alias)
+GET  /create-job                # Create/edit job form
+GET  /job-details               # Job details page
+GET  /profile                   # Employer profile
+GET  /debug                     # Debug information page
 ```
+
+#### **Public API Endpoints (No Authentication Required)**
+
+```http
+GET  /api/jobs                  # Browse all public jobs
+GET  /api/jobs/all              # Get all jobs (alias)
+GET  /api/jobs/{jobId}          # Get specific job details
+```
+
+#### **Protected API Endpoints (Authentication Required)**
+
+```http
+# Job Management (Employers)
+POST   /api/jobs                # Create new job posting
+PUT    /api/jobs/{jobId}        # Update existing job
+DELETE /api/jobs/{jobId}        # Delete job posting
+GET    /api/jobs/my-jobs        # Get employer's jobs
+
+# Employer-specific
+GET    /api/employers/{employerId}/jobs    # Get jobs by employer
+
+# Application Management (Cross-service)
+GET    /api/jobs/{jobId}/applications      # Get job applications
+PUT    /api/applications/{applicationId}/status  # Update application status
+```
+
+#### **Request/Response Examples**
+
+**Create Job:**
+
+```json
+POST /api/jobs
+Headers: Authorization: Bearer {token}
+{
+  "title": "Software Developer",
+  "description": "Full-stack developer position...",
+  "location": "New York, NY",
+  "company": "Tech Corp",
+  "salaryMin": 70000.00,
+  "salaryMax": 90000.00,
+  "status": "OPEN"
+}
+
+Response:
+{
+  "jobId": 1,
+  "title": "Software Developer",
+  "description": "Full-stack developer position...",
+  "location": "New York, NY",
+  "company": "Tech Corp",
+  "salaryMin": 70000.00,
+  "salaryMax": 90000.00,
+  "postedDate": "2025-09-10",
+  "status": "OPEN",
+  "employerId": 1
+}
+```
+
+### 📋 Application Service (Port 8082)
+
+Base URL: `http://localhost:8082`
+
+#### **Web Pages (UI Routes)**
+
+```http
+GET  /                          # Home (redirects to dashboard)
+GET  /dashboard                 # Job seeker dashboard
+GET  /browse-jobs               # Browse available jobs
+GET  /my-applications           # View user's applications
+GET  /profile                   # Job seeker profile
+GET  /job-details               # Job details and application
+GET  /status-demo               # Application status demo
+```
+
+#### **Protected API Endpoints (Authentication Required)**
+
+```http
+# Application Management
+POST   /api/applications        # Submit job application
+POST   /api/applications/apply  # Alternative apply endpoint
+PUT    /api/applications/{applicationId}         # Update application
+DELETE /api/applications/{applicationId}         # Withdraw application
+GET    /api/applications/{applicationId}         # Get specific application
+
+# Application Retrieval
+GET    /api/applications/my-applications         # Get user's applications
+GET    /api/applicants/{applicantId}/applications  # Get applicant's applications
+GET    /api/jobs/{jobId}/applications            # Get applications for job
+
+# Application Status (Employers)
+PUT    /api/applications/{applicationId}/status  # Update application status
+
+# Profile Management
+GET    /api/profile                             # Get user profile
+PUT    /api/profile                             # Update user profile
+
+# Debug Endpoints
+GET    /api/debug/applications                  # Debug applications
+GET    /api/debug/auth                         # Debug authentication
+```
+
+#### **Request/Response Examples**
+
+**Submit Application:**
+
+```json
+POST /api/applications
+Headers: Authorization: Bearer {token}
+{
+  "jobId": 1,
+  "coverLetter": "I am very interested in this position...",
+  "resumeUrl": "https://example.com/resume.pdf"
+}
+
+Response:
+{
+  "applicationId": 1,
+  "jobId": 1,
+  "applicantId": 2,
+  "coverLetter": "I am very interested in this position...",
+  "resumeUrl": "https://example.com/resume.pdf",
+  "status": "APPLIED",
+  "appliedDate": "2025-09-10"
+}
+```
+
+**Get User Applications:**
+
+```json
+GET /api/applications/my-applications
+Headers: Authorization: Bearer {token}
+
+Response:
+[
+  {
+    "applicationId": 1,
+    "jobId": 1,
+    "jobTitle": "Software Developer",
+    "company": "Tech Corp",
+    "status": "APPLIED",
+    "appliedDate": "2025-09-10",
+    "coverLetter": "I am very interested...",
+    "resumeUrl": "https://example.com/resume.pdf"
+  }
+]
+```
+
+### 🔄 Inter-Service Communication
+
+The services communicate via REST APIs with the following patterns:
+
+#### **Authentication Flow**
+
+1. User logs in through Authentication Service → Receives JWT token
+2. Token included in subsequent requests to Job/Application services
+3. Services validate token with Authentication Service via `/api/auth/validate`
+
+#### **Job Application Flow**
+
+1. Job Seeker browses jobs on Application Service
+2. Application Service fetches job data from Job Service
+3. Application submitted through Application Service
+4. Job Service queries Application Service for application data
+
+#### **Cross-Service Endpoints**
+
+**Job Service ↔ Application Service:**
+
+```http
+# Job Service calls Application Service
+GET  {APPLICATION_SERVICE}/api/jobs/{jobId}/applications
+
+# Application Service calls Job Service
+GET  {JOB_SERVICE}/api/jobs/{jobId}
+GET  {JOB_SERVICE}/api/jobs
+```
+
+**All Services ↔ Authentication Service:**
+
+```http
+POST {AUTH_SERVICE}/api/auth/validate
+```
+
+### 🔐 Authentication & Security
+
+#### **JWT Token Format**
+
+- **Header**: `Authorization: Bearer {token}`
+- **Cookie**: `authToken={token}` (for page reload persistence)
+- **Query Parameter**: `?token={token}` (for navigation links)
+
+#### **Token Claims**
+
+```json
+{
+  "sub": "user@example.com",
+  "userId": 1,
+  "userType": "JOB_SEEKER",
+  "iat": 1757444864,
+  "exp": 1757531264
+}
+```
+
+#### **Security Features**
+
+- ✅ **JWT Authentication**: Stateless token-based authentication
+- ✅ **HTTP Cookies**: Automatic cookie setting for page reload persistence
+- ✅ **CORS Support**: Cross-origin request handling
+- ✅ **Role-based Access**: Separate endpoints for Employers/Job Seekers
+- ✅ **Token Validation**: Real-time token verification across services
+- ✅ **Secure Headers**: Proper security headers configuration
+
+### 📊 HTTP Status Codes
+
+| Code | Meaning               | Usage                             |
+| ---- | --------------------- | --------------------------------- |
+| 200  | OK                    | Successful requests               |
+| 201  | Created               | Resource created successfully     |
+| 400  | Bad Request           | Invalid request data              |
+| 401  | Unauthorized          | Missing or invalid authentication |
+| 403  | Forbidden             | Access denied for resource        |
+| 404  | Not Found             | Resource not found                |
+| 409  | Conflict              | Resource already exists           |
+| 500  | Internal Server Error | Server processing error           |
 
 ## 🗄️ Database Schema
 
@@ -533,10 +799,62 @@ cd Application && mvn spring-boot:run
 ### JWT Authentication Flow
 
 1. **Token Generation**: User credentials validated → JWT created with user info
-2. **Token Storage**: Client stores token in localStorage/sessionStorage
-3. **Request Authorization**: Token attached to Authorization header
+2. **Token Storage**: Client stores token in localStorage/sessionStorage + HTTP cookies
+3. **Request Authorization**: Token attached to Authorization header or cookies
 4. **Token Validation**: Service validates token with Authentication Service
 5. **User Context**: User information extracted and made available
+
+### 🔄 Enhanced Authentication Features (v1.1)
+
+#### **HTTP Cookie Persistence**
+
+- **Server-side Cookie Setting**: When tokens are found in URL parameters, services automatically set HttpOnly cookies
+- **Page Reload Support**: Cookies persist across browser refreshes and navigation
+- **Cross-Service Compatibility**: Cookies work across all microservices (Application, Job, Authentication)
+
+#### **Multi-Source Token Detection**
+
+Services check for authentication tokens in the following order:
+
+1. **Authorization Header**: `Bearer {token}` (for API calls)
+2. **URL Query Parameter**: `?token={token}` (for navigation links)
+3. **HTTP Cookies**: `authToken={token}` (for page reloads)
+
+#### **Authentication Filter Enhancement**
+
+```java
+// Enhanced AuthenticationFilter checks multiple sources
+if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    token = authHeader.substring(7);
+} else if ((token = request.getParameter("token")) != null) {
+    // Set cookie for future requests
+    Cookie authCookie = new Cookie("authToken", token);
+    authCookie.setHttpOnly(true);
+    response.addCookie(authCookie);
+} else if (cookies != null) {
+    // Check for existing auth cookie
+    for (Cookie cookie : cookies) {
+        if ("authToken".equals(cookie.getName())) {
+            token = cookie.getValue();
+            break;
+        }
+    }
+}
+```
+
+#### **Client-Side Pre-Authentication**
+
+- **Pre-auth Scripts**: Execute before page rendering to handle tokens immediately
+- **URL Parameter Processing**: Extract tokens from navigation links and store locally
+- **Seamless Navigation**: Token-based routing prevents authentication interruptions
+
+#### **Benefits**
+
+- ✅ **No Page Reload Redirects**: Users stay on the same page after refresh
+- ✅ **Seamless Navigation**: Clicking between pages maintains authentication
+- ✅ **Enhanced UX**: No authentication pop-ups or login interruptions
+- ✅ **Cross-Browser Support**: Works with all modern browsers
+- ✅ **Security Maintained**: HttpOnly cookies protect against XSS attacks
 
 ### Security Features
 
@@ -620,152 +938,3 @@ Job-Application-Service/
 - **Documentation**: Comprehensive API documentation
 
 ---
-
-**Version**: 1.1.0  
-**Last Updated**: September 9, 2025  
-**Documentation**: Comprehensive service and API reference
-
-## ✅ **SECURITY STATUS: ENDPOINTS AND PAGES PROTECTED**
-
-### **🔐 Security Implementation Completed**
-
-All critical security vulnerabilities have been addressed with comprehensive endpoint protection and role-based authorization.
-
-### **🛡️ Security Improvements Implemented**
-
-#### **1. Job Service Security ✅ FIXED**
-
-**Updated**: `Job/src/main/java/com/service/job/config/SecurityConfig.java`
-
-```java
-// SECURE CONFIGURATION:
-.authorizeHttpRequests(auth -> auth
-    // Public static resources and health check
-    .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**").permitAll()
-    // Public job browsing (GET only)
-    .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*").permitAll()
-    // Protected web pages - require authentication
-    .requestMatchers("/dashboard", "/create-job", "/job-details").authenticated()
-    // Protected API endpoints - require authentication
-    .requestMatchers(HttpMethod.POST, "/api/jobs").authenticated()
-    .requestMatchers(HttpMethod.PUT, "/api/jobs/**").authenticated()
-    .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").authenticated()
-    .anyRequest().authenticated()
-)
-```
-
-**Security Features**:
-
-- ✅ **Job Creation**: Only authenticated employers can create jobs
-- ✅ **Job Modification**: Only job owners can update their jobs
-- ✅ **Job Deletion**: Only job owners can delete their jobs
-- ✅ **Role-based Access**: Employers only for job management operations
-- ✅ **Public Browsing**: GET endpoints for job browsing remain public
-
-#### **2. Application Service Security ✅ FIXED**
-
-**Updated**: `Application/src/main/java/com/service/application/config/SecurityConfig.java`
-
-```java
-// SECURE CONFIGURATION:
-.authorizeHttpRequests(auth -> auth
-    // Public static resources only
-    .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**").permitAll()
-    // Protected web pages - require authentication
-    .requestMatchers("/dashboard", "/browse-jobs", "/my-applications").authenticated()
-    // Protected API endpoints - require authentication
-    .requestMatchers("/api/applications/**").authenticated()
-    // Debug endpoints blocked
-    .requestMatchers("/debug/**").denyAll()
-    .anyRequest().authenticated()
-)
-```
-
-**Security Features**:
-
-- ✅ **Application Management**: Only authenticated job seekers can apply
-- ✅ **Status Updates**: Only employers can update application status
-- ✅ **Role-based Access**: Job seekers for applications, employers for status updates
-- ✅ **Debug Endpoints**: Completely blocked in production
-
-#### **3. Authentication Service Security ✅ ENHANCED**
-
-**Security Headers Added**:
-
-```java
-.headers(headers -> headers
-    .frameOptions().deny()
-    .contentTypeOptions().and()
-    .httpStrictTransportSecurity(hsts -> hsts
-        .maxAgeInSeconds(31536000)
-        .includeSubDomains(true)
-    )
-)
-```
-
-#### **4. Role-Based Authorization ✅ IMPLEMENTED**
-
-**Job Management** (Employers Only):
-
-```java
-// Validate user role before job operations
-if (!"EMPLOYER".equals(userType)) {
-    return ResponseEntity.status(403)
-        .body("Access denied. Only employers can manage jobs.");
-}
-```
-
-**Application Management** (Job Seekers Only):
-
-```java
-// Validate user role before application operations
-if (!"JOB_SEEKER".equals(userType)) {
-    return ResponseEntity.status(403)
-        .body("Access denied. Only job seekers can apply to jobs.");
-}
-```
-
-#### **5. CORS Security ✅ RESTRICTED**
-
-**Updated All Services**:
-
-```java
-// More restrictive CORS configuration
-configuration.setAllowedOriginPatterns(Arrays.asList(
-    "http://localhost:*", "https://localhost:*"
-));
-// Removed wildcard "*" origins
-```
-
-### **� Current Security Status**
-
-| Component                  | Previous Status     | Current Status       | Security Level |
-| -------------------------- | ------------------- | -------------------- | -------------- |
-| **Authentication Service** | ✅ Secure           | ✅ **ENHANCED**      | High           |
-| **Job Service**            | ❌ Vulnerable       | ✅ **SECURE**        | High           |
-| **Application Service**    | ⚠️ Partially Secure | ✅ **SECURE**        | High           |
-| **API Endpoints**          | ❌ Exposed          | ✅ **PROTECTED**     | High           |
-| **Dashboard Pages**        | ❌ Public           | ✅ **AUTHENTICATED** | High           |
-| **Role Authorization**     | ❌ Missing          | ✅ **IMPLEMENTED**   | High           |
-| **CORS Configuration**     | ⚠️ Permissive       | ✅ **RESTRICTED**    | Medium         |
-
-### **🛡️ Security Features Now Active**
-
-1. **Endpoint Protection**: All sensitive endpoints require authentication
-2. **Role-based Authorization**: Users can only perform actions allowed for their role
-3. **Input Validation**: Comprehensive validation on all user inputs
-4. **Security Headers**: HSTS, content type options, frame options
-5. **Restricted CORS**: Limited to localhost origins
-6. **Debug Protection**: Debug endpoints blocked in production
-7. **JWT Validation**: All requests validated with Authentication Service
-
-### **✅ PRODUCTION READINESS**
-
-The application is now **SECURE and PRODUCTION READY** with:
-
-- ✅ All critical vulnerabilities fixed
-- ✅ Comprehensive authentication and authorization
-- ✅ Role-based access control implemented
-- ✅ Security best practices applied
-- ✅ Input validation and error handling
-- ✅ Restricted CORS configuration
