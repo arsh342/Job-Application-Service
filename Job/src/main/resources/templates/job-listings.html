@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,68 +14,219 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           "Helvetica Neue", Arial, sans-serif;
-        background: #f8f9fa;
+        background: #f5f7fa;
         min-height: 100vh;
-        color: #212529;
+        color: #1f2937;
+        margin: 0;
+        padding: 0;
       }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-
-      .header {
-        background: white;
-        border-radius: 4px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e9ecef;
+      .layout {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        min-height: 100vh;
       }
 
-      .header h1 {
-        color: #495057;
-        font-size: 1.5rem;
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: white;
+        border-right: 1px solid #e5e9f2;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
         font-weight: 600;
       }
 
-      .nav-buttons {
+      .user-details h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 2px;
+      }
+
+      .user-details p {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .nav-menu {
+        padding: 16px 0;
+      }
+
+      .nav-item {
         display: flex;
-        gap: 10px;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: #6b7280;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .nav-item:hover {
+        background: #f8fafc;
+        color: #374151;
+      }
+
+      .nav-item.active {
+        background: #f0f9ff;
+        color: #0ea5e9;
+        border-right: 3px solid #0ea5e9;
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 32px;
+      }
+
+      .page-header {
+        margin-bottom: 32px;
+      }
+
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+      }
+
+      .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+      }
+
+      .container {
+        max-width: none;
+        margin: 0;
       }
 
       .btn {
-        padding: 8px 16px;
+        padding: 12px 24px;
         border: none;
-        border-radius: 4px;
+        border-radius: 8px;
         cursor: pointer;
-        font-weight: 500;
+        font-weight: 600;
         text-decoration: none;
         display: inline-block;
-        transition: background-color 0.15s ease-in-out;
-        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        font-size: 14px;
       }
 
       .btn-primary {
-        background: #495057;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
       }
 
       .btn-primary:hover {
-        background: #343a40;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
       }
 
       .btn-secondary {
-        background: #6c757d;
-        color: white;
+        background: #f8fafc;
+        color: #374151;
+        border: 1px solid #e5e9f2;
       }
 
       .btn-secondary:hover {
-        background: #5a6268;
+        background: #f1f5f9;
+        transform: translateY(-1px);
+      }
+
+      .btn-edit {
+        background: #10b981;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 12px;
+        margin-right: 8px;
+      }
+
+      .btn-edit:hover {
+        background: #059669;
+        transform: translateY(-1px);
+      }
+
+      .btn-delete {
+        background: #ef4444;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      .btn-delete:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+      }
+
+      .job-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
       }
 
       .filters {
@@ -254,11 +405,30 @@
         border-radius: 10px;
         padding: 15px;
         transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
       }
 
       .applicant-card:hover {
         background: rgba(102, 126, 234, 0.1);
         border-color: rgba(102, 126, 234, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      }
+
+      .applicant-card.status-hired {
+        background: rgba(72, 187, 120, 0.05);
+        border-color: rgba(72, 187, 120, 0.2);
+      }
+
+      .applicant-card.status-rejected {
+        background: rgba(245, 101, 101, 0.05);
+        border-color: rgba(245, 101, 101, 0.2);
+      }
+
+      .applicant-card.status-shortlisted {
+        background: rgba(237, 137, 54, 0.05);
+        border-color: rgba(237, 137, 54, 0.2);
       }
 
       .applicant-info {
@@ -266,6 +436,22 @@
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 10px;
+      }
+
+      .applicant-details {
+        flex: 1;
+      }
+
+      .applicant-name {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      .applicant-email {
+        color: #718096;
+        font-size: 14px;
       }
 
       .applicant-id {
@@ -286,12 +472,12 @@
         color: #3182ce;
       }
 
-      .status-reviewed {
+      .status-shortlisted {
         background: rgba(237, 137, 54, 0.1);
         color: #dd6b20;
       }
 
-      .status-accepted {
+      .status-hired {
         background: rgba(72, 187, 120, 0.1);
         color: #38a169;
       }
@@ -299,6 +485,69 @@
       .status-rejected {
         background: rgba(245, 101, 101, 0.1);
         color: #e53e3e;
+      }
+
+      .applicant-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        align-items: center;
+      }
+
+      .btn-accept {
+        background: #10b981;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-accept:hover {
+        background: #059669;
+        transform: translateY(-1px);
+      }
+
+      .btn-reject {
+        background: #ef4444;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-reject:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+      }
+
+      .btn-shortlist {
+        background: #f59e0b;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-shortlist:hover {
+        background: #d97706;
+        transform: translateY(-1px);
+      }
+
+      .application-actions-disabled {
+        opacity: 0.6;
+        pointer-events: none;
       }
 
       .applied-date {
@@ -391,44 +640,36 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>Job Listings & Applicants</h1>
-        <div class="nav-buttons">
-          <button
-            onclick="navigateToPage('/dashboard')"
-            class="btn btn-secondary"
-          >
-            Dashboard
-          </button>
-          <button
-            onclick="navigateToPage('/create-job')"
-            class="btn btn-primary"
-          >
-            Create New Job
-          </button>
-          <button onclick="logout()" class="btn btn-secondary">Logout</button>
-        </div>
-      </div>
+    <div class="layout">
+      <!-- Include shared sidebar -->
+      <div th:replace="shared/sidebar :: sidebar"></div>
 
-      <div id="statsSection" class="stats-grid" style="display: none">
-        <div class="stat-card">
-          <div class="stat-number" id="totalJobs">0</div>
-          <div class="stat-label">Total Jobs</div>
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="page-header">
+          <h1 class="page-title">Job Listings & Applicants</h1>
+          <p class="page-subtitle">Manage your job postings and review applications</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-number" id="totalApplications">0</div>
-          <div class="stat-label">Total Applications</div>
+
+        <div class="container">
+          <div id="statsSection" class="stats-grid" style="display: none">
+            <div class="stat-card">
+            <div class="stat-number" id="totalJobs">0</div>
+            <div class="stat-label">Total Jobs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="totalApplications">0</div>
+            <div class="stat-label">Total Applications</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="openJobs">0</div>
+            <div class="stat-label">Open Jobs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="avgApplications">0</div>
+            <div class="stat-label">Avg Applications/Job</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number" id="openJobs">0</div>
-          <div class="stat-label">Open Jobs</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="avgApplications">0</div>
-          <div class="stat-label">Avg Applications/Job</div>
-        </div>
-      </div>
 
       <div class="filters">
         <div class="filter-grid">
@@ -476,19 +717,14 @@
       </div>
     </div>
 
+    <!-- Include shared sidebar script -->
+    <div th:replace="shared/sidebar :: sidebar-script"></div>
+
     <script>
       let allJobs = [];
       let allApplications = {};
 
-      // JWT utility functions
-      function getJwtToken() {
-        return (
-          localStorage.getItem("authToken") ||
-          localStorage.getItem("jwtToken") ||
-          sessionStorage.getItem("authToken")
-        );
-      }
-
+      // Additional JWT utility functions (supplementing sidebar)
       function getAuthHeaders() {
         const token = getJwtToken();
         return token ? { Authorization: `Bearer ${token}` } : {};
@@ -522,22 +758,27 @@
         const token = getJwtToken();
         if (token) {
           removeJwtToken();
-          window.location.href = "http://localhost:8083/auth/login";
+          window.location.href = "http://localhost:8083/login";
         } else {
           // If not logged in, just redirect to login
-          window.location.href = "http://localhost:8083/auth/login";
+          window.location.href = "http://localhost:8083/login";
         }
       }
 
       // Data loading functions
       async function loadJobs() {
         try {
-          const response = await fetch("/api/jobs", {
-            headers: getAuthHeaders(),
+          const headers = getAuthHeaders();
+          
+          // Use my-jobs endpoint to get employer's jobs only
+          const response = await fetch("/api/jobs/my-jobs", {
+            headers: headers,
           });
 
           if (response.ok) {
             return await response.json();
+          } else if (response.status === 401) {
+            throw new Error("Authentication required. Please log in.");
           } else {
             throw new Error("Failed to load jobs");
           }
@@ -662,8 +903,15 @@
         const container = document.getElementById("jobsContainer");
 
         if (jobsToRender.length === 0) {
-          container.innerHTML =
-            '<div class="no-applicants">No jobs found matching your criteria.</div>';
+          container.innerHTML = `
+            <div class="no-applicants">
+              <h3>No jobs found</h3>
+              <p>You haven't posted any jobs yet or no jobs match your current filters.</p>
+              <button onclick="navigateToPage('/create-job')" class="btn btn-primary" style="margin-top: 16px;">
+                ➕ Create Your First Job
+              </button>
+            </div>
+          `;
           return;
         }
 
@@ -692,6 +940,14 @@
                             <div class="job-company">${escapeHtml(
                               job.company
                             )}</div>
+                            <div class="job-actions">
+                                <button onclick="editJob(${job.jobId})" class="btn btn-edit">
+                                    ✏️ Edit
+                                </button>
+                                <button onclick="deleteJob(${job.jobId})" class="btn btn-delete">
+                                    🗑️ Delete
+                                </button>
+                            </div>
                         </div>
                         <div class="job-status status-${statusClass}">${
           job.status
@@ -732,9 +988,10 @@
                             <div class="applicants-title">Applications</div>
                             <div class="applicant-count">${
                               applications.length
-                            } applicant${
-          applications.length !== 1 ? "s" : ""
-        }</div>
+                            } total</div>
+                        </div>
+                        <div class="status-summary" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                            ${createStatusSummary(applications)}
                         </div>
                         <div class="applicants-grid">
                             ${applicantCards}
@@ -746,12 +1003,54 @@
 
       function createApplicantCard(application) {
         const statusClass = application.status.toLowerCase();
+        const isProcessed = application.status === 'HIRED' || application.status === 'REJECTED';
+        
+        // Action buttons based on current status
+        let actionButtons = '';
+        if (application.status === 'APPLIED') {
+          actionButtons = `
+            <div class="applicant-actions">
+              <button onclick="updateApplicationStatus(${application.applicationId}, 'SHORTLISTED')" class="btn btn-shortlist">
+                📋 Shortlist
+              </button>
+              <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED')" class="btn btn-accept">
+                ✅ Accept
+              </button>
+              <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED')" class="btn btn-reject">
+                ❌ Reject
+              </button>
+            </div>
+          `;
+        } else if (application.status === 'SHORTLISTED') {
+          actionButtons = `
+            <div class="applicant-actions">
+              <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED')" class="btn btn-accept">
+                ✅ Hire
+              </button>
+              <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED')" class="btn btn-reject">
+                ❌ Reject
+              </button>
+            </div>
+          `;
+        } else {
+          actionButtons = `
+            <div class="applicant-actions application-actions-disabled">
+              <small style="color: #718096; font-style: italic;">No actions available</small>
+            </div>
+          `;
+        }
+
         return `
-                <div class="applicant-card">
+                <div class="applicant-card status-${statusClass}" onclick="viewApplicantDetails(${application.applicationId})">
                     <div class="applicant-info">
-                        <div class="applicant-id">Applicant #${
-                          application.applicantId
-                        }</div>
+                        <div class="applicant-details">
+                            <div class="applicant-name">${
+                              application.applicantName || 'Applicant #' + application.applicantId
+                            }</div>
+                            <div class="applicant-email">${
+                              application.applicantEmail || 'No email provided'
+                            }</div>
+                        </div>
                         <div class="application-status status-${statusClass}">${
           application.status
         }</div>
@@ -768,8 +1067,240 @@
                           }</div>`
                         : ""
                     }
+                    ${actionButtons}
                 </div>
             `;
+      }
+
+      function createStatusSummary(applications) {
+        const statusCounts = {
+          'APPLIED': 0,
+          'SHORTLISTED': 0,
+          'HIRED': 0,
+          'REJECTED': 0
+        };
+
+        applications.forEach(app => {
+          statusCounts[app.status] = (statusCounts[app.status] || 0) + 1;
+        });
+
+        const statusLabels = {
+          'APPLIED': { label: 'Applied', color: '#3182ce' },
+          'SHORTLISTED': { label: 'Shortlisted', color: '#dd6b20' },
+          'HIRED': { label: 'Hired', color: '#38a169' },
+          'REJECTED': { label: 'Rejected', color: '#e53e3e' }
+        };
+
+        return Object.entries(statusCounts)
+          .filter(([status, count]) => count > 0)
+          .map(([status, count]) => {
+            const { label, color } = statusLabels[status];
+            return `
+              <div style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${color};"></div>
+                <span style="color: #4a5568;">${label}: ${count}</span>
+              </div>
+            `;
+          }).join('');
+      }
+
+      // Job management functions
+      async function editJob(jobId) {
+        try {
+          const token = getJwtToken();
+          if (!token) {
+            alert('Please log in to edit jobs');
+            window.location.href = 'http://localhost:8083/login';
+            return;
+          }
+
+          // Navigate to create-job page with the job ID for editing
+          window.location.href = `/create-job?edit=${jobId}&token=${encodeURIComponent(token)}`;
+        } catch (error) {
+          console.error('Error navigating to edit job:', error);
+          alert('Failed to open job editor');
+        }
+      }
+
+      async function deleteJob(jobId) {
+        if (!confirm('Are you sure you want to delete this job? This action cannot be undone.')) {
+          return;
+        }
+
+        try {
+          const headers = getAuthHeaders();
+          headers['Content-Type'] = 'application/json';
+
+          const response = await fetch(`/api/jobs/${jobId}`, {
+            method: 'DELETE',
+            headers: headers
+          });
+
+          if (response.ok) {
+            alert('Job deleted successfully!');
+            // Refresh the job listings
+            loadAllData();
+          } else if (response.status === 401) {
+            alert('Authentication required. Please log in again.');
+            window.location.href = 'http://localhost:8083/login';
+          } else if (response.status === 403) {
+            alert('You are not authorized to delete this job.');
+          } else if (response.status === 404) {
+            alert('Job not found.');
+          } else {
+            const errorText = await response.text();
+            console.error('Delete error:', errorText);
+            alert(`Failed to delete job: ${errorText}`);
+          }
+        } catch (error) {
+          console.error('Error deleting job:', error);
+          alert('Failed to delete job. Please try again.');
+        }
+      }
+
+      // Application management functions
+      function viewApplicantDetails(applicationId) {
+        // Find the application details
+        let application = null;
+        for (const jobId in allApplications) {
+          const found = allApplications[jobId].find(app => app.applicationId === applicationId);
+          if (found) {
+            application = found;
+            break;
+          }
+        }
+
+        if (!application) {
+          alert('Application not found');
+          return;
+        }
+
+        // Create modal content
+        const modalContent = `
+          <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+            <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #2d3748;">Applicant Details</h2>
+                <button onclick="closeApplicantModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #718096;">&times;</button>
+              </div>
+              
+              <div style="margin-bottom: 16px;">
+                <strong style="color: #4a5568;">Name:</strong> ${application.applicantName || 'N/A'}
+              </div>
+              
+              <div style="margin-bottom: 16px;">
+                <strong style="color: #4a5568;">Email:</strong> ${application.applicantEmail || 'N/A'}
+              </div>
+              
+              <div style="margin-bottom: 16px;">
+                <strong style="color: #4a5568;">Application Status:</strong> 
+                <span class="status-badge status-${application.status.toLowerCase()}" style="margin-left: 8px;">${application.status}</span>
+              </div>
+              
+              <div style="margin-bottom: 16px;">
+                <strong style="color: #4a5568;">Applied Date:</strong> ${formatDate(application.appliedDate)}
+              </div>
+              
+              ${application.coverLetter ? `
+                <div style="margin-bottom: 16px;">
+                  <strong style="color: #4a5568;">Cover Letter:</strong>
+                  <div style="background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 8px; border-left: 4px solid #667eea;">
+                    ${escapeHtml(application.coverLetter)}
+                  </div>
+                </div>
+              ` : ''}
+              
+              <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+                ${application.status === 'APPLIED' ? `
+                  <button onclick="updateApplicationStatus(${application.applicationId}, 'SHORTLISTED'); closeApplicantModal();" 
+                          style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    📋 Shortlist
+                  </button>
+                  <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" 
+                          style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    ✅ Accept
+                  </button>
+                  <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" 
+                          style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    ❌ Reject
+                  </button>
+                ` : application.status === 'SHORTLISTED' ? `
+                  <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" 
+                          style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    ✅ Accept
+                  </button>
+                  <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" 
+                          style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    ❌ Reject
+                  </button>
+                ` : `
+                  <span style="color: #718096; font-style: italic;">No actions available for ${application.status.toLowerCase()} applications</span>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+      }
+
+      function closeApplicantModal() {
+        const modal = document.querySelector('[style*="position: fixed"][style*="z-index: 10000"]');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      async function updateApplicationStatus(applicationId, newStatus) {
+        const statusMessages = {
+          'SHORTLISTED': 'shortlist this application',
+          'HIRED': 'accept this application',
+          'REJECTED': 'reject this application'
+        };
+
+        const confirmMessage = `Are you sure you want to ${statusMessages[newStatus] || 'update this application'}?`;
+        
+        if (!confirm(confirmMessage)) {
+          return;
+        }
+
+        try {
+          const token = getJwtToken();
+          
+          if (!token) {
+            alert('Authentication required. Please log in again.');
+            window.location.href = 'http://localhost:8083/login';
+            return;
+          }
+
+          const headers = getAuthHeaders();
+          headers['Content-Type'] = 'application/json';
+
+          const response = await fetch(`http://localhost:8082/api/applications/${applicationId}/status`, {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify({ status: newStatus })
+          });
+
+          if (response.ok) {
+            alert(`Application ${newStatus.toLowerCase()} successfully!`);
+            loadAllData();
+          } else if (response.status === 401) {
+            alert('Authentication required. Please log in again.');
+            window.location.href = 'http://localhost:8083/login';
+          } else if (response.status === 403) {
+            alert('You are not authorized to update this application.');
+          } else if (response.status === 404) {
+            alert('Application not found.');
+          } else {
+            const errorText = await response.text();
+            alert(`Failed to update application: ${errorText}`);
+          }
+        } catch (error) {
+          console.error('Error updating application status:', error);
+          alert('Failed to update application. Please try again.');
+        }
       }
 
       // Utility functions
@@ -813,10 +1344,31 @@
           );
         }
 
+        // Update user info in sidebar
+        const userName = localStorage.getItem("userName");
+        const userEmail = localStorage.getItem("userEmail");
+        const token = getJwtToken();
+        
+        if (userName) {
+          const userNameElement = document.getElementById("userName");
+          const userAvatar = document.getElementById("userAvatar");
+          
+          if (userNameElement) {
+            userNameElement.textContent = userName;
+          }
+          
+          if (userAvatar) {
+            userAvatar.textContent = userName.charAt(0).toUpperCase();
+          }
+        }
+
         // Load data regardless of authentication status
         // since job listings are public
         loadAllData();
       });
     </script>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

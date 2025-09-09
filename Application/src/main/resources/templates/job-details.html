@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Portal - Job Details</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background: #f5f7fa;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: white;
+        border-right: 1px solid #e5e9f2;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .user-details h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 2px;
+      }
+
+      .user-details p {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .nav-menu {
+        padding: 16px 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: #6b7280;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .nav-item:hover {
+        background: #f8fafc;
+        color: #374151;
+      }
+
+      .nav-item.active {
+        background: #f0f9ff;
+        color: #0ea5e9;
+        border-right: 3px solid #0ea5e9;
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 32px;
+      }
+
+      .page-header {
+        margin-bottom: 32px;
+      }
+
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+      }
+
+      .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+      }
+
+      .breadcrumb {
+        margin-bottom: 24px;
+      }
+
+      .breadcrumb a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .breadcrumb span {
+        color: #6b7280;
+        margin: 0 8px;
+      }
+
+      /* Job Details */
+      .job-details-container {
+        max-width: 900px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e9f2;
+        overflow: hidden;
+      }
+
+      .job-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 32px;
+        color: white;
+      }
+
+      .job-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .job-company {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        margin-bottom: 16px;
+      }
+
+      .job-meta {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+        opacity: 0.9;
+      }
+
+      .job-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .job-content {
+        padding: 32px;
+      }
+
+      .job-section {
+        margin-bottom: 32px;
+      }
+
+      .job-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .job-description {
+        line-height: 1.6;
+        color: #374151;
+      }
+
+      .job-requirements ul,
+      .job-benefits ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .job-requirements li,
+      .job-benefits li {
+        padding: 8px 0;
+        padding-left: 24px;
+        position: relative;
+        color: #374151;
+        line-height: 1.5;
+      }
+
+      .job-requirements li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #059669;
+        font-weight: 600;
+      }
+
+      .job-benefits li:before {
+        content: "★";
+        position: absolute;
+        left: 0;
+        color: #f59e0b;
+        font-weight: 600;
+      }
+
+      .salary-range {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .salary-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0369a1;
+      }
+
+      .apply-section {
+        background: #f8fafc;
+        border-top: 1px solid #e5e9f2;
+        padding: 24px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .apply-info {
+        flex: 1;
+      }
+
+      .apply-info h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+      }
+
+      .apply-info p {
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-secondary {
+        background: #6b7280;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #4b5563;
+      }
+
+      .loading {
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .main-content {
+          margin-left: 0;
+          padding: 16px;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .job-header {
+          padding: 24px 20px;
+        }
+
+        .job-content {
+          padding: 24px 20px;
+        }
+
+        .apply-section {
+          padding: 20px;
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Include shared sidebar -->
+      <div th:replace="shared/sidebar :: sidebar"></div>
+
+      <div class="main-content">
+        <div class="breadcrumb">
+          <a href="/dashboard">Dashboard</a>
+          <span>></span>
+          <span>Job Details</span>
+        </div>
+
+        <div id="errorContainer"></div>
+
+        <div class="job-details-container" id="jobDetailsContainer">
+          <div
+            class="loading-placeholder"
+            id="loadingPlaceholder"
+            style="padding: 60px; text-align: center; color: #6b7280"
+          >
+            Loading job details...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentJobId = null;
+      let currentJob = null;
+
+      // JWT utility functions (additional to sidebar)
+      function getAuthHeaders() {
+        const token = getJwtToken();
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      }
+    </script>
+    <div th:replace="shared/sidebar :: sidebar-script"></div>
+    <script>
+      // Get job ID from URL parameters
+      function getJobIdFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get("id");
+      }
+
+      // Load job details
+      async function loadJobDetails() {
+        currentJobId = getJobIdFromURL();
+
+        if (!currentJobId) {
+          showError("No job ID provided");
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `http://localhost:8081/api/jobs/${currentJobId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+            }
+          );
+
+          if (response.ok) {
+            currentJob = await response.json();
+            displayJobDetails(currentJob);
+          } else if (response.status === 401) {
+            showError("Please log in to view job details");
+            setTimeout(() => {
+              window.location.href = "http://localhost:8083/login";
+            }, 2000);
+          } else {
+            showError("Failed to load job details");
+          }
+        } catch (error) {
+          console.error("Error loading job details:", error);
+          showError("Error loading job details: " + error.message);
+        }
+      }
+
+      function displayJobDetails(job) {
+        const container = document.getElementById("jobDetailsContainer");
+
+        container.innerHTML = `
+          <div class="job-header">
+            <h1 class="job-title">${job.title}</h1>
+            <div class="job-company">${job.company}</div>
+            <div class="job-meta">
+              <div class="job-meta-item">
+                <span>📍</span>
+                <span>${job.location}</span>
+              </div>
+              <div class="job-meta-item">
+                <span>📅</span>
+                <span>Posted ${formatDate(job.postedDate)}</span>
+              </div>
+              <div class="job-meta-item">
+                <span>⏰</span>
+                <span>${job.jobType || "Full-time"}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-content">
+            ${
+              job.salaryMin || job.salaryMax
+                ? `
+              <div class="salary-range">
+                <span>💰</span>
+                <span class="salary-amount">${formatSalary(
+                  job.salaryMin,
+                  job.salaryMax
+                )}</span>
+                <span>per year</span>
+              </div>
+            `
+                : ""
+            }
+
+            <div class="job-section">
+              <h2 class="section-title">Job Description</h2>
+              <div class="job-description">
+                <p>${job.description || "No description available"}</p>
+              </div>
+            </div>
+
+            ${
+              job.requirements
+                ? `
+              <div class="job-section">
+                <h2 class="section-title">Requirements</h2>
+                <div class="job-requirements">
+                  <ul>
+                    ${job.requirements
+                      .split(",")
+                      .map((req) => `<li>${req.trim()}</li>`)
+                      .join("")}
+                  </ul>
+                </div>
+              </div>
+            `
+                : ""
+            }
+
+            ${
+              job.benefits
+                ? `
+              <div class="job-section">
+                <h2 class="section-title">Benefits</h2>
+                <div class="job-benefits">
+                  <ul>
+                    ${job.benefits
+                      .split(",")
+                      .map((benefit) => `<li>${benefit.trim()}</li>`)
+                      .join("")}
+                  </ul>
+                </div>
+              </div>
+            `
+                : ""
+            }
+          </div>
+
+          <div class="apply-section">
+            <div class="apply-info">
+              <h3>Ready to apply?</h3>
+              <p>Submit your application for this position</p>
+            </div>
+            <button class="btn btn-primary" onclick="applyToJob(${job.jobId})">
+              Apply for this Job
+            </button>
+          </div>
+        `;
+      }
+
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      function formatSalary(salaryMin, salaryMax) {
+        if (salaryMin && salaryMax) {
+          return `$${salaryMin.toLocaleString()} - $${salaryMax.toLocaleString()}`;
+        } else if (salaryMin) {
+          return `$${salaryMin.toLocaleString()}+`;
+        } else if (salaryMax) {
+          return `Up to $${salaryMax.toLocaleString()}`;
+        } else {
+          return "Competitive salary";
+        }
+      }
+
+      async function applyToJob(jobId) {
+        if (!jobId) {
+          alert("Invalid job ID");
+          return;
+        }
+
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = "Applying...";
+        btn.classList.add("loading");
+
+        try {
+          const response = await fetch("/api/applications", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+            body: JSON.stringify({
+              jobId: jobId,
+              coverLetter: "Application submitted via job details page",
+            }),
+          });
+
+          if (response.ok) {
+            btn.textContent = "✓ Applied Successfully";
+            btn.style.background = "#059669";
+            btn.disabled = true;
+
+            setTimeout(() => {
+              navigateToPage("/my-applications");
+            }, 1500);
+          } else if (response.status === 401) {
+            alert("Please log in to apply for jobs");
+            window.location.href = "http://localhost:8083/login";
+          } else {
+            const errorText = await response.text();
+            alert("Failed to apply: " + errorText);
+          }
+        } catch (error) {
+          console.error("Error applying to job:", error);
+          alert("Error applying to job: " + error.message);
+        } finally {
+          if (btn.textContent.includes("Applying")) {
+            btn.textContent = originalText;
+            btn.classList.remove("loading");
+          }
+        }
+      }
+
+      function showError(message) {
+        const errorContainer = document.getElementById("errorContainer");
+        errorContainer.innerHTML = `
+          <div class="error-message">
+            ${message}
+          </div>
+        `;
+
+        // Hide loading placeholder
+        const loadingPlaceholder =
+          document.getElementById("loadingPlaceholder");
+        if (loadingPlaceholder) {
+          loadingPlaceholder.style.display = "none";
+        }
+      }
+
+      // Initialize page
+      window.addEventListener("load", async function () {
+        // Check if token is passed via URL parameter and store it
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get("token");
+
+        if (urlToken) {
+          localStorage.setItem("authToken", urlToken);
+          localStorage.setItem("jwtToken", urlToken);
+
+          // Clean URL by removing token parameter
+          const cleanUrl = new URL(window.location);
+          cleanUrl.searchParams.delete("token");
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+
+        // Check if we have a JWT token
+        const token = getJwtToken();
+        if (!token) {
+          showError("Please log in to view job details");
+          setTimeout(() => {
+            window.location.href = "http://localhost:8083/login";
+          }, 2000);
+          return;
+        }
+
+        // Load job details
+        await loadJobDetails();
+      });
+    </script>
+  </body>
+</html>

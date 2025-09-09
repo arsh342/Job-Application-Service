@@ -19,4 +19,5 @@ public class ApplicationDto {
     private String applicantEmail;
     private String status;
     private LocalDate appliedDate;
+    private String coverLetter;
 }

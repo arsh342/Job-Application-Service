@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,29 +14,156 @@
       }
 
       body {
-        background: #f8f9fa;
+        background: #f5f7fa;
         min-height: 100vh;
-        padding: 20px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: white;
+        border-right: 1px solid #e5e9f2;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .user-details h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 2px;
+      }
+
+      .user-details p {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .nav-menu {
+        padding: 16px 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: #6b7280;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .nav-item:hover {
+        background: #f8fafc;
+        color: #374151;
+      }
+
+      .nav-item.active {
+        background: #f0f9ff;
+        color: #0ea5e9;
+        border-right: 3px solid #0ea5e9;
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 32px;
+      }
+
+      .page-header {
+        margin-bottom: 32px;
+      }
+
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+      }
+
+      .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
       }
 
       .container {
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: none;
+        margin: 0;
         background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e9ecef;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e9f2;
         overflow: hidden;
-      }
-
-      .header {
-        background: #495057;
-        color: white;
-        padding: 20px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #343a40;
       }
 
       .header h1 {
@@ -62,133 +189,162 @@
       }
 
       .btn-primary {
-        background: rgba(255, 255, 255, 0.1);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s ease;
       }
 
       .btn-primary:hover {
-        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
       }
 
       .search-filters {
-        background: #f8f9fa;
-        padding: 25px 30px;
-        border-bottom: 1px solid #e9ecef;
+        background: #f8fafc;
+        padding: 32px;
+        border-bottom: 1px solid #e5e9f2;
       }
 
       .filter-group {
         display: inline-block;
-        margin-right: 20px;
-        margin-bottom: 10px;
+        margin-right: 24px;
+        margin-bottom: 16px;
       }
 
       .filter-group label {
         display: block;
-        margin-bottom: 0.5rem;
-        color: #495057;
-        font-weight: 500;
-        font-size: 0.875rem;
+        margin-bottom: 8px;
+        color: #374151;
+        font-weight: 600;
+        font-size: 14px;
       }
 
       input,
       select {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        font-size: 0.875rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        background-color: #fff;
+        padding: 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background-color: white;
+        min-width: 160px;
       }
 
       input:focus,
       select:focus {
         outline: none;
-        border-color: #495057;
-        box-shadow: 0 0 0 0.2rem rgba(73, 80, 87, 0.25);
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
 
       .job-card {
         background: white;
-        border: none;
-        padding: 25px 30px;
+        border: 1px solid #e5e9f2;
+        padding: 32px;
         margin: 0;
-        border-bottom: 1px solid #e9ecef;
-        transition: background-color 0.15s ease-in-out;
+        border-bottom: 1px solid #e5e9f2;
+        transition: all 0.2s ease;
+        border-radius: 0;
       }
 
       .job-card:hover {
-        background: #f8f9fa;
+        background: #f8fafc;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
       .job-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
       }
 
       .job-title {
-        margin: 0 0 5px 0;
-        color: #495057;
-        font-size: 1.25rem;
-        font-weight: 600;
+        margin: 0 0 8px 0;
+        color: #1f2937;
+        font-size: 20px;
+        font-weight: 700;
       }
 
       .job-company {
-        color: #6c757d;
-        margin-bottom: 10px;
+        color: #6b7280;
+        margin-bottom: 12px;
         font-weight: 500;
-        font-size: 0.875rem;
+        font-size: 14px;
       }
 
       .job-details {
-        margin: 15px 0;
+        margin: 20px 0;
         line-height: 1.6;
       }
 
       .job-details p {
-        margin: 5px 0;
-        color: #6c757d;
-        font-size: 0.875rem;
+        margin: 8px 0;
+        color: #6b7280;
+        font-size: 14px;
       }
 
       .job-actions {
-        margin-top: 20px;
+        margin-top: 24px;
         display: flex;
-        gap: 10px;
+        gap: 12px;
       }
 
       .apply-btn {
-        background: #28a745;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
-        padding: 8px 16px;
+        padding: 12px 20px;
         border: none;
-        border-radius: 4px;
+        border-radius: 8px;
         cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.15s ease-in-out;
-        font-size: 0.875rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 14px;
       }
 
       .apply-btn:hover {
-        background: #218838;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+      }
+
+      .view-details-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        margin-right: 8px;
+      }
+
+      .view-details-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
       }
 
       .view-btn {
-        background: #007bff;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 8px 16px;
+        padding: 12px 20px;
         border: none;
-        border-radius: 4px;
+        border-radius: 8px;
         cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.15s ease-in-out;
-        font-size: 0.875rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 14px;
       }
 
       .view-btn:hover {
-        background: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
       }
 
       .applied-badge {
@@ -259,87 +415,81 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>Browse Jobs</h1>
-        <div class="header-buttons">
-          <button
-            class="btn btn-primary"
-            onclick="navigateToPage('/dashboard')"
-          >
-            Dashboard
-          </button>
-          <button
-            class="btn btn-primary"
-            onclick="navigateToPage('/my-applications')"
-          >
-            My Applications
-          </button>
-          <button class="btn btn-primary" onclick="logout()">Logout</button>
-        </div>
-      </div>
+    <div class="layout">
+      <!-- Include shared sidebar -->
+      <div th:replace="shared/sidebar :: sidebar"></div>
 
-      <!-- Search and Filter Section -->
-      <div class="search-filters">
-        <div class="filter-group">
-          <label>Search:</label>
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Job title, company, or keywords..."
-            onkeyup="filterJobs()"
-          />
+      <div class="main-content">
+        <div class="page-header">
+          <h1 class="page-title">Browse Jobs</h1>
+          <p class="page-subtitle">Discover your next career opportunity</p>
         </div>
-        <div class="filter-group">
-          <label>Location:</label>
-          <input
-            type="text"
-            id="locationFilter"
-            placeholder="City or state..."
-            onkeyup="filterJobs()"
-          />
-        </div>
-        <div class="filter-group">
-          <label>Company:</label>
-          <input
-            type="text"
-            id="companyFilter"
-            placeholder="Company name..."
-            onkeyup="filterJobs()"
-          />
-        </div>
-        <div class="filter-group">
-          <label>Salary Range:</label>
-          <select id="salaryFilter" onchange="filterJobs()">
-            <option value="">Any</option>
-            <option value="0-30000">$0 - $30,000</option>
-            <option value="30000-50000">$30,000 - $50,000</option>
-            <option value="50000-75000">$50,000 - $75,000</option>
-            <option value="75000-100000">$75,000 - $100,000</option>
-            <option value="100000+">$100,000+</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <button class="btn btn-primary" onclick="clearFilters()">
-            Clear All
-          </button>
-        </div>
-      </div>
 
-      <!-- Jobs List Section -->
-      <div class="content-area">
+        <div class="content-area">
+          <!-- Search and Filter Section -->
+          <!-- <div class="search-filters">
+          <div class="filter-group">
+            <label>Search:</label>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Job title, company, or keywords..."
+              onkeyup="filterJobs()"
+            />
+          </div>
+          <div class="filter-group">
+            <label>Location:</label>
+            <input
+              type="text"
+              id="locationFilter"
+              placeholder="City or state..."
+              onkeyup="filterJobs()"
+            />
+          </div>
+          <div class="filter-group">
+            <label>Company:</label>
+            <input
+              type="text"
+              id="companyFilter"
+              placeholder="Company name..."
+              onkeyup="filterJobs()"
+            />
+          </div>
+          <div class="filter-group">
+            <label>Salary Range:</label>
+            <select id="salaryFilter" onchange="filterJobs()">
+              <option value="">Any</option>
+              <option value="0-30000">$0 - $30,000</option>
+              <option value="30000-50000">$30,000 - $50,000</option>
+              <option value="50000-75000">$50,000 - $75,000</option>
+              <option value="75000-100000">$75,000 - $100,000</option>
+              <option value="100000+">$100,000+</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <button class="btn btn-primary" onclick="clearFilters()">
+              Clear All
+            </button>
+          </div>
+        </div> -->
+
+        <!-- Jobs List Section -->
         <div id="jobsList">
           <!-- Jobs will be dynamically loaded here -->
         </div>
-      </div>
 
-      <!-- Pagination -->
-      <div class="pagination">
-        <div id="paginationControls">
-          <!-- Pagination controls will be generated here -->
+        <!-- Pagination -->
+        <div class="pagination">
+          <div id="paginationControls">
+            <!-- Pagination controls will be generated here -->
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Include shared sidebar script -->
+    <div th:replace="shared/sidebar :: sidebar-script"></div>
+
     <script>
       let allJobs = [];
       let filteredJobs = [];
@@ -382,6 +532,24 @@
       }
 
       window.addEventListener("load", async function () {
+        // Check if token is passed via URL parameter and store it
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get("token");
+
+        if (urlToken) {
+          // Store token from URL parameter
+          localStorage.setItem("authToken", urlToken);
+          localStorage.setItem("jwtToken", urlToken); // Keep for compatibility
+          console.log("Token stored from URL parameter");
+          
+          // Clean URL by removing token parameter
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+        }
+
         // Load jobs and applications
         await loadJobs();
         await loadAppliedJobs();
@@ -486,6 +654,7 @@
                         </div>
                         
                         <div class="job-actions">
+                            <button onclick="viewJobDetails(${job.jobId})" class="view-details-btn">View Details</button>
                             ${
                               !isApplied
                                 ? `<button onclick="applyNow(${job.jobId})" class="apply-btn">Apply Now</button>`
@@ -594,7 +763,17 @@
       }
 
       function viewJobDetails(jobId) {
-        window.open(`http://localhost:8081/job-details?id=${jobId}`, "_blank");
+        // Navigate to job details page with authentication token
+        const token = getJwtToken();
+        if (token) {
+          window.open(
+            `/job-details?id=${jobId}&token=${encodeURIComponent(token)}`,
+            "_blank"
+          );
+        } else {
+          alert("Please log in to view job details");
+          window.location.href = "http://localhost:8083/login";
+        }
       }
 
       function applyNow(jobId) {

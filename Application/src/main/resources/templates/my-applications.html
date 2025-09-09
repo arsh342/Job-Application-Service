@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,29 +13,193 @@
       }
 
       body {
-        background: #f8f9fa;
+        background: #f5f7fa;
         min-height: 100vh;
-        padding: 20px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: white;
+        border-right: 1px solid #e5e9f2;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .user-details h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 2px;
+      }
+
+      .user-details p {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .nav-menu {
+        padding: 16px 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: #6b7280;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .nav-item:hover {
+        background: #f8fafc;
+        color: #374151;
+      }
+
+      .nav-item.active {
+        background: #f0f9ff;
+        color: #0ea5e9;
+        border-right: 3px solid #0ea5e9;
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 32px;
+      }
+
+      .page-header {
+        margin-bottom: 32px;
+      }
+
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+      }
+
+      .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+      }
+
+      .container {
+        max-width: none;
+        margin: 0;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e9f2;
+        overflow: hidden;
+      }
+
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: white;
+        color: #1f2937;
+        padding: 24px 0;
+        border-bottom: 1px solid #e5e9f2;
+        width: 100%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .main-content {
+        width: 100%;
+        min-height: calc(100vh - 80px);
+        padding: 40px 32px;
       }
 
       .container {
         max-width: 1200px;
         margin: 0 auto;
         background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e9ecef;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e9f2;
         overflow: hidden;
-      }
-
-      .header {
-        background: #495057;
-        color: white;
-        padding: 20px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #343a40;
       }
 
       .header h1 {
@@ -61,22 +225,33 @@
       }
 
       .btn-primary {
-        background: rgba(255, 255, 255, 0.1);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s ease;
       }
 
       .btn-primary:hover {
-        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
       }
 
       .btn-secondary {
-        background: #007bff;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s ease;
       }
 
       .btn-secondary:hover {
-        background: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
       }
 
       .content-area {
@@ -313,126 +488,77 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>My Applications</h1>
-        <div class="header-buttons">
-          <button class="btn btn-primary" onclick="navigateToPage('/browse-jobs')">Browse Jobs</button>
-          <button class="btn btn-primary" onclick="navigateToPage('/dashboard')">Dashboard</button>
-          <button class="btn btn-primary" onclick="navigateToPage('/profile')">Profile</button>
-          <button class="btn btn-primary" onclick="logout()">Logout</button>
-        </div>
-      </div>
+    <div class="layout">
+      <!-- Include shared sidebar -->
+      <div th:replace="shared/sidebar :: sidebar"></div>
 
-      <div class="stats-section">
-        <h3>Application Statistics</h3>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-number" id="totalApplications">0</div>
-            <div class="stat-label">Total Applications</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number" id="pendingApplications">0</div>
-            <div class="stat-label">Pending</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number" id="shortlistedApplications">0</div>
-            <div class="stat-label">Shortlisted</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number" id="rejectedApplications">0</div>
-            <div class="stat-label">Rejected</div>
-          </div>
+      <div class="main-content">
+        <div class="page-header">
+          <h1 class="page-title">My Applications</h1>
+          <p class="page-subtitle">Track your job application progress</p>
         </div>
-      </div>
 
-      <!-- Filter Section -->
-      <div class="filter-section">
-        <div class="filter-group">
-          <label>Filter by Status:</label>
-          <select id="statusFilter" onchange="filterApplications()">
-            <option value="">All Applications</option>
-            <option value="APPLIED">Applied</option>
-            <option value="SHORTLISTED">Shortlisted</option>
-            <option value="REJECTED">Rejected</option>
-            <option value="HIRED">Hired</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Search:</label>
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Job title or company..."
-            onkeyup="filterApplications()"
-          />
-        </div>
-        <div class="filter-group">
-          <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
-        </div>
-      </div>
+        <div class="container">
+          <div class="stats-section">
+            <h3>Application Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-number" id="totalApplications">0</div>
+                <div class="stat-label">Total Applications</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="pendingApplications">0</div>
+                <div class="stat-label">Pending</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="shortlistedApplications">0</div>
+                <div class="stat-label">Shortlisted</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number" id="rejectedApplications">0</div>
+                <div class="stat-label">Rejected</div>
+              </div>
+            </div>
+          </div>
 
-      <!-- Applications List -->
-      <div class="content-area">
-        <div id="applicationsList">
-          <!-- Applications will be dynamically loaded here -->
-        </div>
-      </div>
-    </div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number" id="shortlistedApplications">0</div>
-          <div class="stat-label">Shortlisted</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number" id="hiredApplications">0</div>
-          <div class="stat-label">Hired</div>
+          <!-- Filter Section -->
+          <!-- <div class="filter-section">
+            <div class="filter-group">
+              <label>Filter by Status:</label>
+              <select id="statusFilter" onchange="filterApplications()">
+                <option value="">All Applications</option>
+                <option value="APPLIED">Applied</option>
+                <option value="SHORTLISTED">Shortlisted</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="HIRED">Hired</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Search:</label>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Job title or company..."
+                onkeyup="filterApplications()"
+              />
+            </div>
+            <div class="filter-group">
+              <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+            </div>
+          </div> -->
+
+          <!-- Applications List -->
+          <div class="content-area">
+            <div id="applicationsList">
+              <!-- Applications will be dynamically loaded here -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="filter-section">
-      <h3>Filter Applications</h3>
-      <div class="filter-group">
-        <select id="statusFilter" onchange="filterApplications()">
-          <option value="">All Status</option>
-          <option value="APPLIED">Applied</option>
-          <option value="SHORTLISTED">Shortlisted</option>
-          <option value="REJECTED">Rejected</option>
-          <option value="HIRED">Hired</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <input
-          type="text"
-          id="jobTitleFilter"
-          placeholder="Job title..."
-          onkeyup="filterApplications()"
-        />
-      </div>
-      <div class="filter-group">
-        <input
-          type="text"
-          id="companyFilter"
-          placeholder="Company..."
-          onkeyup="filterApplications()"
-        />
-      </div>
-      <div class="filter-group">
-        <select id="sortBy" onchange="filterApplications()">
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="status">By Status</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <button onclick="clearFilters()">Clear Filters</button>
-      </div>
-    </div>
-
-    <div id="applicationsList">
-      <!-- Applications will be loaded here -->
-    </div>
+    <!-- Include shared sidebar script -->
+    <div th:replace="shared/sidebar :: sidebar-script"></div>
 
     <script>
       let allApplications = [];
@@ -473,12 +599,24 @@
       }
 
       window.addEventListener("load", async function () {
+        // Check if we have a JWT token, if not redirect to login
+        const token = getJwtToken();
+        if (!token) {
+          console.log("No JWT token found, redirecting to login");
+          alert("Please log in first to view your applications.");
+          window.location.href = "http://localhost:8083/login";
+          return;
+        }
+        
+        console.log("JWT token found, loading applications...");
         // Load applications
         await loadApplications();
       });
 
       async function loadApplications() {
         try {
+          console.log("Loading applications...");
+          console.log("Auth headers:", getAuthHeaders());
           const response = await fetch("/api/applications/my-applications", {
             method: "GET",
             headers: {
@@ -486,8 +624,12 @@
               ...getAuthHeaders(),
             },
           });
+          
+          console.log("Response status:", response.status);
+          
           if (response.ok) {
             allApplications = await response.json();
+            console.log("Loaded applications:", allApplications);
 
             // Load job details for each application
             for (let application of allApplications) {
@@ -505,7 +647,8 @@
               } catch (error) {
                 console.error(
                   "Error loading job details for application:",
-                  application.applicationId
+                  application.applicationId,
+                  error
                 );
                 application.jobTitle = "Job details unavailable";
                 application.companyName = "Unknown";
@@ -516,12 +659,36 @@
             displayApplications();
             updateStats();
           } else {
+            const errorText = await response.text();
+            console.error("Failed to load applications:", response.status, errorText);
+            
+            if (response.status === 401) {
+              alert("Your session has expired. Please log in again.");
+              window.location.href = "http://localhost:8083/login";
+              return;
+            }
+            
             document.getElementById("applicationsList").innerHTML =
-              '<div class="no-applications">Failed to load applications</div>';
+              `<div class="no-applications" style="background: #ffebee; color: #d32f2f; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3>Error Loading Applications</h3>
+                <p>Status: ${response.status} - ${errorText}</p>
+                <details style="margin-top: 10px;">
+                  <summary>Debug Information</summary>
+                  <pre style="background: #f5f5f5; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 12px;">
+Token: ${getJwtToken() ? getJwtToken().substring(0, 50) + "..." : "No token found"}
+Headers: ${JSON.stringify(getAuthHeaders(), null, 2)}
+Error Response: ${errorText}
+                  </pre>
+                </details>
+                <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                  Retry
+                </button>
+              </div>`;
           }
         } catch (error) {
+          console.error("Error loading applications:", error);
           document.getElementById("applicationsList").innerHTML =
-            '<div class="no-applications">Error loading applications</div>';
+            `<div class="no-applications">Error loading applications: ${error.message}</div>`;
         }
       }
 
@@ -612,26 +779,28 @@
         const shortlisted = allApplications.filter(
           (app) => app.status === "SHORTLISTED"
         ).length;
-        const hired = allApplications.filter(
-          (app) => app.status === "HIRED"
+        const rejected = allApplications.filter(
+          (app) => app.status === "REJECTED"
         ).length;
 
         document.getElementById("totalApplications").textContent = total;
         document.getElementById("pendingApplications").textContent = pending;
         document.getElementById("shortlistedApplications").textContent =
           shortlisted;
-        document.getElementById("hiredApplications").textContent = hired;
+        document.getElementById("rejectedApplications").textContent = rejected;
       }
 
       function filterApplications() {
-        const statusFilter = document.getElementById("statusFilter").value;
-        const jobTitleFilter = document
-          .getElementById("jobTitleFilter")
-          .value.toLowerCase();
-        const companyFilter = document
-          .getElementById("companyFilter")
-          .value.toLowerCase();
-        const sortBy = document.getElementById("sortBy").value;
+        // Check if filter elements exist before trying to access them
+        const statusFilterElement = document.getElementById("statusFilter");
+        const jobTitleFilterElement = document.getElementById("jobTitleFilter");
+        const companyFilterElement = document.getElementById("companyFilter");
+        const sortByElement = document.getElementById("sortBy");
+
+        const statusFilter = statusFilterElement ? statusFilterElement.value : "";
+        const jobTitleFilter = jobTitleFilterElement ? jobTitleFilterElement.value.toLowerCase() : "";
+        const companyFilter = companyFilterElement ? companyFilterElement.value.toLowerCase() : "";
+        const sortBy = sortByElement ? sortByElement.value : "newest";
 
         // Filter applications
         filteredApplications = allApplications.filter((application) => {
@@ -675,10 +844,16 @@
       }
 
       function clearFilters() {
-        document.getElementById("statusFilter").value = "";
-        document.getElementById("jobTitleFilter").value = "";
-        document.getElementById("companyFilter").value = "";
-        document.getElementById("sortBy").value = "newest";
+        const statusFilterElement = document.getElementById("statusFilter");
+        const jobTitleFilterElement = document.getElementById("jobTitleFilter");
+        const companyFilterElement = document.getElementById("companyFilter");
+        const sortByElement = document.getElementById("sortBy");
+
+        if (statusFilterElement) statusFilterElement.value = "";
+        if (jobTitleFilterElement) jobTitleFilterElement.value = "";
+        if (companyFilterElement) companyFilterElement.value = "";
+        if (sortByElement) sortByElement.value = "newest";
+        
         filteredApplications = [...allApplications];
         displayApplications();
       }
@@ -718,5 +893,7 @@
         window.location.href = "/login";
       }
     </script>
+      </div>
+    </div>
   </body>
 </html>

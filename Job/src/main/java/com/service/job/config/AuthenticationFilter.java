@@ -36,15 +36,16 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        String method = request.getMethod();
         
         // Skip authentication for public endpoints
-        if (isPublicEndpoint(path)) {
-            log.debug("Public endpoint accessed: {}", path);
+        if (isPublicEndpoint(path) || isPublicGetEndpoint(path, method)) {
+            log.debug("Public endpoint accessed: {} {}", method, path);
             filterChain.doFilter(request, response);
             return;
         }
 
-        log.debug("Authentication required for path: {}", path);
+        log.debug("Authentication required for path: {} {}", method, path);
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -110,9 +111,20 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                path.equals("/profile") ||
                path.equals("/job-listings") ||
                path.equals("/debug") ||
-               path.equals("/api/jobs") || // GET /api/jobs for browsing
-               path.equals("/api/jobs/all") || // GET /api/jobs/all for browsing all jobs
-               (path.startsWith("/api/jobs/") && path.matches("/api/jobs/\\d+$")); // GET /api/jobs/{id} for job details
+               path.equals("/api/jobs/all"); // GET /api/jobs/all for browsing all jobs
+    }
+
+    private boolean isPublicGetEndpoint(String path, String method) {
+        // Only allow GET requests to these endpoints as public
+        if ("GET".equalsIgnoreCase(method)) {
+            if (path.equals("/api/jobs")) {
+                return true; // GET /api/jobs for browsing
+            }
+            if (path.startsWith("/api/jobs/") && path.matches("/api/jobs/\\d+$")) {
+                return true; // GET /api/jobs/{id} for job details
+            }
+        }
+        return false;
     }
 
     private UserValidationResponse validateTokenWithAuthService(String token) throws Exception {

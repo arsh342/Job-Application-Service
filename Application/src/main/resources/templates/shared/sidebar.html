@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <style>
+      /* Sidebar Styles */
+      .sidebar {
+        width: 280px;
+        background: white;
+        border-right: 1px solid #e5e9f2;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .user-details h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 2px;
+      }
+
+      .user-details p {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .nav-menu {
+        padding: 16px 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: #6b7280;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .nav-item:hover {
+        background: #f8fafc;
+        color: #374151;
+      }
+
+      .nav-item.active {
+        background: #f0f9ff;
+        color: #0ea5e9;
+        border-right: 3px solid #0ea5e9;
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar" th:fragment="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">JP</div>
+          <div>Job Portal</div>
+        </div>
+      </div>
+
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div class="user-details">
+          <h4 id="userName">Loading...</h4>
+          <p id="userEmail">Loading...</p>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <a
+          href="#"
+          class="nav-item"
+          id="nav-dashboard"
+          onclick="navigateToPage('/dashboard')"
+        >
+          <div class="nav-icon">🏠</div>
+          Dashboard
+        </a>
+        <a
+          href="/browse-jobs"
+          class="nav-item"
+          id="nav-browse-jobs"
+          onclick="navigateToPage('/browse-jobs')"
+        >
+          <div class="nav-icon">🔍</div>
+          Browse Jobs
+        </a>
+        <a
+          href="/my-applications"
+          class="nav-item"
+          id="nav-my-applications"
+          onclick="navigateToPage('/my-applications')"
+        >
+          <div class="nav-icon">📄</div>
+          My Applications
+        </a>
+        <a
+          href="/profile"
+          class="nav-item"
+          id="nav-profile"
+          onclick="navigateToPage('/profile')"
+        >
+          <div class="nav-icon">👤</div>
+          Profile
+        </a>
+        <button class="nav-item" onclick="logout()">
+          <div class="nav-icon">🚪</div>
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <script th:fragment="sidebar-script">
+      // Sidebar functionality
+      function initializeSidebar() {
+        // Load user info from localStorage
+        const userName = localStorage.getItem("userName");
+        const userEmail = localStorage.getItem("userEmail");
+
+        if (userName && userEmail) {
+          document.getElementById("userName").textContent = userName;
+          document.getElementById("userEmail").textContent = userEmail;
+          document.getElementById("userAvatar").textContent = userName
+            .charAt(0)
+            .toUpperCase();
+        }
+
+        // Set active navigation item based on current page
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll(".nav-item");
+
+        navItems.forEach((item) => {
+          item.classList.remove("active");
+        });
+
+        // Set active state based on current path
+        if (currentPath === "/dashboard" || currentPath === "/") {
+          document.getElementById("nav-dashboard").classList.add("active");
+        } else if (currentPath === "/browse-jobs") {
+          document.getElementById("nav-browse-jobs").classList.add("active");
+        } else if (currentPath === "/my-applications") {
+          document
+            .getElementById("nav-my-applications")
+            .classList.add("active");
+        } else if (currentPath === "/profile") {
+          document.getElementById("nav-profile").classList.add("active");
+        } else if (currentPath.includes("job-details")) {
+          // For job details, don't highlight any specific nav item or highlight browse-jobs
+          document.getElementById("nav-browse-jobs").classList.add("active");
+        }
+      }
+
+      // JWT utility functions for sidebar
+      function getJwtToken() {
+        return (
+          localStorage.getItem("authToken") ||
+          localStorage.getItem("jwtToken") ||
+          sessionStorage.getItem("authToken")
+        );
+      }
+
+      function removeJwtToken() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("jwtToken");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userId");
+        sessionStorage.removeItem("authToken");
+      }
+
+      function navigateToPage(page) {
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = page;
+        }
+      }
+
+      async function logout() {
+        removeJwtToken();
+        window.location.href = "http://localhost:8083/login";
+      }
+
+      // Initialize sidebar when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeSidebar();
+      });
+    </script>
+  </body>
+</html>

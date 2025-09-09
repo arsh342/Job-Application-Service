@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Status Demo - Job Portal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background: #f5f7fa;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .demo-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .demo-header {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-header h1 {
+        color: #1f2937;
+        margin-bottom: 8px;
+      }
+
+      .demo-header p {
+        color: #6b7280;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-section h2 {
+        color: #1f2937;
+        margin-bottom: 16px;
+      }
+
+      .status-badges {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+      }
+
+      .status-applied {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .status-shortlisted {
+        background: #fff3e0;
+        color: #f57c00;
+      }
+
+      .status-rejected {
+        background: #ffebee;
+        color: #d32f2f;
+      }
+
+      .status-hired {
+        background: #e8f5e8;
+        color: #388e3c;
+      }
+
+      .application-card {
+        border: 1px solid #e5e9f2;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        background: white;
+        transition: all 0.3s ease;
+      }
+
+      .application-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .application-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+
+      .job-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+      }
+
+      .company-name {
+        color: #667eea;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .status-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-shortlist {
+        background: #fff3e0;
+        color: #f57c00;
+      }
+
+      .btn-hire {
+        background: #e8f5e8;
+        color: #388e3c;
+      }
+
+      .btn-reject {
+        background: #ffebee;
+        color: #d32f2f;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .workflow-diagram {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 24px 0;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 8px;
+      }
+
+      .workflow-step {
+        text-align: center;
+        flex: 1;
+      }
+
+      .workflow-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin: 0 auto 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+      }
+
+      .workflow-step.applied .workflow-icon {
+        background: #1976d2;
+      }
+
+      .workflow-step.shortlisted .workflow-icon {
+        background: #f57c00;
+      }
+
+      .workflow-step.hired .workflow-icon {
+        background: #388e3c;
+      }
+
+      .workflow-step.rejected .workflow-icon {
+        background: #d32f2f;
+      }
+
+      .workflow-arrow {
+        font-size: 1.5rem;
+        color: #cbd5e0;
+        margin: 0 10px;
+      }
+
+      .code-block {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 16px;
+        font-family: "Monaco", "Consolas", monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-container">
+      <div class="demo-header">
+        <h1>🎯 Application Status Management Demo</h1>
+        <p>
+          This demonstrates how application statuses work in the Job Application
+          Service
+        </p>
+      </div>
+
+      <div class="demo-section">
+        <h2>📊 Available Status Types</h2>
+        <div class="status-badges">
+          <span class="status-badge status-applied">APPLIED</span>
+          <span class="status-badge status-shortlisted">SHORTLISTED</span>
+          <span class="status-badge status-hired">HIRED</span>
+          <span class="status-badge status-rejected">REJECTED</span>
+        </div>
+        <p>
+          <strong>APPLIED:</strong> Initial status when a job seeker submits an
+          application
+        </p>
+        <p>
+          <strong>SHORTLISTED:</strong> Employer has reviewed and shortlisted
+          the candidate
+        </p>
+        <p>
+          <strong>HIRED:</strong> Employer has decided to hire the candidate
+        </p>
+        <p><strong>REJECTED:</strong> Employer has rejected the application</p>
+      </div>
+
+      <div class="demo-section">
+        <h2>🔄 Status Workflow</h2>
+        <div class="workflow-diagram">
+          <div class="workflow-step applied">
+            <div class="workflow-icon">1</div>
+            <div>APPLIED</div>
+          </div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step shortlisted">
+            <div class="workflow-icon">2</div>
+            <div>SHORTLISTED</div>
+          </div>
+          <div class="workflow-arrow">→</div>
+          <div class="workflow-step hired">
+            <div class="workflow-icon">✓</div>
+            <div>HIRED</div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 16px">
+          <div class="workflow-step rejected" style="display: inline-block">
+            <div class="workflow-icon">✗</div>
+            <div>REJECTED</div>
+          </div>
+          <p style="margin-top: 8px; color: #6b7280; font-size: 0.9rem">
+            Applications can be rejected at any stage
+          </p>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>👤 Job Seeker View</h2>
+        <p style="margin-bottom: 16px">
+          Job seekers can view their application status on the "My Applications"
+          page:
+        </p>
+
+        <div class="application-card">
+          <div class="application-header">
+            <div>
+              <div class="job-title">Senior Software Engineer</div>
+              <div class="company-name">TechCorp Inc.</div>
+            </div>
+            <span class="status-badge status-shortlisted">SHORTLISTED</span>
+          </div>
+          <div style="color: #6b7280; font-size: 0.9rem">
+            <strong>Applied:</strong> 2024-01-15 |
+            <strong>Location:</strong> San Francisco, CA
+          </div>
+        </div>
+
+        <div class="application-card">
+          <div class="application-header">
+            <div>
+              <div class="job-title">Frontend Developer</div>
+              <div class="company-name">StartupXYZ</div>
+            </div>
+            <span class="status-badge status-hired">HIRED</span>
+          </div>
+          <div style="color: #6b7280; font-size: 0.9rem">
+            <strong>Applied:</strong> 2024-01-10 |
+            <strong>Location:</strong> Remote
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>🏢 Employer View</h2>
+        <p style="margin-bottom: 16px">
+          Employers can update application status from the Job Listings page:
+        </p>
+
+        <div class="application-card">
+          <div class="application-header">
+            <div>
+              <div class="job-title">Application #12345</div>
+              <div class="company-name">For: Senior Software Engineer</div>
+            </div>
+            <span class="status-badge status-applied">APPLIED</span>
+          </div>
+          <div style="color: #6b7280; font-size: 0.9rem; margin-bottom: 12px">
+            <strong>Applicant:</strong> John Doe |
+            <strong>Applied:</strong> 2024-01-20
+          </div>
+          <div class="status-actions">
+            <button
+              class="btn btn-shortlist"
+              onclick="updateStatus(this, 'SHORTLISTED')"
+            >
+              📋 Shortlist
+            </button>
+            <button class="btn btn-hire" onclick="updateStatus(this, 'HIRED')">
+              ✅ Hire
+            </button>
+            <button
+              class="btn btn-reject"
+              onclick="updateStatus(this, 'REJECTED')"
+            >
+              ❌ Reject
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>🔧 API Endpoints</h2>
+        <p style="margin-bottom: 16px">
+          The following endpoints handle application status:
+        </p>
+
+        <div class="code-block">
+          <strong>For Job Seekers:</strong>
+          GET /api/applications/my-applications - View all applications with
+          status GET /api/applicants/{applicantId}/applications - Get
+          applications by applicant
+
+          <strong>For Employers:</strong>
+          PUT /api/applications/{applicationId}/status - Update application
+          status GET /api/jobs/{jobId}/applications - View applications for a
+          job
+
+          <strong>Status Update Request:</strong>
+          { "status": "SHORTLISTED" | "HIRED" | "REJECTED" }
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>🎨 Status Colors & Styling</h2>
+        <p style="margin-bottom: 16px">
+          Each status has distinct visual styling:
+        </p>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+          "
+        >
+          <div style="text-align: center">
+            <div
+              class="status-badge status-applied"
+              style="display: inline-block; margin-bottom: 8px"
+            >
+              APPLIED
+            </div>
+            <div style="font-size: 0.8rem; color: #6b7280">
+              Blue theme - waiting for review
+            </div>
+          </div>
+          <div style="text-align: center">
+            <div
+              class="status-badge status-shortlisted"
+              style="display: inline-block; margin-bottom: 8px"
+            >
+              SHORTLISTED
+            </div>
+            <div style="font-size: 0.8rem; color: #6b7280">
+              Orange theme - under consideration
+            </div>
+          </div>
+          <div style="text-align: center">
+            <div
+              class="status-badge status-hired"
+              style="display: inline-block; margin-bottom: 8px"
+            >
+              HIRED
+            </div>
+            <div style="font-size: 0.8rem; color: #6b7280">
+              Green theme - successful outcome
+            </div>
+          </div>
+          <div style="text-align: center">
+            <div
+              class="status-badge status-rejected"
+              style="display: inline-block; margin-bottom: 8px"
+            >
+              REJECTED
+            </div>
+            <div style="font-size: 0.8rem; color: #6b7280">
+              Red theme - application declined
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>🚀 How to Test</h2>
+        <ol style="line-height: 1.6; color: #4a5568">
+          <li>
+            <strong>Start the services:</strong> Authentication (8083), Job
+            (8081), Application (8082)
+          </li>
+          <li>
+            <strong>Register as an employer</strong> at
+            <code>http://localhost:8083/register</code>
+          </li>
+          <li>
+            <strong>Create a job posting</strong> from the employer dashboard
+          </li>
+          <li>
+            <strong>Register as a job seeker</strong> and apply to the job
+          </li>
+          <li>
+            <strong>Login as employer</strong> and go to
+            <code>http://localhost:8081/job-listings</code>
+          </li>
+          <li>
+            <strong>Update application status</strong> using the action buttons
+          </li>
+          <li>
+            <strong>Login as job seeker</strong> and check
+            <code>http://localhost:8082/my-applications</code>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <script>
+      function updateStatus(button, newStatus) {
+        const card = button.closest(".application-card");
+        const statusBadge = card.querySelector(".status-badge");
+
+        // Update the status badge
+        statusBadge.className =
+          "status-badge status-" + newStatus.toLowerCase();
+        statusBadge.textContent = newStatus;
+
+        // Hide action buttons if status is final
+        if (newStatus === "HIRED" || newStatus === "REJECTED") {
+          const actions = card.querySelector(".status-actions");
+          actions.innerHTML =
+            '<small style="color: #718096; font-style: italic;">Status updated to ' +
+            newStatus +
+            "</small>";
+        }
+
+        // Show success message
+        alert(
+          "Status updated to " +
+            newStatus +
+            "!\nIn the real application, this would call:\nPUT /api/applications/{id}/status"
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 package com.service.authentication.controller;
 
 import com.service.authentication.dto.*;
+import com.service.authentication.entity.User;
 import com.service.authentication.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -73,5 +74,21 @@ public class AuthController {
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("Authentication Service is running");
+    }
+    
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+            User user = authService.getUserById(userId);
+            UserDto userDto = UserDto.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .email(user.getEmail())
+                    .userType(user.getUserType().name())
+                    .build();
+            return ResponseEntity.ok(userDto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

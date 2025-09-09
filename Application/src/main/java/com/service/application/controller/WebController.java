@@ -30,4 +30,14 @@ public class WebController {
     public String profile() {
         return "profile";
     }
+    
+    @GetMapping("/job-details")
+    public String jobDetails() {
+        return "job-details";
+    }
+    
+    @GetMapping("/status-demo")
+    public String statusDemo() {
+        return "status-demo";
+    }
 }

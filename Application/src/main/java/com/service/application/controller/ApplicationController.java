@@ -3,8 +3,11 @@ package com.service.application.controller;
 import com.service.application.dto.ApplicationCreateDto;
 import com.service.application.dto.ApplicationResponseDto;
 import com.service.application.dto.ApplicationStatusUpdateDto;
+import com.service.application.dto.profile.UserProfileDto;
+import com.service.application.dto.profile.UserProfileUpdateDto;
 import com.service.application.model.JobApplication;
 import com.service.application.service.JobApplicationService;
+import com.service.application.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api")
@@ -20,6 +25,7 @@ import java.util.List;
 public class ApplicationController {
     
     private final JobApplicationService jobApplicationService;
+    private final UserProfileService userProfileService;
     
     @PostMapping("/applications")
     public ResponseEntity<?> applyToJob(@Valid @RequestBody ApplicationCreateDto dto, HttpServletRequest request) {
@@ -162,6 +168,70 @@ public class ApplicationController {
             return ResponseEntity.ok(applications);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+    
+    // Debug endpoint to check authentication
+    @GetMapping("/debug/auth")
+    public ResponseEntity<?> debugAuth(HttpServletRequest request) {
+        try {
+            Long applicantId = (Long) request.getAttribute("applicantId");
+            String userEmail = (String) request.getAttribute("userEmail");
+            String userName = (String) request.getAttribute("userName");
+            String userType = (String) request.getAttribute("userType");
+            
+            Map<String, Object> debugInfo = new HashMap<>();
+            debugInfo.put("applicantId", applicantId);
+            debugInfo.put("userEmail", userEmail);
+            debugInfo.put("userName", userName);
+            debugInfo.put("userType", userType);
+            debugInfo.put("authHeader", request.getHeader("Authorization"));
+            debugInfo.put("timestamp", new java.util.Date());
+            
+            return ResponseEntity.ok(debugInfo);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Debug error: " + e.getMessage());
+        }
+    }
+    
+    // Profile endpoints
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(HttpServletRequest request) {
+        Long applicantId = (Long) request.getAttribute("applicantId");
+        String userEmail = (String) request.getAttribute("userEmail");
+        
+        if (applicantId == null) {
+            return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        try {
+            UserProfileDto profile = userProfileService.getProfileByUserId(applicantId);
+            
+            // If profile doesn't have an email, set it from the token
+            if (profile.getEmail() == null && userEmail != null) {
+                profile.setEmail(userEmail);
+            }
+            
+            return ResponseEntity.ok(profile);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error getting profile: " + e.getMessage());
+        }
+    }
+    
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@Valid @RequestBody UserProfileUpdateDto request, HttpServletRequest httpRequest) {
+        Long applicantId = (Long) httpRequest.getAttribute("applicantId");
+        String userEmail = (String) httpRequest.getAttribute("userEmail");
+        
+        if (applicantId == null) {
+            return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        try {
+            UserProfileDto updatedProfile = userProfileService.createOrUpdateProfile(applicantId, userEmail, request);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating profile: " + e.getMessage());
         }
     }
 }

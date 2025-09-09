@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,105 +14,364 @@
       }
 
       body {
-        background: #f8f9fa;
+        background: #f5f7fa;
         min-height: 100vh;
-        padding: 20px;
+        margin: 0;
+        padding: 0;
+      }
+      .layout {
+        display: flex;
+        min-height: 100vh;
       }
 
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
         background: white;
+        border-right: 1px solid #e5e9f2;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .user-details h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 2px;
+      }
+
+      .user-details p {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .nav-menu {
+        padding: 16px 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: #6b7280;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .nav-item:hover {
+        background: #f8fafc;
+        color: #374151;
+      }
+
+      .nav-item.active {
+        background: #f0f9ff;
+        color: #0ea5e9;
+        border-right: 3px solid #0ea5e9;
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        min-height: 100vh;
+      }
+
+      .content-header {
+        background: white;
+        border-bottom: 1px solid #e5e9f2;
+        padding: 24px 32px;
+      }
+
+      .content-header h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+      }
+
+      .content-header p {
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      .content-body {
+        padding: 32px;
+      }
+
+      /* Dynamic Form Sections */
+      .dynamic-item {
+        background: #f8f9fa;
         border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 16px;
+        position: relative;
+      }
+
+      .dynamic-item .remove-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .dynamic-item .remove-btn:hover {
+        background: #c82333;
+      }
+
+      .skill-item {
+        display: flex;
+        gap: 12px;
+        align-items: end;
+        background: #f8f9fa;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        position: relative;
+      }
+
+      .skill-item .form-group {
+        margin-bottom: 0;
+        flex: 1;
+      }
+
+      .form-grid-3 {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 16px;
+      }
+
+      .form-grid-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 16px;
+      }
+
+      .date-range {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        margin: 0;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        cursor: pointer;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .profile-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e9f2;
         overflow: hidden;
       }
 
-      .header {
-        background: #495057;
+      .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 32px;
+        text-align: center;
         color: white;
-        padding: 30px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #343a40;
       }
 
-      .header h1 {
-        font-size: 1.75rem;
-        font-weight: 600;
-      }
-
-      .header-buttons {
-        display: flex;
-        gap: 10px;
-      }
-
-      .btn {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background-color 0.15s ease-in-out;
-        font-size: 0.875rem;
-      }
-
-      .btn-primary {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-
-      .btn-primary:hover {
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
         background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 32px;
+        font-weight: bold;
+        border: 3px solid rgba(255, 255, 255, 0.3);
       }
 
-      .profile-container {
-        padding: 40px;
+      .profile-name {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
       }
 
-      .profile-section {
-        background: #f8f9fa;
-        border-radius: 4px;
-        padding: 30px;
-        margin-bottom: 30px;
-        border: 1px solid #e9ecef;
+      .profile-type {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-block;
       }
 
-      .profile-section h2 {
-        color: #495057;
-        font-size: 1.25rem;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #dee2e6;
+      .profile-form {
+        padding: 32px;
+      }
+
+      .form-section {
+        margin-bottom: 32px;
+      }
+
+      .form-section h3 {
+        font-size: 18px;
         font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e9f2;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
       }
 
       .form-group {
-        margin-bottom: 1.25rem;
+        margin-bottom: 20px;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
       }
 
       label {
         display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #495057;
-        font-size: 0.875rem;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #374151;
+        font-size: 14px;
       }
 
       input,
       textarea,
       select {
         width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        font-size: 1rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        background: white;
+        padding: 12px 16px;
+        border: 2px solid #e5e9f2;
+        border-radius: 12px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background: #f9fafb;
       }
 
       input:focus,
@@ -120,842 +379,1280 @@
       select:focus {
         outline: none;
         border-color: #667eea;
+        background: white;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        transform: translateY(-2px);
       }
 
       textarea {
         resize: vertical;
-        min-height: 120px;
+        min-height: 100px;
       }
 
-      button {
-        padding: 15px 30px;
-        margin: 8px;
-        cursor: pointer;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 16px;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .save-btn {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-      }
-
-      .save-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-      }
-
-      .cancel-btn {
-        background: linear-gradient(135deg, #dc3545, #e83e8c);
-        color: white;
-        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-      }
-
-      .cancel-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-      }
-
-      .success-msg {
-        background: linear-gradient(135deg, #d4edda, #c3e6cb);
-        color: #155724;
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-top: 15px;
-        border-left: 4px solid #28a745;
-        font-weight: 600;
-      }
-
-      .error-msg {
-        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-        color: #721c24;
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-top: 15px;
-        border-left: 4px solid #dc3545;
-        font-weight: 600;
-      }
-
-      .password-section {
-        border-top: 3px solid #667eea;
-        padding-top: 30px;
-        margin-top: 30px;
-      }
-
-      .skill-tag {
-        display: inline-block;
-        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-        color: #1565c0;
-        padding: 8px 16px;
-        margin: 4px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(21, 101, 192, 0.2);
-        transition: all 0.3s ease;
-      }
-
-      .skill-tag:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
-      }
-
-      .skill-input {
+      .form-actions {
         display: flex;
-        margin-bottom: 15px;
-        gap: 15px;
+        gap: 12px;
+        justify-content: flex-end;
+        padding-top: 24px;
+        border-top: 1px solid #e5e9f2;
+        margin-top: 32px;
       }
 
-      .skill-input input {
-        flex: 1;
+      /* Dynamic Form Sections */
+      .dynamic-item {
+        background: #f8fafc;
+        border: 1px solid #e5e9f2;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        position: relative;
       }
 
-      .skill-input button {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        padding: 15px 20px;
+      .skill-item {
+        background: #f8fafc;
+        border: 1px solid #e5e9f2;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+        position: relative;
+      }
+
+      .section-title {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e5e9f2;
+      }
+
+      .date-range {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 16px;
+        align-items: end;
+        margin: 16px 0;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+      }
+
+      .checkbox-group input[type="checkbox"] {
         margin: 0;
       }
 
-      .experience-item,
-      .education-item {
-        background: white;
-        border: 2px solid #e9ecef;
-        padding: 25px;
-        margin-bottom: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
+      .checkbox-group label {
+        margin: 0;
+        font-size: 14px;
+        color: #6b7280;
+        cursor: pointer;
       }
 
-      .experience-item:hover,
-      .education-item:hover {
-        border-color: #667eea;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
-      }
-
-      .add-section-btn {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+      .remove-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #ef4444;
         color: white;
-        width: 100%;
-        padding: 15px;
-        margin-top: 20px;
-        border-radius: 8px;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
         font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .remove-btn:hover {
+        background: #dc2626;
+        transform: scale(1.1);
+      }
+
+      .skill-item .remove-btn {
+        position: static;
+        margin-left: 8px;
+      }
+
+      /* Form improvements */
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 8px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        padding-right: 32px;
+        appearance: none;
+      }
+
+      /* Loading states */
+      .profile-form.loading {
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .btn.loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
       }
 
-      .add-section-btn:hover {
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
       }
 
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+      }
+
+      .btn-secondary:hover {
+        background: #e5e7eb;
+      }
+
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .success-message {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+
+      .error-message {
+        background: #fef2f2;
+        color: #991b1b;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-weight: 500;
       }
 
       @media (max-width: 768px) {
-        .header {
-          flex-direction: column;
-          gap: 20px;
-          text-align: center;
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
         }
 
-        .header h1 {
-          font-size: 2rem;
+        .main-content {
+          margin-left: 0;
         }
 
-        .profile-container {
-          padding: 20px;
-        }
-
-        .form-row {
+        .form-grid {
           grid-template-columns: 1fr;
         }
 
-        .skill-input {
-          flex-direction: column;
-          gap: 10px;
+        .content-body {
+          padding: 16px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>Profile Management</h1>
-        <div class="header-buttons">
-          <button
-            class="btn btn-primary"
-            onclick="navigateToPage('/dashboard')"
-          >
-            Dashboard
-          </button>
-          <button
-            class="btn btn-primary"
-            onclick="navigateToPage('/browse-jobs')"
-          >
-            Browse Jobs
-          </button>
-          <button class="btn btn-primary" onclick="logout()">Logout</button>
-        </div>
-      </div>
+    <div class="layout">
+      <!-- Include shared sidebar -->
+      <div th:replace="shared/sidebar :: sidebar"></div>
 
-      <div class="profile-container">
-        <div class="profile-section">
-          <h2>Personal Information</h2>
-          <form id="profileForm">
-            <div class="form-group">
-              <label for="fullName">Full Name:</label>
-              <input type="text" id="fullName" name="fullName" required />
-            </div>
-
-            <div class="form-group">
-              <label for="email">Email:</label>
-              <input type="email" id="email" name="email" required readonly />
-            </div>
-
-            <div class="form-group">
-              <label for="phone">Phone Number:</label>
-              <input type="tel" id="phone" name="phone" />
-            </div>
-
-            <div class="form-group">
-              <label for="address">Address:</label>
-              <textarea id="address" name="address" rows="3"></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="dateOfBirth">Date of Birth:</label>
-              <input type="date" id="dateOfBirth" name="dateOfBirth" />
-            </div>
-
-            <div class="form-group">
-              <label for="linkedinUrl">LinkedIn Profile:</label>
-              <input
-                type="url"
-                id="linkedinUrl"
-                name="linkedinUrl"
-                placeholder="https://linkedin.com/in/yourprofile"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="portfolioUrl">Portfolio/Website:</label>
-              <input
-                type="url"
-                id="portfolioUrl"
-                name="portfolioUrl"
-                placeholder="https://yourportfolio.com"
-              />
-            </div>
-
-            <button type="button" onclick="updateProfile()" class="save-btn">
-              Update Profile
-            </button>
-            <div id="profileMessage"></div>
-          </form>
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="content-header">
+          <h1>Profile Settings</h1>
+          <p>Manage your personal information and preferences</p>
         </div>
 
-        <div class="profile-section">
-          <h2>Professional Summary</h2>
-          <div class="form-group">
-            <label for="summary">Professional Summary:</label>
-            <textarea
-              id="summary"
-              rows="5"
-              placeholder="Brief description of your professional background and career objectives..."
-            ></textarea>
-          </div>
-          <button type="button" onclick="updateSummary()" class="save-btn">
-            Update Summary
-          </button>
-          <div id="summaryMessage"></div>
-        </div>
-
-        <div class="profile-section">
-          <h2>Skills</h2>
-          <div class="form-group">
-            <label>Add Skill:</label>
-            <div class="skill-input">
-              <input type="text" id="newSkill" placeholder="Enter a skill..." />
-              <button type="button" onclick="addSkill()">Add</button>
+        <div class="content-body">
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar" id="profileAvatar">U</div>
+              <div class="profile-info">
+                <h2 id="profileName">Loading...</h2>
+                <p class="profile-type" id="profileType">Job Seeker</p>
+              </div>
             </div>
-            <div id="skillsList"></div>
-          </div>
-        </div>
+            <form class="profile-form" id="profileForm">
+              <div id="messageContainer"></div>
 
-        <div class="profile-section">
-          <h2>Work Experience</h2>
-          <div id="experienceList"></div>
-          <button type="button" onclick="addExperience()">
-            Add Experience
-          </button>
-        </div>
+              <div class="form-section">
+                <h3>Personal Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" />
+                  </div>
+                  <div class="form-group">
+                    <label for="location">Location</label>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      placeholder="City, Country"
+                    />
+                  </div>
+                </div>
 
-        <div class="profile-section">
-          <h2>Education</h2>
-          <div id="educationList"></div>
-          <button type="button" onclick="addEducation()">Add Education</button>
-        </div>
-
-        <div class="profile-section">
-          <div class="password-section">
-            <h2>Change Password</h2>
-            <form id="passwordForm">
-              <div class="form-group">
-                <label for="currentPassword">Current Password:</label>
-                <input
-                  type="password"
-                  id="currentPassword"
-                  name="currentPassword"
-                  required
-                />
+                <div class="form-group">
+                  <label for="summary">Professional Summary</label>
+                  <textarea
+                    id="summary"
+                    name="summary"
+                    rows="4"
+                    placeholder="Brief description of your professional background and goals..."
+                  ></textarea>
+                </div>
               </div>
 
-              <div class="form-group">
-                <label for="newPassword">New Password:</label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  required
-                  minlength="6"
-                />
+              <div class="form-section">
+                <h3>Links & Profiles</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="website">Website</label>
+                    <input
+                      type="url"
+                      id="website"
+                      name="website"
+                      placeholder="https://yourwebsite.com"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="linkedin">LinkedIn</label>
+                    <input
+                      type="url"
+                      id="linkedin"
+                      name="linkedin"
+                      placeholder="https://linkedin.com/in/yourprofile"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="github">GitHub</label>
+                    <input
+                      type="url"
+                      id="github"
+                      name="github"
+                      placeholder="https://github.com/yourusername"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div class="form-group">
-                <label for="confirmPassword">Confirm New Password:</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  required
-                  minlength="6"
-                />
+              <div class="form-section">
+                <h3>Career Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="currentPosition">Current Position</label>
+                    <input
+                      type="text"
+                      id="currentPosition"
+                      name="currentPosition"
+                      placeholder="Software Engineer"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="currentCompany">Current Company</label>
+                    <input
+                      type="text"
+                      id="currentCompany"
+                      name="currentCompany"
+                      placeholder="Tech Corp Inc."
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="yearsOfExperience">Years of Experience</label>
+                    <input
+                      type="number"
+                      id="yearsOfExperience"
+                      name="yearsOfExperience"
+                      min="0"
+                      max="50"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="expectedSalary">Expected Salary (Annual)</label>
+                    <input
+                      type="number"
+                      id="expectedSalary"
+                      name="expectedSalary"
+                      placeholder="75000"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="preferredLocation"
+                      >Preferred Work Location</label
+                    >
+                    <input
+                      type="text"
+                      id="preferredLocation"
+                      name="preferredLocation"
+                      placeholder="Remote, New York, etc."
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="jobTypePreference">Job Type Preference</label>
+                    <select id="jobTypePreference" name="jobTypePreference">
+                      <option value="">Select...</option>
+                      <option value="FULL_TIME">Full Time</option>
+                      <option value="PART_TIME">Part Time</option>
+                      <option value="CONTRACT">Contract</option>
+                      <option value="FREELANCE">Freelance</option>
+                      <option value="INTERNSHIP">Internship</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="workModePreference">Work Mode Preference</label>
+                    <select id="workModePreference" name="workModePreference">
+                      <option value="">Select...</option>
+                      <option value="REMOTE">Remote</option>
+                      <option value="ONSITE">On-site</option>
+                      <option value="HYBRID">Hybrid</option>
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              <button type="button" onclick="changePassword()" class="save-btn">
-                Change Password
-              </button>
-              <div id="passwordMessage"></div>
+              <!-- Skills Section -->
+              <div class="form-section">
+                <h3>Skills</h3>
+                <div id="skillsContainer">
+                  <!-- Skills will be dynamically added here -->
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="addSkill()"
+                >
+                  + Add Skill
+                </button>
+              </div>
+
+              <!-- Experience Section -->
+              <div class="form-section">
+                <h3>Work Experience</h3>
+                <div id="experiencesContainer">
+                  <!-- Experiences will be dynamically added here -->
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="addExperience()"
+                >
+                  + Add Experience
+                </button>
+              </div>
+
+              <!-- Education Section -->
+              <div class="form-section">
+                <h3>Education</h3>
+                <div id="educationsContainer">
+                  <!-- Educations will be dynamically added here -->
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="addEducation()"
+                >
+                  + Add Education
+                </button>
+              </div>
+
+              <!-- Projects Section -->
+              <div class="form-section">
+                <h3>Projects</h3>
+                <div id="projectsContainer">
+                  <!-- Projects will be dynamically added here -->
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="addProject()"
+                >
+                  + Add Project
+                </button>
+              </div>
+
+              <!-- Certifications Section -->
+              <div class="form-section">
+                <h3>Certifications</h3>
+                <div id="certificationsContainer">
+                  <!-- Certifications will be dynamically added here -->
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="addCertification()"
+                >
+                  + Add Certification
+                </button>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="saveBtn">
+                  💾 Save Changes
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="resetForm()"
+                >
+                  🔄 Reset
+                </button>
+              </div>
             </form>
           </div>
         </div>
       </div>
+    </div>
 
-      <script>
-        let currentApplicant = null;
-        let skills = [];
-        let experiences = [];
-        let educations = [];
+    <!-- Include shared sidebar script -->
+    <div th:replace="shared/sidebar :: sidebar-script"></div>
 
-        // JWT utility functions
-        function getJwtToken() {
-          return (
-            localStorage.getItem("authToken") ||
-            localStorage.getItem("jwtToken") ||
-            sessionStorage.getItem("authToken")
+    <script>
+      let currentProfile = null;
+
+      // Dynamic Form Functions
+      function addSkill() {
+        const container = document.getElementById("skillsContainer");
+        const skillItem = document.createElement("div");
+        skillItem.className = "skill-item";
+        skillItem.innerHTML = `
+          <div class="form-group">
+            <label>Skill Name</label>
+            <input type="text" name="skillName" placeholder="JavaScript, Python, etc." required />
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <select name="skillLevel">
+              <option value="BEGINNER">Beginner</option>
+              <option value="INTERMEDIATE">Intermediate</option>
+              <option value="ADVANCED">Advanced</option>
+              <option value="EXPERT">Expert</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select name="skillCategory">
+              <option value="PROGRAMMING_LANGUAGE">Programming Language</option>
+              <option value="FRAMEWORK">Framework</option>
+              <option value="DATABASE">Database</option>
+              <option value="TOOL">Tool</option>
+              <option value="SOFT_SKILL">Soft Skill</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Years of Experience</label>
+            <input type="number" name="skillYears" min="0" max="50" />
+          </div>
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+        `;
+        container.appendChild(skillItem);
+      }
+
+      function addExperience() {
+        const container = document.getElementById("experiencesContainer");
+        const expItem = document.createElement("div");
+        expItem.className = "dynamic-item";
+        expItem.innerHTML = `
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <div class="section-title">Work Experience</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Position</label>
+              <input type="text" name="expPosition" placeholder="Software Engineer" required />
+            </div>
+            <div class="form-group">
+              <label>Company</label>
+              <input type="text" name="expCompany" placeholder="Tech Corp Inc." required />
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" name="expLocation" placeholder="New York, NY" />
+            </div>
+            <div class="form-group">
+              <label>Employment Type</label>
+              <select name="expType">
+                <option value="FULL_TIME">Full Time</option>
+                <option value="PART_TIME">Part Time</option>
+                <option value="CONTRACT">Contract</option>
+                <option value="FREELANCE">Freelance</option>
+                <option value="INTERNSHIP">Internship</option>
+              </select>
+            </div>
+          </div>
+          <div class="date-range">
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" name="expStartDate" />
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" name="expEndDate" />
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" name="expIsCurrent" onchange="toggleEndDate(this)" />
+              <label>Currently working here</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="expDescription" rows="3" placeholder="Describe your responsibilities and achievements..."></textarea>
+          </div>
+        `;
+        container.appendChild(expItem);
+      }
+
+      function addEducation() {
+        const container = document.getElementById("educationsContainer");
+        const eduItem = document.createElement("div");
+        eduItem.className = "dynamic-item";
+        eduItem.innerHTML = `
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <div class="section-title">Education</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Institution</label>
+              <input type="text" name="eduInstitution" placeholder="University of Technology" required />
+            </div>
+            <div class="form-group">
+              <label>Degree</label>
+              <input type="text" name="eduDegree" placeholder="Bachelor of Science" required />
+            </div>
+            <div class="form-group">
+              <label>Field of Study</label>
+              <input type="text" name="eduField" placeholder="Computer Science" />
+            </div>
+            <div class="form-group">
+              <label>Education Level</label>
+              <select name="eduLevel">
+                <option value="HIGH_SCHOOL">High School</option>
+                <option value="DIPLOMA">Diploma</option>
+                <option value="BACHELORS">Bachelor's</option>
+                <option value="MASTERS">Master's</option>
+                <option value="PhD">PhD</option>
+                <option value="CERTIFICATION">Certification</option>
+              </select>
+            </div>
+          </div>
+          <div class="date-range">
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" name="eduStartDate" />
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" name="eduEndDate" />
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" name="eduIsCurrent" onchange="toggleEndDate(this)" />
+              <label>Currently studying here</label>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Grade/GPA</label>
+              <input type="number" name="eduGrade" step="0.01" placeholder="3.8" />
+            </div>
+            <div class="form-group">
+              <label>Grade Scale</label>
+              <input type="text" name="eduGradeScale" placeholder="4.0, 10.0, 100%" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="eduDescription" rows="2" placeholder="Additional details, honors, etc..."></textarea>
+          </div>
+        `;
+        container.appendChild(eduItem);
+      }
+
+      function addProject() {
+        const container = document.getElementById("projectsContainer");
+        const projItem = document.createElement("div");
+        projItem.className = "dynamic-item";
+        projItem.innerHTML = `
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <div class="section-title">Project</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Project Name</label>
+              <input type="text" name="projName" placeholder="E-commerce Website" required />
+            </div>
+            <div class="form-group">
+              <label>Technologies Used</label>
+              <input type="text" name="projTech" placeholder="React, Node.js, MongoDB" />
+            </div>
+            <div class="form-group">
+              <label>Project URL</label>
+              <input type="url" name="projUrl" placeholder="https://myproject.com" />
+            </div>
+            <div class="form-group">
+              <label>Repository URL</label>
+              <input type="url" name="projRepo" placeholder="https://github.com/user/project" />
+            </div>
+          </div>
+          <div class="date-range">
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" name="projStartDate" />
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" name="projEndDate" />
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" name="projIsFeatured" />
+              <label>Featured Project</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="projDescription" rows="3" placeholder="Describe the project, your role, and key achievements..."></textarea>
+          </div>
+        `;
+        container.appendChild(projItem);
+      }
+
+      function addCertification() {
+        const container = document.getElementById("certificationsContainer");
+        const certItem = document.createElement("div");
+        certItem.className = "dynamic-item";
+        certItem.innerHTML = `
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <div class="section-title">Certification</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Certification Name</label>
+              <input type="text" name="certName" placeholder="AWS Certified Solutions Architect" required />
+            </div>
+            <div class="form-group">
+              <label>Issuing Organization</label>
+              <input type="text" name="certOrg" placeholder="Amazon Web Services" />
+            </div>
+            <div class="form-group">
+              <label>Credential ID</label>
+              <input type="text" name="certId" placeholder="ABC123XYZ" />
+            </div>
+            <div class="form-group">
+              <label>Credential URL</label>
+              <input type="url" name="certUrl" placeholder="https://credential.url" />
+            </div>
+          </div>
+          <div class="date-range">
+            <div class="form-group">
+              <label>Issue Date</label>
+              <input type="date" name="certIssueDate" />
+            </div>
+            <div class="form-group">
+              <label>Expiry Date</label>
+              <input type="date" name="certExpiryDate" />
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" name="certNoExpiry" onchange="toggleExpiryDate(this)" />
+              <label>Does not expire</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="certDescription" rows="2" placeholder="Additional details about the certification..."></textarea>
+          </div>
+        `;
+        container.appendChild(certItem);
+      }
+
+      function toggleExpiryDate(checkbox) {
+        const expiryInput = checkbox.parentElement.parentElement.querySelector(
+          'input[name="certExpiryDate"]'
+        );
+        if (checkbox.checked) {
+          expiryInput.disabled = true;
+          expiryInput.value = "";
+        } else {
+          expiryInput.disabled = false;
+        }
+      }
+
+      function toggleEndDate(checkbox) {
+        const endDateInput = checkbox.parentElement.parentElement.querySelector(
+          'input[name$="EndDate"]'
+        );
+        if (checkbox.checked) {
+          endDateInput.disabled = true;
+          endDateInput.value = "";
+        } else {
+          endDateInput.disabled = false;
+        }
+      }
+
+      // JWT utility functions
+      function getJwtToken() {
+        return (
+          localStorage.getItem("authToken") ||
+          localStorage.getItem("jwtToken") ||
+          sessionStorage.getItem("authToken")
+        );
+      }
+
+      function getAuthHeaders() {
+        const token = getJwtToken();
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      }
+
+      function removeJwtToken() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("authToken");
+      }
+
+      function navigateToPage(page) {
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = page;
+        }
+      }
+
+      window.addEventListener("load", async function () {
+        // Check if token is passed via URL parameter and store it
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get("token");
+
+        if (urlToken) {
+          // Store token from URL parameter
+          localStorage.setItem("authToken", urlToken);
+          localStorage.setItem("jwtToken", urlToken); // Keep for compatibility
+          console.log("Token stored from URL parameter");
+
+          // Clean URL by removing token parameter
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
           );
         }
 
-        function setJwtToken(token) {
-          localStorage.setItem("authToken", token);
-          localStorage.setItem("jwtToken", token);
+        // Check if we have a JWT token, if not redirect to login
+        const token = getJwtToken();
+        if (!token) {
+          console.log("No JWT token found, redirecting to login");
+          alert("Please log in first to view your profile.");
+          window.location.href = "http://localhost:8083/login";
+          return;
         }
 
-        function removeJwtToken() {
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("jwtToken");
-          sessionStorage.removeItem("authToken");
-        }
+        console.log("JWT token found, loading profile...");
+        await loadProfile();
+      });
 
-        function getAuthHeaders() {
-          const token = getJwtToken();
-          return token ? { Authorization: `Bearer ${token}` } : {};
-        }
+      async function loadProfile() {
+        try {
+          const response = await fetch("/api/profile", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAuthHeaders(),
+            },
+          });
 
-        function navigateToPage(page) {
-          const token = getJwtToken();
-          if (token) {
-            window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+          if (response.ok) {
+            currentProfile = await response.json();
+            displayProfile(currentProfile);
+          } else if (response.status === 401) {
+            alert("Your session has expired. Please log in again.");
+            window.location.href = "http://localhost:8083/login";
+            return;
           } else {
-            window.location.href = page;
+            const errorText = await response.text();
+            showMessage("Failed to load profile: " + errorText, "error");
           }
+        } catch (error) {
+          console.error("Error loading profile:", error);
+          showMessage("Error loading profile: " + error.message, "error");
         }
+      }
 
-        window.addEventListener("load", async function () {
-          // Load profile data
-          await loadProfile();
+      function displayProfile(profile) {
+        // Update sidebar user info
+        document.getElementById("userName").textContent =
+          profile.name || "User";
+        document.getElementById("userEmail").textContent = profile.email || "";
+
+        // Update avatars
+        const avatar = (profile.name || "U").charAt(0).toUpperCase();
+        document.getElementById("userAvatar").textContent = avatar;
+        document.getElementById("profileAvatar").textContent = avatar;
+
+        // Update profile header
+        document.getElementById("profileName").textContent =
+          profile.name || "User";
+        document.getElementById("profileType").textContent =
+          profile.userType === "APPLICANT" ? "Employer" : "Job Seeker";
+
+        // Pre-fill form
+        document.getElementById("name").value = profile.name || "";
+        document.getElementById("email").value = profile.email || "";
+        document.getElementById("phone").value = profile.phone || "";
+        document.getElementById("location").value = profile.location || "";
+        document.getElementById("summary").value = profile.summary || "";
+        document.getElementById("website").value = profile.website || "";
+        document.getElementById("linkedin").value = profile.linkedin || "";
+        document.getElementById("github").value = profile.github || "";
+        document.getElementById("currentPosition").value =
+          profile.currentPosition || "";
+        document.getElementById("currentCompany").value =
+          profile.currentCompany || "";
+        document.getElementById("yearsOfExperience").value =
+          profile.yearsOfExperience || "";
+        document.getElementById("expectedSalary").value =
+          profile.expectedSalary || "";
+        document.getElementById("preferredLocation").value =
+          profile.preferredLocation || "";
+        document.getElementById("jobTypePreference").value =
+          profile.jobTypePreference || "";
+        document.getElementById("workModePreference").value =
+          profile.workModePreference || "";
+
+        // Load dynamic sections
+        loadSkills(profile.skills || []);
+        loadExperiences(profile.experiences || []);
+        loadEducations(profile.educations || []);
+        loadProjects(profile.projects || []);
+        loadCertifications(profile.certifications || []);
+      }
+
+      // Collection functions for dynamic sections
+      function collectSkills() {
+        const skills = [];
+        const skillItems = document.querySelectorAll(
+          "#skillsContainer .skill-item"
+        );
+        skillItems.forEach((item) => {
+          const name = item.querySelector('input[name="skillName"]').value;
+          if (name.trim()) {
+            skills.push({
+              name: name,
+              level: item.querySelector('select[name="skillLevel"]').value,
+              category: item.querySelector('select[name="skillCategory"]')
+                .value,
+              yearsOfExperience:
+                parseInt(
+                  item.querySelector('input[name="skillYears"]').value
+                ) || 0,
+            });
+          }
+        });
+        return skills;
+      }
+
+      function collectExperiences() {
+        const experiences = [];
+        const expItems = document.querySelectorAll(
+          "#experiencesContainer .dynamic-item"
+        );
+        expItems.forEach((item) => {
+          const position = item.querySelector(
+            'input[name="expPosition"]'
+          ).value;
+          const company = item.querySelector('input[name="expCompany"]').value;
+          if (position.trim() && company.trim()) {
+            experiences.push({
+              position: position,
+              company: company,
+              location: item.querySelector('input[name="expLocation"]').value,
+              employmentType: item.querySelector('select[name="expType"]')
+                .value,
+              startDate:
+                item.querySelector('input[name="expStartDate"]').value || null,
+              endDate:
+                item.querySelector('input[name="expEndDate"]').value || null,
+              isCurrent: item.querySelector('input[name="expIsCurrent"]')
+                .checked,
+              description: item.querySelector('textarea[name="expDescription"]')
+                .value,
+            });
+          }
+        });
+        return experiences;
+      }
+
+      function collectEducations() {
+        const educations = [];
+        const eduItems = document.querySelectorAll(
+          "#educationsContainer .dynamic-item"
+        );
+        eduItems.forEach((item) => {
+          const institution = item.querySelector(
+            'input[name="eduInstitution"]'
+          ).value;
+          const degree = item.querySelector('input[name="eduDegree"]').value;
+          if (institution.trim() && degree.trim()) {
+            educations.push({
+              institution: institution,
+              degree: degree,
+              fieldOfStudy: item.querySelector('input[name="eduField"]').value,
+              educationLevel: item.querySelector('select[name="eduLevel"]')
+                .value,
+              startDate:
+                item.querySelector('input[name="eduStartDate"]').value || null,
+              endDate:
+                item.querySelector('input[name="eduEndDate"]').value || null,
+              isCurrent: item.querySelector('input[name="eduIsCurrent"]')
+                .checked,
+              grade:
+                parseFloat(
+                  item.querySelector('input[name="eduGrade"]').value
+                ) || null,
+              gradeScale: item.querySelector('input[name="eduGradeScale"]')
+                .value,
+              description: item.querySelector('textarea[name="eduDescription"]')
+                .value,
+            });
+          }
+        });
+        return educations;
+      }
+
+      function collectProjects() {
+        const projects = [];
+        const projItems = document.querySelectorAll(
+          "#projectsContainer .dynamic-item"
+        );
+        projItems.forEach((item) => {
+          const name = item.querySelector('input[name="projName"]').value;
+          if (name.trim()) {
+            projects.push({
+              name: name,
+              description: item.querySelector(
+                'textarea[name="projDescription"]'
+              ).value,
+              technologiesUsed: item.querySelector('input[name="projTech"]')
+                .value,
+              projectUrl: item.querySelector('input[name="projUrl"]').value,
+              repositoryUrl: item.querySelector('input[name="projRepo"]').value,
+              startDate:
+                item.querySelector('input[name="projStartDate"]').value || null,
+              endDate:
+                item.querySelector('input[name="projEndDate"]').value || null,
+              isFeatured: item.querySelector('input[name="projIsFeatured"]')
+                .checked,
+            });
+          }
+        });
+        return projects;
+      }
+
+      function collectCertifications() {
+        const certifications = [];
+        const certItems = document.querySelectorAll(
+          "#certificationsContainer .dynamic-item"
+        );
+        certItems.forEach((item) => {
+          const name = item.querySelector('input[name="certName"]').value;
+          if (name.trim()) {
+            certifications.push({
+              name: name,
+              issuingOrganization: item.querySelector('input[name="certOrg"]')
+                .value,
+              credentialId: item.querySelector('input[name="certId"]').value,
+              credentialUrl: item.querySelector('input[name="certUrl"]').value,
+              issueDate:
+                item.querySelector('input[name="certIssueDate"]').value || null,
+              expiryDate:
+                item.querySelector('input[name="certExpiryDate"]').value ||
+                null,
+              description: item.querySelector(
+                'textarea[name="certDescription"]'
+              ).value,
+            });
+          }
+        });
+        return certifications;
+      }
+
+      // Load functions for dynamic sections
+      function loadSkills(skills) {
+        const container = document.getElementById("skillsContainer");
+        container.innerHTML = "";
+        skills.forEach((skill) => {
+          addSkill();
+          const lastItem = container.lastElementChild;
+          lastItem.querySelector('input[name="skillName"]').value =
+            skill.name || "";
+          lastItem.querySelector('select[name="skillLevel"]').value =
+            skill.level || "BEGINNER";
+          lastItem.querySelector('select[name="skillCategory"]').value =
+            skill.category || "OTHER";
+          lastItem.querySelector('input[name="skillYears"]').value =
+            skill.yearsOfExperience || "";
+        });
+      }
+
+      function loadExperiences(experiences) {
+        const container = document.getElementById("experiencesContainer");
+        container.innerHTML = "";
+        experiences.forEach((exp) => {
+          addExperience();
+          const lastItem = container.lastElementChild;
+          lastItem.querySelector('input[name="expPosition"]').value =
+            exp.position || "";
+          lastItem.querySelector('input[name="expCompany"]').value =
+            exp.company || "";
+          lastItem.querySelector('input[name="expLocation"]').value =
+            exp.location || "";
+          lastItem.querySelector('select[name="expType"]').value =
+            exp.employmentType || "FULL_TIME";
+          lastItem.querySelector('input[name="expStartDate"]').value =
+            exp.startDate || "";
+          lastItem.querySelector('input[name="expEndDate"]').value =
+            exp.endDate || "";
+          lastItem.querySelector('input[name="expIsCurrent"]').checked =
+            exp.isCurrent || false;
+          lastItem.querySelector('textarea[name="expDescription"]').value =
+            exp.description || "";
+
+          if (exp.isCurrent) {
+            lastItem.querySelector('input[name="expEndDate"]').disabled = true;
+          }
+        });
+      }
+
+      function loadEducations(educations) {
+        const container = document.getElementById("educationsContainer");
+        container.innerHTML = "";
+        educations.forEach((edu) => {
+          addEducation();
+          const lastItem = container.lastElementChild;
+          lastItem.querySelector('input[name="eduInstitution"]').value =
+            edu.institution || "";
+          lastItem.querySelector('input[name="eduDegree"]').value =
+            edu.degree || "";
+          lastItem.querySelector('input[name="eduField"]').value =
+            edu.fieldOfStudy || "";
+          lastItem.querySelector('select[name="eduLevel"]').value =
+            edu.educationLevel || "BACHELORS";
+          lastItem.querySelector('input[name="eduStartDate"]').value =
+            edu.startDate || "";
+          lastItem.querySelector('input[name="eduEndDate"]').value =
+            edu.endDate || "";
+          lastItem.querySelector('input[name="eduIsCurrent"]').checked =
+            edu.isCurrent || false;
+          lastItem.querySelector('input[name="eduGrade"]').value =
+            edu.grade || "";
+          lastItem.querySelector('input[name="eduGradeScale"]').value =
+            edu.gradeScale || "";
+          lastItem.querySelector('textarea[name="eduDescription"]').value =
+            edu.description || "";
+
+          if (edu.isCurrent) {
+            lastItem.querySelector('input[name="eduEndDate"]').disabled = true;
+          }
+        });
+      }
+
+      function loadProjects(projects) {
+        const container = document.getElementById("projectsContainer");
+        container.innerHTML = "";
+        projects.forEach((proj) => {
+          addProject();
+          const lastItem = container.lastElementChild;
+          lastItem.querySelector('input[name="projName"]').value =
+            proj.name || "";
+          lastItem.querySelector('textarea[name="projDescription"]').value =
+            proj.description || "";
+          lastItem.querySelector('input[name="projTech"]').value =
+            proj.technologiesUsed || "";
+          lastItem.querySelector('input[name="projUrl"]').value =
+            proj.projectUrl || "";
+          lastItem.querySelector('input[name="projRepo"]').value =
+            proj.repositoryUrl || "";
+          lastItem.querySelector('input[name="projStartDate"]').value =
+            proj.startDate || "";
+          lastItem.querySelector('input[name="projEndDate"]').value =
+            proj.endDate || "";
+          lastItem.querySelector('input[name="projIsFeatured"]').checked =
+            proj.isFeatured || false;
+        });
+      }
+
+      function loadCertifications(certifications) {
+        const container = document.getElementById("certificationsContainer");
+        container.innerHTML = "";
+        certifications.forEach((cert) => {
+          addCertification();
+          const lastItem = container.lastElementChild;
+          lastItem.querySelector('input[name="certName"]').value =
+            cert.name || "";
+          lastItem.querySelector('input[name="certOrg"]').value =
+            cert.issuingOrganization || "";
+          lastItem.querySelector('input[name="certId"]').value =
+            cert.credentialId || "";
+          lastItem.querySelector('input[name="certUrl"]').value =
+            cert.credentialUrl || "";
+          lastItem.querySelector('input[name="certIssueDate"]').value =
+            cert.issueDate || "";
+          lastItem.querySelector('input[name="certExpiryDate"]').value =
+            cert.expiryDate || "";
+          lastItem.querySelector('textarea[name="certDescription"]').value =
+            cert.description || "";
+
+          if (!cert.expiryDate) {
+            lastItem.querySelector('input[name="certNoExpiry"]').checked = true;
+            lastItem.querySelector(
+              'input[name="certExpiryDate"]'
+            ).disabled = true;
+          }
+        });
+      }
+
+      document
+        .getElementById("profileForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const saveBtn = document.getElementById("saveBtn");
+          const form = document.getElementById("profileForm");
+
+          // Show loading state
+          saveBtn.classList.add("loading");
+          saveBtn.textContent = "Saving...";
+          form.classList.add("loading");
+
+          try {
+            const formData = {
+              name: document.getElementById("name").value,
+              email: document.getElementById("email").value,
+              phone: document.getElementById("phone").value,
+              location: document.getElementById("location").value,
+              summary: document.getElementById("summary").value,
+              website: document.getElementById("website").value,
+              linkedin: document.getElementById("linkedin").value,
+              github: document.getElementById("github").value,
+              currentPosition: document.getElementById("currentPosition").value,
+              currentCompany: document.getElementById("currentCompany").value,
+              yearsOfExperience: document.getElementById("yearsOfExperience")
+                .value
+                ? parseInt(document.getElementById("yearsOfExperience").value)
+                : null,
+              expectedSalary: document.getElementById("expectedSalary").value
+                ? parseFloat(document.getElementById("expectedSalary").value)
+                : null,
+              preferredLocation:
+                document.getElementById("preferredLocation").value,
+              jobTypePreference:
+                document.getElementById("jobTypePreference").value || null,
+              workModePreference:
+                document.getElementById("workModePreference").value || null,
+              skills: collectSkills(),
+              experiences: collectExperiences(),
+              educations: collectEducations(),
+              projects: collectProjects(),
+              certifications: collectCertifications(),
+            };
+
+            const response = await fetch("/api/profile", {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                ...getAuthHeaders(),
+              },
+              body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+              const updatedProfile = await response.json();
+              currentProfile = updatedProfile;
+              displayProfile(updatedProfile);
+              showMessage("Profile updated successfully!", "success");
+            } else if (response.status === 401) {
+              alert("Your session has expired. Please log in again.");
+              window.location.href = "http://localhost:8083/login";
+              return;
+            } else {
+              const errorText = await response.text();
+              showMessage("Failed to update profile: " + errorText, "error");
+            }
+          } catch (error) {
+            console.error("Error updating profile:", error);
+            showMessage("Error updating profile: " + error.message, "error");
+          } finally {
+            // Reset loading state
+            saveBtn.classList.remove("loading");
+            saveBtn.innerHTML = "💾 Save Changes";
+            form.classList.remove("loading");
+          }
         });
 
-        async function loadProfile() {
-          try {
-            const response = await fetch("/api/auth/current", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(),
-              },
-            });
-            if (response.ok) {
-              const applicant = await response.json();
-
-              document.getElementById("fullName").value =
-                applicant.fullName || "";
-              document.getElementById("email").value = applicant.email || "";
-              document.getElementById("phone").value = applicant.phone || "";
-              document.getElementById("address").value =
-                applicant.address || "";
-              document.getElementById("dateOfBirth").value =
-                applicant.dateOfBirth || "";
-              document.getElementById("linkedinUrl").value =
-                applicant.linkedinUrl || "";
-              document.getElementById("portfolioUrl").value =
-                applicant.portfolioUrl || "";
-              document.getElementById("summary").value =
-                applicant.summary || "";
-
-              // Load skills, experience, education if stored in applicant object
-              skills = applicant.skills || [];
-              experiences = applicant.experiences || [];
-              educations = applicant.educations || [];
-
-              displaySkills();
-              displayExperiences();
-              displayEducations();
-            } else {
-              showMessage(
-                "profileMessage",
-                "Failed to load profile data",
-                "error"
-              );
-            }
-          } catch (error) {
-            showMessage(
-              "profileMessage",
-              "Error loading profile: " + error.message,
-              "error"
-            );
-          }
+      function resetForm() {
+        if (currentProfile) {
+          displayProfile(currentProfile);
+          showMessage("Form reset to last saved values", "success");
         }
+      }
 
-        async function loadStats() {
-          try {
-            const response = await fetch("/api/applications/my-applications", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(),
-              },
-            });
-            if (response.ok) {
-              const applications = await response.json();
+      function showMessage(message, type) {
+        const container = document.getElementById("messageContainer");
+        const messageDiv = document.createElement("div");
+        messageDiv.className =
+          type === "success" ? "success-message" : "error-message";
+        messageDiv.textContent = message;
 
-              document.getElementById("totalApplications").textContent =
-                applications.length;
+        container.innerHTML = "";
+        container.appendChild(messageDiv);
 
-              const thisMonth = new Date();
-              thisMonth.setDate(1);
-              const monthlyApps = applications.filter(
-                (app) => new Date(app.appliedDate) >= thisMonth
-              ).length;
-              document.getElementById("monthlyApplications").textContent =
-                monthlyApps;
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          messageDiv.remove();
+        }, 5000);
+      }
 
-              const shortlisted = applications.filter(
-                (app) => app.status === "SHORTLISTED"
-              ).length;
-              document.getElementById("shortlistedCount").textContent =
-                shortlisted;
-
-              const hired = applications.filter(
-                (app) => app.status === "HIRED"
-              ).length;
-              document.getElementById("hiredCount").textContent = hired;
-            }
-
-            if (currentApplicant && currentApplicant.createdDate) {
-              document.getElementById("memberSince").textContent = new Date(
-                currentApplicant.createdDate
-              ).toLocaleDateString();
-            } else {
-              document.getElementById("memberSince").textContent = "N/A";
-            }
-          } catch (error) {
-            console.error("Error loading statistics:", error);
-          }
-        }
-
-        async function updateProfile() {
-          const profileData = {
-            fullName: document.getElementById("fullName").value,
-            phone: document.getElementById("phone").value,
-            address: document.getElementById("address").value,
-            dateOfBirth: document.getElementById("dateOfBirth").value,
-            linkedinUrl: document.getElementById("linkedinUrl").value,
-            portfolioUrl: document.getElementById("portfolioUrl").value,
-            skills: skills,
-            experiences: experiences,
-            educations: educations,
-          };
-
-          try {
-            const response = await fetch("/api/auth/profile", {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(),
-              },
-              body: JSON.stringify(profileData),
-            });
-
-            if (response.ok) {
-              showMessage(
-                "profileMessage",
-                "Profile updated successfully!",
-                "success"
-              );
-            } else {
-              const error = await response.text();
-              showMessage(
-                "profileMessage",
-                "Failed to update profile: " + error,
-                "error"
-              );
-            }
-          } catch (error) {
-            showMessage(
-              "profileMessage",
-              "Error updating profile: " + error.message,
-              "error"
-            );
-          }
-        }
-
-        async function updateSummary() {
-          const summary = document.getElementById("summary").value;
-
-          try {
-            const response = await fetch("/api/auth/profile", {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(),
-              },
-              body: JSON.stringify({ summary: summary }),
-            });
-
-            if (response.ok) {
-              showMessage(
-                "summaryMessage",
-                "Summary updated successfully!",
-                "success"
-              );
-            } else {
-              const error = await response.text();
-              showMessage(
-                "summaryMessage",
-                "Failed to update summary: " + error,
-                "error"
-              );
-            }
-          } catch (error) {
-            showMessage(
-              "summaryMessage",
-              "Error updating summary: " + error.message,
-              "error"
-            );
-          }
-        }
-
-        function addSkill() {
-          const skillInput = document.getElementById("newSkill");
-          const skill = skillInput.value.trim();
-
-          if (skill && !skills.includes(skill)) {
-            skills.push(skill);
-            skillInput.value = "";
-            displaySkills();
-            updateProfile();
-          }
-        }
-
-        function removeSkill(skill) {
-          skills = skills.filter((s) => s !== skill);
-          displaySkills();
-          updateProfile();
-        }
-
-        function displaySkills() {
-          const skillsList = document.getElementById("skillsList");
-          skillsList.innerHTML = skills
-            .map(
-              (skill) =>
-                `<span class="skill-tag">${skill} <span onclick="removeSkill('${skill}')" style="cursor: pointer; margin-left: 5px;">×</span></span>`
-            )
-            .join("");
-        }
-
-        function addExperience() {
-          const experience = {
-            id: Date.now(),
-            company: "",
-            position: "",
-            startDate: "",
-            endDate: "",
-            description: "",
-            current: false,
-          };
-          experiences.push(experience);
-          displayExperiences();
-        }
-
-        function removeExperience(id) {
-          experiences = experiences.filter((exp) => exp.id !== id);
-          displayExperiences();
-          updateProfile();
-        }
-
-        function displayExperiences() {
-          const experienceList = document.getElementById("experienceList");
-          experienceList.innerHTML = experiences
-            .map(
-              (exp) => `
-                <div class="experience-item">
-                    <div class="form-group">
-                        <label>Company:</label>
-                        <input type="text" value="${
-                          exp.company
-                        }" onchange="updateExperience(${
-                exp.id
-              }, 'company', this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label>Position:</label>
-                        <input type="text" value="${
-                          exp.position
-                        }" onchange="updateExperience(${
-                exp.id
-              }, 'position', this.value)">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Start Date:</label>
-                            <input type="date" value="${
-                              exp.startDate
-                            }" onchange="updateExperience(${
-                exp.id
-              }, 'startDate', this.value)">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>End Date:</label>
-                            <input type="date" value="${
-                              exp.endDate
-                            }" onchange="updateExperience(${
-                exp.id
-              }, 'endDate', this.value)" ${exp.current ? "disabled" : ""}>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" ${
-                              exp.current ? "checked" : ""
-                            } onchange="updateExperience(${
-                exp.id
-              }, 'current', this.checked)">
-                            Currently working here
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label>Description:</label>
-                        <textarea rows="3" onchange="updateExperience(${
-                          exp.id
-                        }, 'description', this.value)">${
-                exp.description
-              }</textarea>
-                    </div>
-                    <button type="button" onclick="removeExperience(${
-                      exp.id
-                    })" class="cancel-btn">Remove</button>
-                </div>
-            `
-            )
-            .join("");
-        }
-
-        function updateExperience(id, field, value) {
-          const exp = experiences.find((e) => e.id === id);
-          if (exp) {
-            exp[field] = value;
-            if (field === "current" && value) {
-              exp.endDate = "";
-            }
-            updateProfile();
-          }
-        }
-
-        function addEducation() {
-          const education = {
-            id: Date.now(),
-            institution: "",
-            degree: "",
-            fieldOfStudy: "",
-            startDate: "",
-            endDate: "",
-            gpa: "",
-          };
-          educations.push(education);
-          displayEducations();
-        }
-
-        function removeEducation(id) {
-          educations = educations.filter((edu) => edu.id !== id);
-          displayEducations();
-          updateProfile();
-        }
-
-        function displayEducations() {
-          const educationList = document.getElementById("educationList");
-          educationList.innerHTML = educations
-            .map(
-              (edu) => `
-                <div class="education-item">
-                    <div class="form-group">
-                        <label>Institution:</label>
-                        <input type="text" value="${edu.institution}" onchange="updateEducation(${edu.id}, 'institution', this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label>Degree:</label>
-                        <input type="text" value="${edu.degree}" onchange="updateEducation(${edu.id}, 'degree', this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label>Field of Study:</label>
-                        <input type="text" value="${edu.fieldOfStudy}" onchange="updateEducation(${edu.id}, 'fieldOfStudy', this.value)">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Start Date:</label>
-                            <input type="date" value="${edu.startDate}" onchange="updateEducation(${edu.id}, 'startDate', this.value)">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>End Date:</label>
-                            <input type="date" value="${edu.endDate}" onchange="updateEducation(${edu.id}, 'endDate', this.value)">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>GPA:</label>
-                        <input type="text" value="${edu.gpa}" onchange="updateEducation(${edu.id}, 'gpa', this.value)" placeholder="e.g., 3.8/4.0">
-                    </div>
-                    <button type="button" onclick="removeEducation(${edu.id})" class="cancel-btn">Remove</button>
-                </div>
-            `
-            )
-            .join("");
-        }
-
-        function updateEducation(id, field, value) {
-          const edu = educations.find((e) => e.id === id);
-          if (edu) {
-            edu[field] = value;
-            updateProfile();
-          }
-        }
-
-        async function changePassword() {
-          const currentPassword =
-            document.getElementById("currentPassword").value;
-          const newPassword = document.getElementById("newPassword").value;
-          const confirmPassword =
-            document.getElementById("confirmPassword").value;
-
-          if (newPassword !== confirmPassword) {
-            showMessage(
-              "passwordMessage",
-              "New passwords do not match",
-              "error"
-            );
-            return;
-          }
-
-          if (newPassword.length < 6) {
-            showMessage(
-              "passwordMessage",
-              "Password must be at least 6 characters long",
-              "error"
-            );
-            return;
-          }
-
-          const passwordData = {
-            currentPassword: currentPassword,
-            newPassword: newPassword,
-          };
-
-          try {
-            const response = await fetch("/api/auth/change-password", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                ...getAuthHeaders(),
-              },
-              body: JSON.stringify(passwordData),
-            });
-
-            if (response.ok) {
-              showMessage(
-                "passwordMessage",
-                "Password changed successfully!",
-                "success"
-              );
-              document.getElementById("passwordForm").reset();
-            } else {
-              const error = await response.text();
-              showMessage(
-                "passwordMessage",
-                "Failed to change password: " + error,
-                "error"
-              );
-            }
-          } catch (error) {
-            showMessage(
-              "passwordMessage",
-              "Error changing password: " + error.message,
-              "error"
-            );
-          }
-        }
-
-        function showMessage(elementId, message, type) {
-          const messageDiv = document.getElementById(elementId);
-          messageDiv.textContent = message;
-          messageDiv.className =
-            type === "success" ? "success-msg" : "error-msg";
-
-          setTimeout(() => {
-            messageDiv.textContent = "";
-            messageDiv.className = "";
-          }, 5000);
-        }
-
-        async function logout() {
-          removeJwtToken();
-          window.location.href = "/login";
-        }
-      </script>
-    </div>
+      async function logout() {
+        removeJwtToken();
+        window.location.href = "http://localhost:8083/login";
+      }
+    </script>
   </body>
 </html>

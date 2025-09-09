@@ -17,6 +17,8 @@ public class ApplicationResponseDto {
     private Long applicationId;
     private Long jobId;
     private Long applicantId;
+    private String applicantName;
+    private String applicantEmail;
     private ApplicationStatus status;
     private LocalDate appliedDate;
     private String coverLetter;

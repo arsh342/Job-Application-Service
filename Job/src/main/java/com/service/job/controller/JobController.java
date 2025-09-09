@@ -137,4 +137,51 @@ public class JobController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    @PutMapping("/applications/{applicationId}/status")
+    public ResponseEntity<?> updateApplicationStatus(@PathVariable Long applicationId,
+                                                    @RequestBody StatusUpdateRequest request,
+                                                    HttpServletRequest httpRequest) {
+        Long employerId = (Long) httpRequest.getAttribute("employerId");
+        if (employerId == null) {
+            return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        try {
+            // Delegate to Application service
+            String applicationServiceUrl = "http://localhost:8082";
+            
+            // Create HTTP client request
+            java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+            
+            // Create request body
+            String requestBody = String.format("{\"status\":\"%s\"}", request.getStatus());
+            
+            java.net.http.HttpRequest httpReq = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create(applicationServiceUrl + "/api/applications/" + applicationId + "/status"))
+                    .header("Content-Type", "application/json")
+                    .PUT(java.net.http.HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+            
+            java.net.http.HttpResponse<String> response = client.send(httpReq, 
+                    java.net.http.HttpResponse.BodyHandlers.ofString());
+            
+            if (response.statusCode() == 200) {
+                return ResponseEntity.ok(response.body());
+            } else {
+                return ResponseEntity.status(response.statusCode()).body(response.body());
+            }
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating application status: " + e.getMessage());
+        }
+    }
+    
+    // Status update request class
+    public static class StatusUpdateRequest {
+        private String status;
+        
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+    }
 }

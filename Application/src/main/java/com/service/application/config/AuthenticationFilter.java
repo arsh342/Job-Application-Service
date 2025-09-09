@@ -100,14 +100,19 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private boolean isPublicEndpoint(String path) {
         return path.equals("/") || 
                path.equals("/health") || 
+               path.equals("/favicon.ico") ||
                path.startsWith("/css/") || 
                path.startsWith("/js/") || 
                path.startsWith("/images/") ||
                path.equals("/login-redirect") ||
                path.equals("/dashboard") ||
                path.equals("/browse-jobs") ||
+               path.equals("/my-applications") ||
+               path.equals("/profile") ||
+               path.equals("/status-demo") ||
                path.matches("/api/jobs/\\d+/applications") ||
-               path.equals("/debug/applications");
+               path.equals("/debug/applications") ||
+               path.startsWith("/api/debug/");
     }
 
     private UserValidationResponse validateTokenWithAuthService(String token) throws Exception {
