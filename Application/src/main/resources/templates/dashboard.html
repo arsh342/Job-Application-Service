@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Job Portal - Job Seeker Dashboard</title>
+    <title>Skillfind - Job Seeker Dashboard</title>
     <style>
       * {
         margin: 0;
@@ -51,10 +51,9 @@
       }
 
       .logo-icon {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 8px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -154,16 +153,6 @@
       .page-subtitle {
         font-size: 16px;
         color: #6b7280;
-      }
-
-      .container {
-        max-width: none;
-        margin: 0;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e5e9f2;
-        overflow: hidden;
       }
 
       .header h1 {
@@ -595,11 +584,6 @@
             </div>
           </div>
         </div>
-
-        <div class="container"></div>
-
-        <div class="dashboard-layout">
-          <div class="main-content">
             <!-- Job Recommendations Section -->
             <div class="section">
               <h2>🎯 Job Recommendations</h2>
@@ -607,18 +591,15 @@
                 <p class="no-items">No job recommendations available.</p>
               </div>
             </div>
-          </div>
 
-          <div class="sidebar">
-            <!-- My Applications Section -->
+          <!-- <div class="sidebar">
             <div class="section">
               <h2>📋 My Applications</h2>
               <div id="applicationsList" class="applications-list">
                 <p class="no-items">No applications yet.</p>
               </div>
             </div>
-          </div>
-        </div>
+          </div> -->
 
         <script>
           let currentApplicantId = null;

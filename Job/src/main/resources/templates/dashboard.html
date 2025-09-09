@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Job Portal - Employer Dashboard</title>
+    <title>Skillfind - Employer Dashboard</title>
     <style>
       * {
         margin: 0;
@@ -51,10 +51,9 @@
       }
 
       .logo-icon {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 8px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -315,11 +314,96 @@
       }
 
       .chart-bar-value {
+        position: absolute;
+        top: 50%;
+        right: -40px;
+        transform: translateY(-50%);
+        font-size: 12px;
         font-weight: 600;
-        color: #1f2937;
+        color: #374151;
         min-width: 40px;
         text-align: right;
         font-size: 14px;
+      }
+
+      /* Job Listings with Applications */
+      .job-listing-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        background: white;
+        transition: all 0.2s ease;
+      }
+
+      .job-listing-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+      }
+
+      .job-listing-info {
+        flex: 1;
+      }
+
+      .job-listing-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+      }
+
+      .job-listing-details {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+
+      .job-listing-meta {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: #9ca3af;
+      }
+
+      .application-count {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .application-count-number {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+      }
+
+      /* Responsive design for job listings */
+      @media (max-width: 768px) {
+        .job-listing-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .job-listing-meta {
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .application-count {
+          align-self: stretch;
+          justify-content: center;
+        }
       }
 
       /* Job List */
@@ -481,18 +565,16 @@
 
         <!-- Content Grid -->
         <div class="content-grid">
-          <!-- Chart Section -->
+          <!-- Job Listings Section -->
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Application Views</h3>
+              <h3 class="card-title">Job Listings & Applications</h3>
             </div>
             <div class="card-content">
-              <div class="chart-container">
-                <div id="applicationsChart" class="chart-container">
-                  <p style="text-align: center; color: #6c757d; margin: 50px 0">
-                    Loading chart...
-                  </p>
-                </div>
+              <div id="jobListingsWithApplications">
+                <p style="text-align: center; color: #6c757d; margin: 50px 0">
+                  Loading job listings...
+                </p>
               </div>
             </div>
           </div>
@@ -636,9 +718,7 @@
         try {
           // Load jobs and their statistics
           await Promise.all([
-            loadJobs(),
             loadJobStatistics(),
-            loadRecentApplications(),
             displayRecentJobs(),
             updateUserInfo(),
           ]);
@@ -648,7 +728,7 @@
       }
 
       async function loadJobs() {
-        if (!currentEmployerId) return;
+        if (!currentEmployerId) return [];
 
         try {
           const response = await fetch(
@@ -666,6 +746,7 @@
           console.error("Failed to load jobs:", error);
           return [];
         }
+        return [];
       }
 
       async function loadJobStatistics() {
@@ -737,58 +818,78 @@
             document.getElementById("newApplications").textContent =
               newApplications;
 
-            // Create chart
-            createApplicationsChart(applicationData);
+            // Create job listings display
+            displayJobListingsWithApplications(jobs, applicationData);
           }
         } catch (error) {
           console.error("Failed to load job statistics:", error);
         }
       }
 
-      function createApplicationsChart(data) {
-        const chartContainer = document.getElementById("applicationsChart");
-        chartContainer.innerHTML = "";
+      function displayJobListingsWithApplications(jobs, applicationData) {
+        const container = document.getElementById(
+          "jobListingsWithApplications"
+        );
+        container.innerHTML = "";
 
-        if (data.length === 0) {
-          chartContainer.innerHTML =
-            '<p style="text-align: center; color: #6c757d; margin: 50px 0;">No job data available</p>';
+        if (jobs.length === 0) {
+          container.innerHTML =
+            '<p style="text-align: center; color: #6c757d; margin: 50px 0;">No jobs posted yet. <a href="/create-job" style="color: #667eea;">Create your first job</a></p>';
           return;
         }
 
-        const maxApplications = Math.max(
-          ...data.map((item) => item.applications),
-          1
-        );
+        // Create a map for quick lookup of application counts
+        const applicationMap = new Map();
+        applicationData.forEach((item) => {
+          const job = jobs.find(
+            (j) =>
+              j.title.startsWith(item.jobTitle) ||
+              item.jobTitle.startsWith(j.title.substring(0, 15))
+          );
+          if (job) {
+            applicationMap.set(job.jobId, item.applications);
+          }
+        });
 
-        data.slice(0, 8).forEach((item) => {
-          // Show only first 8 jobs
-          const barContainer = document.createElement("div");
-          barContainer.className = "chart-bar";
+        jobs.forEach((job) => {
+          const applicationCount = applicationMap.get(job.jobId) || 0;
 
-          const label = document.createElement("div");
-          label.className = "chart-bar-label";
-          label.textContent =
-            item.jobTitle.length > 12
-              ? item.jobTitle.substring(0, 12) + "..."
-              : item.jobTitle;
+          const jobDiv = document.createElement("div");
+          jobDiv.className = "job-listing-item";
 
-          const barWrapper = document.createElement("div");
-          barWrapper.className = "chart-bar-container";
+          const statusColor = job.status === "ACTIVE" ? "#10b981" : "#6b7280";
 
-          const barFill = document.createElement("div");
-          barFill.className = "chart-bar-fill";
-          const percentage = (item.applications / maxApplications) * 100;
-          barFill.style.width = `${percentage}%`;
+          jobDiv.innerHTML = `
+            <div class="job-listing-info">
+              <div class="job-listing-title">${job.title}</div>
+              <div class="job-listing-details">${
+                job.company || "Company not specified"
+              } • ${job.location || "Location not specified"}</div>
+              <div class="job-listing-meta">
+                <span>Posted: ${new Date(
+                  job.postedDate || Date.now()
+                ).toLocaleDateString()}</span>
+                <span style="color: ${statusColor};">● ${
+            job.status || "ACTIVE"
+          }</span>
+                <span>Salary: ${
+                  job.salary ? "$" + job.salary : "Not specified"
+                }</span>
+              </div>
+            </div>
+            <div class="application-count">
+              Applications
+              <span class="application-count-number">${applicationCount}</span>
+            </div>
+          `;
 
-          const value = document.createElement("div");
-          value.className = "chart-bar-value";
-          value.textContent = item.applications;
+          // Add click handler to view applications
+          jobDiv.addEventListener("click", () => {
+            viewApplications(job.jobId);
+          });
 
-          barWrapper.appendChild(barFill);
-          barContainer.appendChild(label);
-          barContainer.appendChild(barWrapper);
-          barContainer.appendChild(value);
-          chartContainer.appendChild(barContainer);
+          jobDiv.style.cursor = "pointer";
+          container.appendChild(jobDiv);
         });
       }
 
@@ -1004,24 +1105,38 @@
       async function displayRecentJobs() {
         if (!currentEmployerId) return;
 
+        console.log("Loading recent jobs for employer:", currentEmployerId);
+
         try {
-          const jobs = await loadEmployerJobs();
-          const recentJobs = jobs.slice(0, 5); // Show latest 5 jobs
+          const response = await fetch(
+            `/api/employers/${currentEmployerId}/jobs`,
+            {
+              headers: getAuthHeaders(),
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch jobs: ${response.status}`);
+          }
+          
+          const jobs = await response.json();
+          console.log("Loaded jobs for recent display:", jobs);
+          
+          const recentJobs = jobs.slice(0, 3); // Show latest 3 jobs
 
           const recentJobsContainer = document.getElementById("recentJobs");
+          if (!recentJobsContainer) {
+            console.error("Recent jobs container not found");
+            return;
+          }
+          
           if (recentJobs.length === 0) {
             recentJobsContainer.innerHTML =
-              '<p style="color: #6b7280; text-align: center;">No jobs posted yet</p>';
+              '<p style="color: #6b7280; text-align: center; padding: 20px;">No jobs posted yet</p>';
             return;
           }
 
-          const colors = [
-            "#667eea",
-            "#84fab0",
-            "#fa709a",
-            "#a8edea",
-            "#ffeaa7",
-          ];
+          const colors = ["#667eea", "#84fab0", "#fa709a"];
 
           recentJobsContainer.innerHTML = recentJobs
             .map(
@@ -1034,7 +1149,9 @@
               </div>
               <div class="job-details">
                 <h4>${job.title}</h4>
-                <p>${job.company} • ${job.location}</p>
+                <p>${job.company || "Company not specified"} • ${
+                job.location || "Location not specified"
+              }</p>
               </div>
               <div class="job-meta">
                 <div class="job-type">${job.status}</div>
@@ -1048,6 +1165,11 @@
             .join("");
         } catch (error) {
           console.error("Error loading recent jobs:", error);
+          const recentJobsContainer = document.getElementById("recentJobs");
+          if (recentJobsContainer) {
+            recentJobsContainer.innerHTML =
+              '<p style="color: #ef4444; text-align: center; padding: 20px;">Failed to load recent jobs</p>';
+          }
         }
       }
 
