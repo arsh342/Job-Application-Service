@@ -2,20 +2,20 @@
 
 ## 📋 Table of Contents
 
-- [Project Overview](#project-overview)
-- [System Architecture](#system-architecture)
-- [Services Overview](#services-overview)
-- [Authentication Service (Port 8083)](#authentication-service-port-8083)
-- [Job Service (Port 8081)](#job-service-port-8081)
-- [Application Service (Port 8082)](#application-service-port-8082)
-- [Inter-Service Communication Flow](#inter-service-communication-flow)
-- [API Documentation](#api-documentation)
-- [Database Schema](#database-schema)
-- [Setup & Installation](#setup--installation)
-- [User Workflows](#user-workflows)
-- [Security Implementation](#security-implementation)
-- [Troubleshooting](#troubleshooting)
-- [Development Guidelines](#development-guidelines)
+- [Project Overview](#-project-overview)
+- [System Architecture](#️-system-architecture)
+- [Services Overview](#-services-overview)
+- [Authentication Service (Port 8083)](#-authentication-service-port-8083)
+- [Job Service (Port 8081)](#-job-service-port-8081)
+- [Application Service (Port 8082)](#-application-service-port-8082)
+- [Inter-Service Communication Flow](#-inter-service-communication-flow)
+- [API Documentation](#-api-documentation)
+- [Database Schema](#️-database-schema)
+- [Setup & Installation](#-setup--installation)
+- [User Workflows](#-user-workflows)
+- [Security Implementation](#-security-implementation)
+- [Troubleshooting](#-troubleshooting)
+- [Development Guidelines](#-development-guidelines)
 
 ## 🎯 Project Overview
 
