@@ -3,6 +3,7 @@ package com.service.job.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,8 +30,19 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**", "/login-redirect", "/dashboard", "/jobs", "/create-job", "/job-details", "/profile", "/job-listings").permitAll()
-                .requestMatchers("/api/jobs/**", "/api/jobs").permitAll()
+                // Public static resources and health check
+                .requestMatchers("/", "/health", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                .requestMatchers("/login-redirect").permitAll()
+                // Public job browsing (GET only)
+                .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/all").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/jobs/*").permitAll()
+                // Protected web pages - require authentication
+                .requestMatchers("/dashboard", "/create-job", "/job-details", "/profile", "/job-listings", "/jobs").authenticated()
+                // Protected API endpoints - require authentication
+                .requestMatchers(HttpMethod.POST, "/api/jobs").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/jobs/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/jobs/**").authenticated()
+                // All other requests require authentication
                 .anyRequest().authenticated()
             )
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -41,7 +53,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        // More restrictive CORS - only allow specific origins in production
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*", "https://localhost:*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

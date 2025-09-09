@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Browse Jobs - Skillfind</title>
+    <script src="/static/js/pre-auth.js"></script>
+    <script src="/static/js/auth-helper.js"></script>
     <style>
       * {
         margin: 0;
@@ -549,6 +551,12 @@
           );
         }
 
+        // Give AuthHelper more time to process URL tokens before checking auth
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Check authentication before loading content
+        checkAuth();
+        
         // Load jobs and applications
         await loadJobs();
         await loadAppliedJobs();
@@ -556,7 +564,9 @@
 
       async function loadJobs() {
         try {
-          const response = await fetch("http://localhost:8081/api/jobs/all");
+          const response = await fetch("http://localhost:8081/api/jobs/all", {
+            headers: getAuthHeaders()
+          });
 
           if (response.ok) {
             allJobs = await response.json();

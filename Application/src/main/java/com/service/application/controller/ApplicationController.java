@@ -21,7 +21,6 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class ApplicationController {
     
     private final JobApplicationService jobApplicationService;
@@ -30,8 +29,15 @@ public class ApplicationController {
     @PostMapping("/applications")
     public ResponseEntity<?> applyToJob(@Valid @RequestBody ApplicationCreateDto dto, HttpServletRequest request) {
         Long applicantId = (Long) request.getAttribute("applicantId");
+        String userType = (String) request.getAttribute("userType");
+        
         if (applicantId == null) {
             return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        // Validate that user is a job seeker
+        if (!"JOB_SEEKER".equals(userType)) {
+            return ResponseEntity.status(403).body("Access denied. Only job seekers can apply to jobs.");
         }
         
         try {
@@ -141,7 +147,20 @@ public class ApplicationController {
     
     @PutMapping("/applications/{applicationId}/status")
     public ResponseEntity<?> updateApplicationStatus(@PathVariable Long applicationId,
-                                                     @RequestBody StatusUpdateRequest request) {
+                                                     @RequestBody StatusUpdateRequest request,
+                                                     HttpServletRequest httpRequest) {
+        Long userId = (Long) httpRequest.getAttribute("userId");
+        String userType = (String) httpRequest.getAttribute("userType");
+        
+        if (userId == null) {
+            return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        // Validate that user is an employer
+        if (!"EMPLOYER".equals(userType)) {
+            return ResponseEntity.status(403).body("Access denied. Only employers can update application status.");
+        }
+        
         try {
             ApplicationStatusUpdateDto dto = new ApplicationStatusUpdateDto();
             dto.setStatus(JobApplication.ApplicationStatus.valueOf(request.getStatus()));

@@ -14,6 +14,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -45,31 +46,77 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.debug("Authentication required for path: {} {}", method, path);
+        log.info("Processing request for path: {}", path);
+        log.info("Applying authentication for path: {}", path);
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
+            log.info("Found token in Authorization header");
         }
 
-        // Check for token in session storage or query parameter as fallback
+        // Check for token in query parameter as fallback
         if (token == null) {
             token = request.getParameter("token");
+            if (token != null) {
+                log.info("Found token in query parameter");
+                // Set cookie for future requests to avoid page reload issues
+                Cookie authCookie = new Cookie("authToken", token);
+                authCookie.setPath("/");
+                authCookie.setMaxAge(24 * 60 * 60); // 24 hours
+                authCookie.setHttpOnly(true);
+                authCookie.setSecure(false); // Set to true in production with HTTPS
+                ((HttpServletResponse) response).addCookie(authCookie);
+                log.info("Set authToken cookie for token found in query parameter");
+            }
+        }
+
+        // Check for token in cookies as another fallback
+        if (token == null) {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                log.info("Found {} cookies to check", cookies.length);
+                for (Cookie cookie : cookies) {
+                    log.debug("Cookie: {}={}", cookie.getName(), cookie.getValue().length() > 20 ? 
+                             cookie.getValue().substring(0, 20) + "..." : cookie.getValue());
+                    if ("authToken".equals(cookie.getName())) {
+                        token = cookie.getValue();
+                        log.info("Found token in cookie");
+                        break;
+                    }
+                }
+            } else {
+                log.info("No cookies found in request");
+            }
         }
 
         if (token == null) {
-            sendUnauthorizedResponse(response, "No authentication token provided");
-            return;
+            log.warn("No token found for path: {}", path);
+            // For web pages, redirect to login instead of returning 401
+            if (isWebPageRequest(path)) {
+                log.info("Redirecting to login for web page: {}", path);
+                response.sendRedirect("http://localhost:8083/login");
+                return;
+            } else {
+                sendUnauthorizedResponse(response, "No authentication token provided");
+                return;
+            }
         }
 
         try {
             UserValidationResponse validation = validateTokenWithAuthService(token);
             
             if (!validation.isValid()) {
-                sendUnauthorizedResponse(response, "Invalid authentication token");
-                return;
+                // For web pages, redirect to login instead of returning 401
+                if (isWebPageRequest(path)) {
+                    response.sendRedirect("http://localhost:8083/login");
+                    return;
+                } else {
+                    sendUnauthorizedResponse(response, "Invalid authentication token");
+                    return;
+                }
             }
 
             // Add user information to request attributes
@@ -93,7 +140,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             log.error("Error validating token with auth service", e);
-            sendUnauthorizedResponse(response, "Authentication service error");
+            // For web pages, redirect to login instead of returning 401
+            if (isWebPageRequest(path)) {
+                response.sendRedirect("http://localhost:8083/login");
+                return;
+            } else {
+                sendUnauthorizedResponse(response, "Authentication service error");
+            }
         }
     }
 
@@ -103,25 +156,18 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                path.startsWith("/css/") || 
                path.startsWith("/js/") || 
                path.startsWith("/images/") ||
-               path.equals("/login-redirect") ||
-               path.equals("/dashboard") ||
-               path.equals("/jobs") ||
-               path.equals("/create-job") ||
-               path.equals("/job-details") ||
-               path.equals("/profile") ||
-               path.equals("/job-listings") ||
-               path.equals("/debug") ||
-               path.equals("/api/jobs/all"); // GET /api/jobs/all for browsing all jobs
+               path.equals("/favicon.ico") ||
+               path.equals("/login-redirect");
     }
 
     private boolean isPublicGetEndpoint(String path, String method) {
-        // Only allow GET requests to these endpoints as public
+        // Only allow GET requests to these endpoints as public for job browsing
         if ("GET".equalsIgnoreCase(method)) {
-            if (path.equals("/api/jobs")) {
-                return true; // GET /api/jobs for browsing
+            if (path.equals("/api/jobs") || path.equals("/api/jobs/all")) {
+                return true; // GET /api/jobs for browsing all jobs
             }
             if (path.startsWith("/api/jobs/") && path.matches("/api/jobs/\\d+$")) {
-                return true; // GET /api/jobs/{id} for job details
+                return true; // GET /api/jobs/{id} for specific job details
             }
         }
         return false;
@@ -162,6 +208,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             "<a href='http://localhost:8083/login' class='btn'>Login</a>" +
             "</div></body></html>"
         );
+    }
+
+    private boolean isWebPageRequest(String path) {
+        return path.equals("/dashboard") || 
+               path.equals("/create-job") || 
+               path.equals("/job-details") || 
+               path.equals("/profile") || 
+               path.equals("/job-listings") || 
+               path.equals("/jobs");
     }
 
     @Data

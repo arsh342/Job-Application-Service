@@ -134,34 +134,34 @@
           href="#"
           class="nav-item"
           id="nav-dashboard"
-          onclick="navigateToPage('/dashboard')"
+          onclick="navigateToPage('/dashboard'); return false;"
         >
           <div class="nav-icon">🏠</div>
           Dashboard
         </a>
         <a
-          href="/browse-jobs"
+          href="#"
           class="nav-item"
           id="nav-browse-jobs"
-          onclick="navigateToPage('/browse-jobs')"
+          onclick="navigateToPage('/browse-jobs'); return false;"
         >
           <div class="nav-icon">🔍</div>
           Browse Jobs
         </a>
         <a
-          href="/my-applications"
+          href="#"
           class="nav-item"
           id="nav-my-applications"
-          onclick="navigateToPage('/my-applications')"
+          onclick="navigateToPage('/my-applications'); return false;"
         >
           <div class="nav-icon">📄</div>
           My Applications
         </a>
         <a
-          href="/profile"
+          href="#"
           class="nav-item"
           id="nav-profile"
-          onclick="navigateToPage('/profile')"
+          onclick="navigateToPage('/profile'); return false;"
         >
           <div class="nav-icon">👤</div>
           Profile
@@ -232,11 +232,23 @@
       }
 
       function navigateToPage(page) {
-        const token = getJwtToken();
-        if (token) {
-          window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+        console.log("Navigating to page:", page);
+
+        // Use AuthHelper if available, otherwise fallback to manual token handling
+        if (window.AuthHelper) {
+          console.log("Using AuthHelper for navigation");
+          const token = window.AuthHelper.getToken();
+          console.log("Token available:", !!token);
+          window.AuthHelper.navigateWithAuth(page);
         } else {
-          window.location.href = page;
+          console.log("Using manual token handling");
+          const token = getJwtToken();
+          console.log("Token available:", !!token);
+          if (token) {
+            window.location.href = `${page}?token=${encodeURIComponent(token)}`;
+          } else {
+            window.location.href = page;
+          }
         }
       }
 

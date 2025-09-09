@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class JobController {
     
     private final JobService jobService;
@@ -23,8 +22,15 @@ public class JobController {
     @PostMapping("/jobs")
     public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDto dto, HttpServletRequest request) {
         Long employerId = (Long) request.getAttribute("employerId");
+        String userType = (String) request.getAttribute("userType");
+        
         if (employerId == null) {
             return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        // Validate that user is an employer
+        if (!"EMPLOYER".equals(userType)) {
+            return ResponseEntity.status(403).body("Access denied. Only employers can create jobs.");
         }
         
         try {
@@ -40,8 +46,15 @@ public class JobController {
                                       @Valid @RequestBody JobCreateDto dto, 
                                       HttpServletRequest request) {
         Long employerId = (Long) request.getAttribute("employerId");
+        String userType = (String) request.getAttribute("userType");
+        
         if (employerId == null) {
             return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        // Validate that user is an employer
+        if (!"EMPLOYER".equals(userType)) {
+            return ResponseEntity.status(403).body("Access denied. Only employers can update jobs.");
         }
         
         try {
@@ -55,8 +68,15 @@ public class JobController {
     @DeleteMapping("/jobs/{jobId}")
     public ResponseEntity<?> deleteJob(@PathVariable Long jobId, HttpServletRequest request) {
         Long employerId = (Long) request.getAttribute("employerId");
+        String userType = (String) request.getAttribute("userType");
+        
         if (employerId == null) {
             return ResponseEntity.status(401).body("Authentication required");
+        }
+        
+        // Validate that user is an employer
+        if (!"EMPLOYER".equals(userType)) {
+            return ResponseEntity.status(403).body("Access denied. Only employers can delete jobs.");
         }
         
         try {

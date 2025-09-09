@@ -38,6 +38,7 @@ public class Job {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private JobStatus status = JobStatus.OPEN;
     
     @Column(name = "employer_id", nullable = false)
