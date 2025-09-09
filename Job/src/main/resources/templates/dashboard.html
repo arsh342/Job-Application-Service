@@ -1114,14 +1114,14 @@
               headers: getAuthHeaders(),
             }
           );
-          
+
           if (!response.ok) {
             throw new Error(`Failed to fetch jobs: ${response.status}`);
           }
-          
+
           const jobs = await response.json();
           console.log("Loaded jobs for recent display:", jobs);
-          
+
           const recentJobs = jobs.slice(0, 3); // Show latest 3 jobs
 
           const recentJobsContainer = document.getElementById("recentJobs");
@@ -1129,7 +1129,7 @@
             console.error("Recent jobs container not found");
             return;
           }
-          
+
           if (recentJobs.length === 0) {
             recentJobsContainer.innerHTML =
               '<p style="color: #6b7280; text-align: center; padding: 20px;">No jobs posted yet</p>';
