@@ -231,8 +231,21 @@
               id="password"
               name="password"
               required
-              minlength="6"
+              minlength="8"
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>/?]).*$"
+              title="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number and one special character"
             />
+            <small
+              style="
+                color: #6c757d;
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+              "
+            >
+              Must be at least 8 characters with uppercase, lowercase, number
+              and special character
+            </small>
           </div>
 
           <div class="form-group">
@@ -249,7 +262,7 @@
           </div>
 
           <div class="form-group conditional-field" id="phoneField">
-            <label for="phone">Phone Number</label>
+            <label for="phone">Phone Number (Optional)</label>
             <input type="tel" id="phone" name="phone" />
           </div>
 
@@ -285,7 +298,6 @@
         userTypeInfo.style.display = "none";
 
         if (selectedType === "APPLICANT") {
-          phoneField.style.display = "block";
           userTypeInfo.style.display = "block";
           userTypeDescription.textContent =
             "As a Job Seeker, you can browse and apply for jobs posted by employers.";
@@ -302,14 +314,25 @@
         .addEventListener("submit", async function (e) {
           e.preventDefault();
 
+          const userType = document.getElementById("userType").value;
           const formData = {
             name: document.getElementById("name").value,
             email: document.getElementById("email").value,
             password: document.getElementById("password").value,
-            userType: document.getElementById("userType").value,
-            phone: document.getElementById("phone").value || null,
-            companyName: document.getElementById("companyName").value || null,
+            userType: userType,
           };
+
+          // Only include phone for employers (though it's currently not shown for job seekers)
+          if (userType === "EMPLOYER") {
+            formData.companyName =
+              document.getElementById("companyName").value || null;
+          }
+
+          // Phone is optional for all users but typically only collected for employers
+          const phoneValue = document.getElementById("phone").value;
+          if (phoneValue && phoneValue.trim()) {
+            formData.phone = phoneValue;
+          }
 
           try {
             const response = await fetch("/api/auth/register", {

@@ -176,9 +176,12 @@
     <script th:fragment="sidebar-script">
       // Sidebar functionality
       function initializeSidebar() {
-        // Load user info from localStorage
-        const userName = localStorage.getItem("userName");
-        const userEmail = localStorage.getItem("userEmail");
+        // Use Thymeleaf variables if available, otherwise fallback to localStorage
+        const thymeleafUserName = /*[[${userName}]]*/ "";
+        const thymeleafUserEmail = /*[[${userEmail}]]*/ "";
+
+        let userName = thymeleafUserName || localStorage.getItem("userName");
+        let userEmail = thymeleafUserEmail || localStorage.getItem("userEmail");
 
         if (userName && userEmail) {
           document.getElementById("userName").textContent = userName;

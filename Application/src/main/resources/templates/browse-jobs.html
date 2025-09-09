@@ -541,7 +541,6 @@
           // Store token from URL parameter
           localStorage.setItem("authToken", urlToken);
           localStorage.setItem("jwtToken", urlToken); // Keep for compatibility
-          console.log("Token stored from URL parameter");
           
           // Clean URL by removing token parameter
           window.history.replaceState(

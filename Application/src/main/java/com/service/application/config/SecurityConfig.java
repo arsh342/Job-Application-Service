@@ -40,11 +40,12 @@ public class SecurityConfig {
                 .requestMatchers("/", "/health", "/favicon.ico").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/static/**", "/images/**", "/webjars/**").permitAll()
                 .requestMatchers("/login-redirect").permitAll()
+                // Cross-service communication endpoints - allow all for Job service calls
+                .requestMatchers("/api/jobs/*/applications").permitAll()
                 // Protected web pages - require authentication
                 .requestMatchers("/dashboard", "/browse-jobs", "/my-applications", "/profile").authenticated()
                 // Protected API endpoints - require authentication
                 .requestMatchers("/api/applications/**").authenticated()
-                .requestMatchers("/api/jobs/*/applications").authenticated()
                 // Remove debug endpoints in production
                 .requestMatchers("/debug/**").denyAll()
                 // All other requests require authentication

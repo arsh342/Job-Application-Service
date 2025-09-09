@@ -703,9 +703,6 @@
           // If validation fails but we have a token, continue anyway
           // This provides better UX when services are temporarily unavailable
           if (token) {
-            console.log(
-              "Continuing with existing token despite validation failure"
-            );
             return;
           }
 
@@ -1110,8 +1107,6 @@
       async function displayRecentJobs() {
         if (!currentEmployerId) return;
 
-        console.log("Loading recent jobs for employer:", currentEmployerId);
-
         try {
           const response = await fetch(
             `/api/employers/${currentEmployerId}/jobs`,
@@ -1125,7 +1120,6 @@
           }
 
           const jobs = await response.json();
-          console.log("Loaded jobs for recent display:", jobs);
 
           const recentJobs = jobs.slice(0, 3); // Show latest 3 jobs
 

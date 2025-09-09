@@ -122,10 +122,16 @@
       </div>
 
       <div class="user-info">
-        <div class="user-avatar" id="userAvatar">U</div>
+        <div
+          class="user-avatar"
+          id="userAvatar"
+          th:text="${userName != null ? #strings.substring(userName,0,1).toUpperCase() : 'U'}"
+        >
+          U
+        </div>
         <div class="user-details">
-          <h4 id="userName"></h4>
-          <p id="userEmail"></p>
+          <h4 id="userName" th:text="${userName ?: 'User'}"></h4>
+          <p id="userEmail" th:text="${userEmail ?: 'user@example.com'}"></p>
         </div>
       </div>
 
@@ -158,7 +164,7 @@
           My Job Listings
         </a>
         <!-- <a
-          href="/profile"
+          href="#"
           class="nav-item"
           id="nav-profile"
           onclick="navigateToPage('/profile')"
@@ -176,16 +182,25 @@
     <script th:fragment="sidebar-script">
       // Sidebar functionality
       function initializeSidebar() {
-        // Load user info from localStorage
-        const userName = localStorage.getItem("userName");
-        const userEmail = localStorage.getItem("userEmail");
+        // Check if user info is already set via Thymeleaf (server-side)
+        const userNameElement = document.getElementById("userName");
+        const userEmailElement = document.getElementById("userEmail");
 
-        if (userName && userEmail) {
-          document.getElementById("userName").textContent = userName;
-          document.getElementById("userEmail").textContent = userEmail;
-          document.getElementById("userAvatar").textContent = userName
-            .charAt(0)
-            .toUpperCase();
+        // If Thymeleaf didn't set the values (e.g., from server-side model), try localStorage
+        if (
+          !userNameElement.textContent ||
+          userNameElement.textContent === "User"
+        ) {
+          const userName = localStorage.getItem("userName");
+          const userEmail = localStorage.getItem("userEmail");
+
+          if (userName && userEmail) {
+            userNameElement.textContent = userName;
+            userEmailElement.textContent = userEmail;
+            document.getElementById("userAvatar").textContent = userName
+              .charAt(0)
+              .toUpperCase();
+          }
         }
 
         // Set active navigation item based on current page

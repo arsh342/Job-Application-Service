@@ -8,12 +8,26 @@
   window.AuthHelper = {
     // Get JWT token from localStorage
     getToken: function () {
-      return (
+      // First check localStorage/sessionStorage
+      let token =
         localStorage.getItem("authToken") ||
         localStorage.getItem("jwtToken") ||
         sessionStorage.getItem("authToken") ||
-        sessionStorage.getItem("jwtToken")
-      );
+        sessionStorage.getItem("jwtToken");
+
+      // If no token found, try to get from cookies as fallback
+      if (!token) {
+        const cookies = document.cookie.split(";");
+        const authCookie = cookies.find((cookie) =>
+          cookie.trim().startsWith("authToken=")
+        );
+        if (authCookie) {
+          token = authCookie.split("=")[1];
+          console.log("Found token in cookie as fallback");
+        }
+      }
+
+      return token;
     },
 
     // Set JWT token
@@ -92,6 +106,15 @@
 
     // Handle navigation with authentication
     navigateWithAuth: function (url) {
+      const urlObj = new URL(url, window.location.origin);
+      const urlToken = urlObj.searchParams.get("token");
+
+      // If URL already has a token, navigate directly
+      if (urlToken) {
+        window.location.href = url;
+        return;
+      }
+
       if (this.isAuthenticated()) {
         const token = this.getToken();
         // Check if URL already has parameters
@@ -172,9 +195,9 @@
       this.setupAuthInterceptor();
 
       // Check authentication on page load for protected pages
+      // Note: /profile is excluded as it handles authentication manually
       const protectedPaths = [
         "/dashboard",
-        "/profile",
         "/browse-jobs",
         "/my-applications",
         "/create-job",

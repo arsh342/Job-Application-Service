@@ -606,15 +606,12 @@
         // Check authentication using shared helper
         checkAuth();
         
-        console.log("JWT token found, loading applications...");
         // Load applications
         await loadApplications();
       });
 
       async function loadApplications() {
         try {
-          console.log("Loading applications...");
-          console.log("Auth headers:", getAuthHeaders());
           const response = await fetch("/api/applications/my-applications", {
             method: "GET",
             headers: {
@@ -623,24 +620,43 @@
             },
           });
           
-          console.log("Response status:", response.status);
-          
           if (response.ok) {
             allApplications = await response.json();
-            console.log("Loaded applications:", allApplications);
 
             // Load job details for each application
             for (let application of allApplications) {
               try {
                 const jobResponse = await fetch(
-                  `http://localhost:8081/api/jobs/${application.jobId}`
+                  `http://localhost:8081/api/jobs/${application.jobId}`,
+                  {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                      ...getAuthHeaders(),
+                    },
+                  }
                 );
                 if (jobResponse.ok) {
                   const job = await jobResponse.json();
                   application.jobTitle = job.title;
                   application.companyName = job.company;
                   application.jobLocation = job.location;
-                  application.jobSalary = job.salary;
+                  application.jobSalary = job.salaryMin && job.salaryMax 
+                    ? `$${job.salaryMin.toLocaleString()} - $${job.salaryMax.toLocaleString()}`
+                    : job.salaryMin 
+                    ? `$${job.salaryMin.toLocaleString()}+`
+                    : "Salary not specified";
+                } else {
+                  // Handle different error responses
+                  const errorText = await jobResponse.text();
+                  console.error(
+                    `Failed to load job ${application.jobId}: ${jobResponse.status} ${jobResponse.statusText}`,
+                    errorText
+                  );
+                  application.jobTitle = "Job details unavailable";
+                  application.companyName = "Unknown";
+                  application.jobLocation = "Unknown";
+                  application.jobSalary = "Unknown";
                 }
               } catch (error) {
                 console.error(

@@ -160,6 +160,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                path.startsWith("/webjars/") ||
                path.startsWith("/resources/") ||
                path.equals("/login-redirect") ||
+               // Cross-service communication endpoints (Job service calling Application service)
+               path.matches("/api/jobs/\\d+/applications") ||
                path.endsWith(".js") ||
                path.endsWith(".css") ||
                path.endsWith(".png") ||

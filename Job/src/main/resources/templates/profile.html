@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile - Job Portal</title>
+    <script src="/js/pre-auth.js"></script>
+    <script src="/js/auth-helper.js"></script>
     <style>
       * {
         margin: 0;
@@ -328,8 +330,21 @@
                       id="newPassword"
                       name="newPassword"
                       required
-                      minlength="6"
+                      minlength="8"
+                      pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>/?]).*$"
+                      title="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number and one special character"
                     />
+                    <small
+                      style="
+                        color: #6c757d;
+                        font-size: 12px;
+                        margin-top: 4px;
+                        display: block;
+                      "
+                    >
+                      Must be at least 8 characters with uppercase, lowercase,
+                      number and special character
+                    </small>
                   </div>
 
                   <div class="form-group">
@@ -339,7 +354,7 @@
                       id="confirmPassword"
                       name="confirmPassword"
                       required
-                      minlength="6"
+                      minlength="8"
                     />
                   </div>
 
@@ -407,32 +422,37 @@
             }
 
             window.addEventListener("load", async function () {
-              // First check if token is passed via URL parameter
-              const urlParams = new URLSearchParams(window.location.search);
-              const urlToken = urlParams.get("token");
+              console.log("Profile page loading...");
 
-              if (urlToken) {
-                // Store token from URL parameter
-                setJwtToken(urlToken);
-                // Clean URL by removing token parameter
-                window.history.replaceState(
-                  {},
-                  document.title,
-                  window.location.pathname
-                );
+              // Auth-helper.js has already processed URL token, so just get the stored token
+              let token = getJwtToken();
+
+              // If no token in localStorage, try to get it from Thymeleaf model (server-side)
+              const thymeleafToken = /*[[${token}]]*/ null;
+              if (!token && thymeleafToken) {
+                token = thymeleafToken;
+                setJwtToken(thymeleafToken);
               }
 
-              const token = getJwtToken();
-              if (!token) {
-                window.location.href = "http://localhost:8083/login";
-                return;
-              }
+              console.log("Token found:", token ? "YES" : "NO");
+              console.log("Thymeleaf token:", thymeleafToken ? "YES" : "NO");
+
+              // Since backend already authenticated us to render this page,
+              // let's not redirect even if client-side token is missing
+              // if (!token) {
+              //   window.location.href = "http://localhost:8083/login";
+              //   return;
+              // }
 
               try {
-                // Extract user info from stored token data
-                const userType = localStorage.getItem("userType");
-                const userName = localStorage.getItem("userName");
-                const userId = localStorage.getItem("userId");
+                // Use Thymeleaf model data as primary source, localStorage as fallback
+                const userType =
+                  /*[[${userType}]]*/ localStorage.getItem("userType");
+                const userName =
+                  /*[[${userName}]]*/ localStorage.getItem("userName");
+                const userId = /*[[${userId}]]*/ localStorage.getItem("userId");
+
+                console.log("Profile data:", { userType, userName, userId });
 
                 if (userType && userName && userId) {
                   // Use stored user information
@@ -635,10 +655,53 @@
                 return;
               }
 
-              if (newPassword.length < 6) {
+              if (newPassword.length < 8) {
                 showMessage(
                   "passwordMessage",
-                  "Password must be at least 6 characters long",
+                  "Password must be at least 8 characters long",
+                  "error"
+                );
+                return;
+              }
+
+              // Check for uppercase, lowercase, number and special character
+              const hasUppercase = /[A-Z]/.test(newPassword);
+              const hasLowercase = /[a-z]/.test(newPassword);
+              const hasNumber = /\d/.test(newPassword);
+              const hasSpecialChar =
+                /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword);
+
+              if (!hasUppercase) {
+                showMessage(
+                  "passwordMessage",
+                  "Password must contain at least one uppercase letter",
+                  "error"
+                );
+                return;
+              }
+
+              if (!hasLowercase) {
+                showMessage(
+                  "passwordMessage",
+                  "Password must contain at least one lowercase letter",
+                  "error"
+                );
+                return;
+              }
+
+              if (!hasNumber) {
+                showMessage(
+                  "passwordMessage",
+                  "Password must contain at least one number",
+                  "error"
+                );
+                return;
+              }
+
+              if (!hasSpecialChar) {
+                showMessage(
+                  "passwordMessage",
+                  "Password must contain at least one special character",
                   "error"
                 );
                 return;

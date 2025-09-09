@@ -393,10 +393,11 @@ POST /api/auth/validate         # Validate JWT token
 POST /api/auth/register
 {
   "email": "user@example.com",
-  "password": "password123",
+  "password": "SecurePass123!",
   "name": "John Doe",
   "userType": "JOB_SEEKER", // or "EMPLOYER"
   "companyName": "Company Inc" // Required for EMPLOYER
+}
 }
 
 Response:
@@ -415,7 +416,7 @@ Response:
 POST /api/auth/login
 {
   "email": "user@example.com",
-  "password": "password123"
+  "password": "SecurePass123!"
 }
 
 Response:
@@ -859,6 +860,7 @@ if (authHeader != null && authHeader.startsWith("Bearer ")) {
 ### Security Features
 
 - **Password Encryption**: BCrypt hashing for secure storage
+- **Strong Password Requirements**: Minimum 8 characters with uppercase, lowercase, number and special character
 - **Token Expiration**: 24-hour token validity
 - **Role-based Access**: Different permissions for user types
 - **CORS Configuration**: Cross-origin request handling
