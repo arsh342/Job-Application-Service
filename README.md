@@ -938,5 +938,3 @@ Job-Application-Service/
 - **Status Codes**: Appropriate HTTP response codes
 - **Request/Response**: Standardized JSON formats
 - **Documentation**: Comprehensive API documentation
-
----
