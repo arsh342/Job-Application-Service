@@ -373,8 +373,6 @@ Base URL: `http://localhost:8083`
 GET  /                          # Home (redirects to login)
 GET  /login                     # Login page
 GET  /register                  # Registration page
-GET  /dashboard                 # User dashboard
-GET  /profile                   # User profile page
 ```
 
 #### **REST API Endpoints**
@@ -443,7 +441,6 @@ GET  /job-listings              # Employer's job listings
 GET  /jobs                      # Public job browsing (alias)
 GET  /create-job                # Create/edit job form
 GET  /job-details               # Job details page
-GET  /profile                   # Employer profile
 GET  /debug                     # Debug information page
 ```
 
@@ -517,7 +514,6 @@ GET  /browse-jobs               # Browse available jobs
 GET  /my-applications           # View user's applications
 GET  /profile                   # Job seeker profile
 GET  /job-details               # Job details and application
-GET  /status-demo               # Application status demo
 ```
 
 #### **Protected API Endpoints (Authentication Required)**
