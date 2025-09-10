@@ -47,6 +47,247 @@ The **Job Portal Microservices System** is a comprehensive, enterprise-grade job
 | **Frontend**       | Thymeleaf + HTML5/CSS3 | -             |
 | **Authentication** | HTTP Cookies + JWT     | Enhanced v1.1 |
 
+## 📦 Dependencies & Their Functions
+
+This project uses a comprehensive set of dependencies to build a robust microservices architecture. Below is a detailed breakdown of each dependency and its specific function in the system.
+
+### 🔧 Core Spring Boot Dependencies
+
+#### **Spring Boot Starter Parent (3.5.5)**
+
+- **Function**: Provides dependency management and default configurations for Spring Boot
+- **Usage**: Base parent POM that manages versions of all Spring Boot dependencies
+- **Benefits**: Ensures compatible versions across all Spring Boot components
+
+#### **Spring Boot Starter Web**
+
+- **Function**: Web development framework for creating REST APIs and web applications
+- **Usage**: Core dependency for all three services
+- **Features**:
+  - Embedded Tomcat server
+  - Spring MVC framework
+  - JSON serialization/deserialization
+  - HTTP request/response handling
+
+#### **Spring Boot Starter Data JPA**
+
+- **Function**: Data persistence layer using Hibernate and JPA
+- **Usage**: Database operations in all services
+- **Features**:
+  - Entity mapping and relationships
+  - JPQL and Criteria API
+  - Repository pattern implementation
+  - Automatic schema generation
+
+#### **Spring Boot Starter Validation**
+
+- **Function**: Bean validation for request/response validation
+- **Usage**: Input validation across all REST endpoints
+- **Features**:
+  - Annotation-based validation (@NotNull, @Email, @Size)
+  - Custom validation constraints
+  - Automatic error message generation
+
+#### **Spring Boot Starter Thymeleaf**
+
+- **Function**: Server-side template engine for web UI
+- **Usage**: Rendering HTML pages in all services
+- **Features**:
+  - Dynamic content rendering
+  - Form binding and processing
+  - Template inheritance and fragments
+
+### 🔐 Security Dependencies
+
+#### **Spring Boot Starter Security**
+
+- **Function**: Comprehensive security framework
+- **Usage**: Authentication and authorization across all services
+- **Features**:
+  - HTTP security configuration
+  - Method-level security
+  - CORS handling
+  - Security filter chain
+
+#### **Spring Boot Starter OAuth2 Authorization Server**
+
+- **Function**: OAuth2 authorization server capabilities
+- **Usage**: Enhanced authentication features in Authentication Service
+- **Features**:
+  - OAuth2 token generation
+  - Client registration
+  - Authorization code flow
+
+#### **Spring Boot Starter OAuth2 Client**
+
+- **Function**: OAuth2 client capabilities
+- **Usage**: Service-to-service authentication
+- **Features**:
+  - OAuth2 token consumption
+  - Client credentials flow
+  - Resource server integration
+
+#### **Spring Boot Starter OAuth2 Resource Server**
+
+- **Function**: Resource server for token validation
+- **Usage**: Protecting endpoints with OAuth2 tokens
+- **Features**:
+  - JWT token validation
+  - Token introspection
+  - Resource protection
+
+#### **Thymeleaf Extras Spring Security 6**
+
+- **Function**: Thymeleaf integration with Spring Security
+- **Usage**: Security-aware template rendering
+- **Features**:
+  - Security context access in templates
+  - Conditional rendering based on authentication
+  - CSRF token handling
+
+### 🔑 JWT (JSON Web Token) Dependencies
+
+#### **JJWT API (0.11.5)**
+
+- **Function**: JWT API interfaces and core functionality
+- **Usage**: JWT token creation and parsing
+- **Features**:
+  - Token structure definition
+  - Claims management
+  - Signature algorithms
+
+#### **JJWT Implementation (0.11.5)**
+
+- **Function**: Concrete implementation of JWT functionality
+- **Usage**: Runtime JWT operations
+- **Features**:
+  - Token generation
+  - Token parsing and validation
+  - Cryptographic operations
+
+#### **JJWT Jackson (0.11.5)**
+
+- **Function**: JSON processing integration for JWT
+- **Usage**: JWT payload serialization/deserialization
+- **Features**:
+  - JSON to JWT claims conversion
+  - Custom serializers/deserializers
+  - Date handling for JWT timestamps
+
+### ☁️ Microservices Dependencies
+
+#### **Spring Cloud Starter OpenFeign**
+
+- **Function**: Declarative HTTP client for inter-service communication
+- **Usage**: Service-to-service REST API calls
+- **Features**:
+  - Interface-based client generation
+  - Load balancing integration
+  - Fallback and circuit breaker support
+  - Request/response interceptors
+
+#### **Spring Cloud Dependencies (2025.0.0)**
+
+- **Function**: Dependency management for Spring Cloud components
+- **Usage**: Version alignment for cloud-native features
+- **Features**:
+  - Service discovery
+  - Configuration management
+  - Circuit breakers
+
+### 🗄️ Database Dependencies
+
+#### **MySQL Connector/J**
+
+- **Function**: JDBC driver for MySQL database connectivity
+- **Usage**: Database connection in all services
+- **Features**:
+  - Connection pooling
+  - Transaction management
+  - Performance optimizations
+  - SSL support
+
+### 🛠️ Development & Utility Dependencies
+
+#### **Spring Boot DevTools**
+
+- **Function**: Development-time enhancements
+- **Usage**: Hot reloading and development productivity
+- **Features**:
+  - Automatic application restart
+  - Live reload of static resources
+  - Property defaults for development
+  - Remote debugging support
+
+#### **Project Lombok**
+
+- **Function**: Code generation library to reduce boilerplate
+- **Usage**: Entity classes, DTOs, and service classes
+- **Features**:
+  - `@Data` - generates getters, setters, toString, equals, hashCode
+  - `@Entity` - JPA entity boilerplate
+  - `@Builder` - builder pattern implementation
+  - `@Slf4j` - logging setup
+
+### 🧪 Testing Dependencies
+
+#### **Spring Boot Starter Test**
+
+- **Function**: Comprehensive testing framework
+- **Usage**: Unit and integration testing
+- **Included Libraries**:
+  - **JUnit 5**: Testing framework with assertions and test lifecycle
+  - **Mockito**: Mocking framework for unit tests
+  - **AssertJ**: Fluent assertions library
+  - **TestContainers**: Integration testing with real databases
+  - **Spring Test**: Spring-specific testing utilities
+
+#### **Spring Security Test**
+
+- **Function**: Testing utilities for security components
+- **Usage**: Testing authentication and authorization
+- **Features**:
+  - Mock authentication contexts
+  - Security test annotations
+  - JWT token testing utilities
+
+### 📋 Service-Specific Dependency Usage
+
+| Dependency          | Authentication Service | Job Service            | Application Service         |
+| ------------------- | ---------------------- | ---------------------- | --------------------------- |
+| **Spring Web**      | ✅ REST APIs + UI      | ✅ REST APIs + UI      | ✅ REST APIs + UI           |
+| **Spring Data JPA** | ✅ User management     | ✅ Job data            | ✅ Application data         |
+| **Spring Security** | ✅ Core auth logic     | ✅ Endpoint protection | ✅ Endpoint protection      |
+| **JWT Libraries**   | ✅ Token generation    | ✅ Token validation    | ✅ Token validation         |
+| **OpenFeign**       | ✅ (Future use)        | ✅ Auth service calls  | ✅ Auth + Job service calls |
+| **Thymeleaf**       | ✅ Login/Register UI   | ✅ Employer dashboard  | ✅ Job seeker dashboard     |
+| **MySQL Connector** | ✅ User database       | ✅ Job database        | ✅ Application database     |
+
+### 🔄 Dependency Interaction Flow
+
+```
+Frontend (Thymeleaf) → Spring Web → Spring Security → JWT Validation
+                                        ↓
+Spring Data JPA → MySQL Connector → Database Operations
+                                        ↓
+OpenFeign → Service-to-Service Communication → Authentication Validation
+```
+
+### 📊 Build Configuration
+
+#### **Maven Compiler Plugin**
+
+- **Function**: Compiles Java source code with annotation processing
+- **Configuration**: Lombok annotation processor for code generation
+
+#### **Spring Boot Maven Plugin**
+
+- **Function**: Packages application as executable JAR
+- **Features**:
+  - Fat JAR creation with embedded server
+  - Development-time application running
+  - Dependency exclusions (Lombok from runtime)
+
 ## 🏗️ System Architecture
 
 ### Microservices Design Pattern
