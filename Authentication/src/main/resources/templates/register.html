@@ -352,10 +352,10 @@
                 "success"
               );
 
-              // Redirect to login page after 2 seconds
+              // Redirect to login page after showing success message
               setTimeout(() => {
-                window.location.href = "/auth/login";
-              }, 2000);
+                window.location.href = "/login";
+              }, 1000);
             } else {
               const errorText = await response.text();
               showAlert(
@@ -370,9 +370,18 @@
 
       function showAlert(message, type) {
         const alert = document.getElementById("alert");
-        alert.textContent = message;
-        alert.className = `alert alert-${type}`;
-        alert.style.display = "block";
+        if (alert) {
+          alert.textContent = message;
+          // Clear existing alert classes
+          alert.className = "alert";
+          // Add the appropriate alert type class
+          alert.classList.add(`alert-${type}`);
+          alert.style.display = "block";
+        } else {
+          console.error("Alert element not found");
+          // Fallback to browser alert
+          window.alert(message);
+        }
       }
     </script>
   </body>
