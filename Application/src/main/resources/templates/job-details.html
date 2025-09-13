@@ -568,11 +568,11 @@
 
       function formatSalary(salaryMin, salaryMax) {
         if (salaryMin && salaryMax) {
-          return `$${salaryMin.toLocaleString()} - $${salaryMax.toLocaleString()}`;
+          return `₹${salaryMin.toLocaleString()} - ₹${salaryMax.toLocaleString()}`;
         } else if (salaryMin) {
-          return `$${salaryMin.toLocaleString()}+`;
+          return `₹${salaryMin.toLocaleString()}+`;
         } else if (salaryMax) {
-          return `Up to $${salaryMax.toLocaleString()}`;
+          return `Up to ₹${salaryMax.toLocaleString()}`;
         } else {
           return "Competitive salary";
         }
@@ -589,23 +589,24 @@
         btn.textContent = "Applying...";
         btn.classList.add("loading");
 
+        const applicationData = {
+          jobId: jobId,
+        };
+
         try {
-          const response = await fetch("/api/applications", {
+          const response = await fetch("/api/applications/apply", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               ...getAuthHeaders(),
             },
-            body: JSON.stringify({
-              jobId: jobId,
-            }),
+            body: JSON.stringify(applicationData),
           });
 
           if (response.ok) {
             btn.textContent = "✓ Applied Successfully";
             btn.style.background = "#059669";
             btn.disabled = true;
-
             setTimeout(() => {
               navigateToPage("/my-applications");
             }, 1500);
@@ -614,7 +615,7 @@
             window.location.href = "http://localhost:8083/login";
           } else {
             const errorText = await response.text();
-            alert("Failed to apply: " + errorText);
+            alert("Failed to submit application: " + errorText);
           }
         } catch (error) {
           console.error("Error applying to job:", error);

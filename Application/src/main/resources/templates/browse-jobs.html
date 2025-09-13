@@ -428,7 +428,7 @@
 
         <div class="content-area">
           <!-- Search and Filter Section -->
-          <!-- <div class="search-filters">
+          <div class="search-filters">
           <div class="filter-group">
             <label>Search:</label>
             <input
@@ -436,6 +436,7 @@
               id="searchInput"
               placeholder="Job title, company, or keywords..."
               onkeyup="filterJobs()"
+              disabled
             />
           </div>
           <div class="filter-group">
@@ -445,26 +446,27 @@
               id="locationFilter"
               placeholder="City or state..."
               onkeyup="filterJobs()"
-            />
-          </div>
-          <div class="filter-group">
-            <label>Company:</label>
-            <input
-              type="text"
-              id="companyFilter"
-              placeholder="Company name..."
-              onkeyup="filterJobs()"
+              disabled
             />
           </div>
           <div class="filter-group">
             <label>Salary Range:</label>
-            <select id="salaryFilter" onchange="filterJobs()">
+            <select id="salaryFilter" onchange="filterJobs()" disabled>
               <option value="">Any</option>
-              <option value="0-30000">$0 - $30,000</option>
-              <option value="30000-50000">$30,000 - $50,000</option>
-              <option value="50000-75000">$50,000 - $75,000</option>
-              <option value="75000-100000">$75,000 - $100,000</option>
-              <option value="100000+">$100,000+</option>
+              <option value="0-30000">₹0 - ₹30,000</option>
+              <option value="30000-50000">₹30,000 - ₹50,000</option>
+              <option value="50000-75000">₹50,000 - ₹75,000</option>
+              <option value="75000-100000">₹75,000 - ₹100,000</option>
+              <option value="100000+">₹100,000+</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Sort By:</label>
+            <select id="sortBy" onchange="filterJobs()" disabled>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="salary_high">Salary High to Low</option>
+              <option value="salary_low">Salary Low to High</option>
             </select>
           </div>
           <div class="filter-group">
@@ -472,7 +474,7 @@
               Clear All
             </button>
           </div>
-        </div> -->
+        </div>
 
         <!-- Jobs List Section -->
         <div id="jobsList">
@@ -674,6 +676,12 @@
           })
           .join("");
 
+        // Enable filter inputs/selects after jobs are loaded
+        document.getElementById("searchInput").disabled = false;
+        document.getElementById("locationFilter").disabled = false;
+        document.getElementById("salaryFilter").disabled = false;
+        document.getElementById("sortBy").disabled = false;
+
         displayPagination();
       }
 
@@ -720,24 +728,42 @@
       }
 
       function filterJobs() {
-        const titleFilter = document
-          .getElementById("searchTitle")
-          .value.toLowerCase();
-        const locationFilter = document
-          .getElementById("searchLocation")
-          .value.toLowerCase();
-        const companyFilter = document
-          .getElementById("searchCompany")
-          .value.toLowerCase();
-        const sortBy = document.getElementById("sortBy").value;
+        const searchValue = document.getElementById("searchInput").value.toLowerCase();
+        const locationValue = document.getElementById("locationFilter").value.toLowerCase();
+        const salaryValue = document.getElementById("salaryFilter").value;
+        const sortBy = document.getElementById("sortBy") ? document.getElementById("sortBy").value : "newest";
 
-        // Filter jobs
         filteredJobs = allJobs.filter((job) => {
-          return (
-            job.title.toLowerCase().includes(titleFilter) &&
-            job.location.toLowerCase().includes(locationFilter) &&
-            job.companyName.toLowerCase().includes(companyFilter)
-          );
+          let matches =
+            (job.title.toLowerCase().includes(searchValue) ||
+              (job.companyName && job.companyName.toLowerCase().includes(searchValue)) ||
+              (job.company && job.company.toLowerCase().includes(searchValue)) ||
+              (job.keywords && job.keywords.toLowerCase().includes(searchValue))) &&
+            job.location.toLowerCase().includes(locationValue);
+
+          // Salary filter using salaryMin and salaryMax
+          if (salaryValue) {
+            const min = job.salaryMin || 0;
+            const max = job.salaryMax || 0;
+            switch (salaryValue) {
+              case "0-30000":
+                if (!((min <= 30000 && min >= 0) || (max <= 30000 && max > 0))) matches = false;
+                break;
+              case "30000-50000":
+                if (!((min > 30000 && min <= 50000) || (max > 30000 && max <= 50000))) matches = false;
+                break;
+              case "50000-75000":
+                if (!((min > 50000 && min <= 75000) || (max > 50000 && max <= 75000))) matches = false;
+                break;
+              case "75000-100000":
+                if (!((min > 75000 && min <= 100000) || (max > 75000 && max <= 100000))) matches = false;
+                break;
+              case "100000+":
+                if (!(min > 100000 || max > 100000)) matches = false;
+                break;
+            }
+          }
+          return matches;
         });
 
         // Sort jobs
@@ -748,9 +774,9 @@
             case "oldest":
               return new Date(a.postedDate) - new Date(b.postedDate);
             case "salary_high":
-              return (b.salary || 0) - (a.salary || 0);
+              return (b.salaryMax || b.salaryMin || 0) - (a.salaryMax || a.salaryMin || 0);
             case "salary_low":
-              return (a.salary || 0) - (b.salary || 0);
+              return (a.salaryMin || a.salaryMax || 0) - (b.salaryMin || b.salaryMax || 0);
             default:
               return 0;
           }
@@ -761,13 +787,11 @@
       }
 
       function clearFilters() {
-        document.getElementById("searchTitle").value = "";
-        document.getElementById("searchLocation").value = "";
-        document.getElementById("searchCompany").value = "";
+        document.getElementById("searchInput").value = "";
+        document.getElementById("locationFilter").value = "";
+        document.getElementById("salaryFilter").value = "";
         document.getElementById("sortBy").value = "newest";
-        filteredJobs = [...allJobs];
-        currentPage = 1;
-        displayJobs();
+        filterJobs();
       }
 
       function viewJobDetails(jobId) {
