@@ -198,20 +198,7 @@
           <h1>Skillfind</h1>
           <p>Join Our Community</p>
         </div>
-        <div
-          id="alert"
-          class="alert"
-          th:if="${error}"
-          th:classappend="alert-error"
-          th:text="${error}"
-        ></div>
-        <div
-          id="alert"
-          class="alert"
-          th:if="${success}"
-          th:classappend="alert-success"
-          th:text="${success}"
-        ></div>
+        <div id="alert" class="alert" style="display: none"></div>
 
         <form id="registerForm">
           <div class="form-group">
@@ -314,11 +301,23 @@
         .addEventListener("submit", async function (e) {
           e.preventDefault();
 
+          const password = document.getElementById("password").value;
+          // Password validation regex (same as input pattern)
+          const passwordPattern =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+          if (!passwordPattern.test(password)) {
+            showAlert(
+              "Please enter a valid password with at least 8 characters, including uppercase, lowercase, number, and special character.",
+              "error"
+            );
+            return;
+          }
+
           const userType = document.getElementById("userType").value;
           const formData = {
             name: document.getElementById("name").value,
             email: document.getElementById("email").value,
-            password: document.getElementById("password").value,
+            password: password,
             userType: userType,
           };
 
@@ -379,8 +378,7 @@
           alert.style.display = "block";
         } else {
           console.error("Alert element not found");
-          // Fallback to browser alert
-          window.alert(message);
+          // No browser alert fallback
         }
       }
     </script>
