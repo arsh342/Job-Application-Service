@@ -517,6 +517,83 @@
           grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         }
       }
+
+      /* Add new CSS styles for recent job cards */
+      .recent-job-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+        padding: 20px 24px;
+        margin-bottom: 18px;
+        transition: box-shadow 0.2s;
+        cursor: pointer;
+        border: 1px solid #e5e9f2;
+      }
+      .recent-job-card:hover {
+        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.18);
+        border-color: #667eea;
+      }
+      .recent-job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .recent-job-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+      }
+      .recent-job-icon {
+        font-size: 22px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border-radius: 8px;
+        padding: 6px 10px;
+        margin-right: 4px;
+      }
+      .recent-job-status {
+        font-size: 13px;
+        font-weight: 500;
+        padding: 4px 12px;
+        border-radius: 12px;
+        background: #f3f4f6;
+        color: #374151;
+      }
+      .recent-job-status.status-open {
+        background: #e0f7ef;
+        color: #10b981;
+      }
+      .recent-job-status.status-closed {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+      .recent-job-details {
+        display: flex;
+        gap: 24px;
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+      .recent-job-meta {
+        display: flex;
+        gap: 24px;
+        font-size: 13px;
+        color: #9ca3af;
+      }
+      @media (max-width: 768px) {
+        .recent-job-card {
+          padding: 16px 10px;
+        }
+        .recent-job-details,
+        .recent-job-meta {
+          flex-direction: column;
+          gap: 6px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -875,7 +952,13 @@
             job.status || "ACTIVE"
           }</span>
                 <span>Salary: ${
-                  job.salary ? "$" + job.salary : "Not specified"
+                  job.salaryMin && job.salaryMax
+                    ? "₹" + job.salaryMin + " - ₹" + job.salaryMax
+                    : job.salaryMin
+                    ? "₹" + job.salaryMin + "+"
+                    : job.salaryMax
+                    ? "Up to ₹" + job.salaryMax
+                    : "Not specified"
                 }</span>
               </div>
             </div>
@@ -1131,67 +1214,61 @@
 
           if (recentJobs.length === 0) {
             recentJobsContainer.innerHTML =
-              '<p style="color: #6b7280; text-align: center; padding: 20px;">No jobs posted yet</p>';
+              '<p style="text-align: center; color: #6c757d; margin: 50px 0;">No recent jobs found.</p>';
             return;
           }
 
-          const colors = ["#667eea", "#84fab0", "#fa709a"];
+          recentJobsContainer.innerHTML = ""; // Clear previous content
 
-          recentJobsContainer.innerHTML = recentJobs
-            .map(
-              (job, index) => `
-            <div class="job-item">
-              <div class="job-logo" style="background: ${
-                colors[index % colors.length]
-              }">
-                ${job.company ? job.company.charAt(0).toUpperCase() : "J"}
+          recentJobs.forEach((job) => {
+            const jobElement = document.createElement("div");
+            jobElement.className = "recent-job-card";
+            jobElement.innerHTML = `
+              <div class="recent-job-header">
+                <div class="recent-job-title">
+                  <span class="recent-job-icon">💼</span>
+                  <span>${job.title}</span>
+                </div>
+                <div class="recent-job-status ${
+                  job.status === "OPEN" ? "status-open" : "status-closed"
+                }">
+                  ${job.status}
+                </div>
               </div>
-              <div class="job-details">
-                <h4>${job.title}</h4>
-                <p>${job.company || "Company not specified"} • ${
-                job.location || "Location not specified"
-              }</p>
+              <div class="recent-job-details">
+                <span><strong>Company:</strong> ${
+                  job.company || "Not specified"
+                }</span>
+                <span><strong>Location:</strong> ${
+                  job.location || "Not specified"
+                }</span>
               </div>
-              <div class="job-meta">
-                <div class="job-type">${job.status}</div>
-                <div class="job-location">${new Date(
-                  job.postedDate || Date.now()
-                ).toLocaleDateString()}</div>
+              <div class="recent-job-meta">
+                <span><strong>Posted:</strong> ${new Date(
+                  job.postedDate
+                ).toLocaleDateString()}</span>
               </div>
-            </div>
-          `
-            )
-            .join("");
+            `;
+            jobElement.addEventListener("click", () => {
+              viewApplications(job.jobId);
+            });
+            recentJobsContainer.appendChild(jobElement);
+          });
         } catch (error) {
-          console.error("Error loading recent jobs:", error);
-          const recentJobsContainer = document.getElementById("recentJobs");
-          if (recentJobsContainer) {
-            recentJobsContainer.innerHTML =
-              '<p style="color: #ef4444; text-align: center; padding: 20px;">Failed to load recent jobs</p>';
-          }
+          console.error("Failed to load recent jobs:", error);
         }
       }
 
-      async function updateUserInfo() {
-        if (currentEmployer) {
-          const userName = document.getElementById("userName");
-          const userAvatar = document.getElementById("userAvatar");
-
-          if (userName && currentEmployer.name) {
-            userName.textContent = currentEmployer.name;
-          }
-
-          if (userAvatar && currentEmployer.name) {
-            userAvatar.textContent = currentEmployer.name
-              .charAt(0)
-              .toUpperCase();
-          }
+      function updateUserInfo() {
+        // Update sidebar user info if elements exist
+        const userNameElem = document.getElementById("userName");
+        const userTypeElem = document.getElementById("userType");
+        if (userNameElem && currentEmployer && currentEmployer.name) {
+          userNameElem.textContent = currentEmployer.name;
         }
-      }
-
-      async function logout() {
-        removeJwtToken();
-        window.location.href = "http://localhost:8083/login";
+        if (userTypeElem && currentEmployer && currentEmployer.userType) {
+          userTypeElem.textContent = currentEmployer.userType;
+        }
       }
     </script>
   </body>

@@ -645,14 +645,14 @@
                             }</span></p>
                             ${
                               job.salaryMin || job.salaryMax
-                                ? `<p class="salary">💰 $${
+                                ? `<p class="salary">💰 ${
                                     job.salaryMin && job.salaryMax
-                                      ? `${job.salaryMin} - ${job.salaryMax}`
+                                      ? `₹${job.salaryMin} - ₹${job.salaryMax}`
                                       : job.salaryMin
-                                      ? `${job.salaryMin}+`
-                                      : `Up to ${job.salaryMax}`
+                                      ? `₹${job.salaryMin}+`
+                                      : `Up to ₹${job.salaryMax}`
                                   }</p>`
-                                : '<p class="salary">💰 $Not specified</p>'
+                                : '<p class="salary">💰 Not specified</p>'
                             }
                             <p>${
                               job.description.length > 200

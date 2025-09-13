@@ -641,10 +641,10 @@
                   application.jobTitle = job.title;
                   application.companyName = job.company;
                   application.jobLocation = job.location;
-                  application.jobSalary = job.salaryMin && job.salaryMax 
-                    ? `$${job.salaryMin.toLocaleString()} - $${job.salaryMax.toLocaleString()}`
-                    : job.salaryMin 
-                    ? `$${job.salaryMin.toLocaleString()}+`
+                  application.jobSalary = job.salaryMin && job.salaryMax
+                    ? `₹${job.salaryMin.toLocaleString()} - ₹${job.salaryMax.toLocaleString()}`
+                    : job.salaryMin
+                    ? `₹${job.salaryMin.toLocaleString()}+`
                     : "Salary not specified";
                 } else {
                   // Handle different error responses
@@ -743,7 +743,7 @@ Error Response: ${errorText}
                             }
                             ${
                               application.jobSalary
-                                ? ` | <strong>Salary:</strong> $${application.jobSalary}`
+                                ? ` | <strong>Salary:</strong> ${application.jobSalary}`
                                 : ""
                             }
                         </div>

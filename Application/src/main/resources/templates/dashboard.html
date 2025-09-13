@@ -797,11 +797,11 @@
 
           function formatSalary(salaryMin, salaryMax) {
             if (salaryMin && salaryMax) {
-              return `$${salaryMin.toLocaleString()} - $${salaryMax.toLocaleString()}`;
+              return `₹${salaryMin.toLocaleString()} - ₹${salaryMax.toLocaleString()}`;
             } else if (salaryMin) {
-              return `$${salaryMin.toLocaleString()}+`;
+              return `₹${salaryMin.toLocaleString()}+`;
             } else if (salaryMax) {
-              return `Up to $${salaryMax.toLocaleString()}`;
+              return `Up to ₹${salaryMax.toLocaleString()}`;
             } else {
               return "Salary not specified";
             }
