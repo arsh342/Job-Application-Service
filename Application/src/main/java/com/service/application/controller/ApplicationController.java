@@ -253,4 +253,23 @@ public class ApplicationController {
             return ResponseEntity.badRequest().body("Error updating profile: " + e.getMessage());
         }
     }
+    
+    // Allow employers or the applicant themselves to view applicant profile
+    @GetMapping("/applicants/{applicantId}")
+    public ResponseEntity<?> getApplicantProfile(@PathVariable Long applicantId, HttpServletRequest request) {
+        Long sessionApplicantId = (Long) request.getAttribute("applicantId");
+        String userType = (String) request.getAttribute("userType");
+
+        // Only allow if employer or the applicant themselves
+        if (!"EMPLOYER".equals(userType) && (sessionApplicantId == null || !sessionApplicantId.equals(applicantId))) {
+            return ResponseEntity.status(403).body("Access denied. Only employers or the applicant can view this profile.");
+        }
+
+        try {
+            UserProfileDto profile = userProfileService.getProfileByUserId(applicantId);
+            return ResponseEntity.ok(profile);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error getting profile: " + e.getMessage());
+        }
+    }
 }

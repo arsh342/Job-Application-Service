@@ -1179,81 +1179,115 @@
           return;
         }
 
-        // Create modal content
-        const modalContent = `
-          <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-            <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; color: #2d3748;">Applicant Details</h2>
-                <button onclick="closeApplicantModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #718096;">&times;</button>
-              </div>
-              
-              <div style="margin-bottom: 16px;">
-                <strong style="color: #4a5568;">Name:</strong> ${application.applicantName || 'N/A'}
-              </div>
-              
-              <div style="margin-bottom: 16px;">
-                <strong style="color: #4a5568;">Email:</strong> ${application.applicantEmail || 'N/A'}
-              </div>
-              
-              <div style="margin-bottom: 16px;">
-                <strong style="color: #4a5568;">Application Status:</strong> 
-                <span class="status-badge status-${application.status.toLowerCase()}" style="margin-left: 8px;">${application.status}</span>
-              </div>
-              
-              <div style="margin-bottom: 16px;">
-                <strong style="color: #4a5568;">Applied Date:</strong> ${formatDate(application.appliedDate)}
-              </div>
-              
-              ${application.coverLetter ? `
-                <div style="margin-bottom: 16px;">
-                  <strong style="color: #4a5568;">Cover Letter:</strong>
-                  <div style="background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 8px; border-left: 4px solid #667eea;">
-                    ${escapeHtml(application.coverLetter)}
+        const headers = getAuthHeaders();
+        fetch(`http://localhost:8082/api/applicants/${application.applicantId}`, { headers })
+          .then(response => response.ok ? response.json() : null)
+          .then(profile => {
+            // Helper for rendering lists
+            function renderList(items, label) {
+              if (!items || items.length === 0) return '';
+              return `<div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>${label}:</strong><ul style='margin: 8px 0 0 16px; color: #718096; font-size: 13px;'>${items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`;
+            }
+            // Helper for rendering skills
+            function renderSkills(skills) {
+              if (!skills || skills.length === 0) return '';
+              return `<div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Skills:</strong><ul style='margin: 8px 0 0 16px; color: #718096; font-size: 13px;'>${skills.map(skill => `<li>${escapeHtml(skill.name)} (${escapeHtml(skill.level)}, ${escapeHtml(skill.category)}, ${skill.yearsOfExperience || ''} yrs)</li>`).join('')}</ul></div>`;
+            }
+            // Helper for rendering links
+            function renderLinks(profile) {
+              let links = [];
+              if (profile && profile.website) links.push(`<a href='${profile.website}' target='_blank'>Website</a>`);
+              if (profile && profile.linkedin) links.push(`<a href='${profile.linkedin}' target='_blank'>LinkedIn</a>`);
+              if (profile && profile.github) links.push(`<a href='${profile.github}' target='_blank'>GitHub</a>`);
+              return links.length ? `<div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Links:</strong> ${links.join(' | ')}</div>` : '';
+            }
+            // Modal content
+            let modalContent;
+            if (!profile) {
+              modalContent = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                  <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 95%; max-height: 90vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                      <h2 style="margin: 0; color: #2d3748;">Applicant Profile</h2>
+                      <button onclick="closeApplicantModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #718096;">&times;</button>
+                    </div>
+                    <div style="margin-bottom: 16px; color: #e53e3e; font-weight: bold;">Unable to load applicant profile.<br>Access denied or profile not found.</div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Name:</strong> ${application.applicantName || 'N/A'}</div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Email:</strong> ${application.applicantEmail || 'N/A'}</div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Application Status:</strong> <span class="status-badge status-${application.status.toLowerCase()}" style="margin-left: 8px;">${application.status}</span></div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Applied Date:</strong> ${formatDate(application.appliedDate)}</div>
+                    ${application.coverLetter ? `<div style=\"margin-bottom: 16px;\"><strong style=\"color: #4a5568;\">Cover Letter:</strong><div style=\"background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 8px; border-left: 4px solid #667eea;\">${escapeHtml(application.coverLetter)}</div></div>` : ''}
                   </div>
                 </div>
-              ` : ''}
-              
-              <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
-                ${application.status === 'APPLIED' ? `
-                  <button onclick="updateApplicationStatus(${application.applicationId}, 'SHORTLISTED'); closeApplicantModal();" 
-                          style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    📋 Shortlist
-                  </button>
-                  <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" 
-                          style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    ✅ Accept
-                  </button>
-                  <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" 
-                          style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    ❌ Reject
-                  </button>
-                ` : application.status === 'SHORTLISTED' ? `
-                  <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" 
-                          style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    ✅ Accept
-                  </button>
-                  <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" 
-                          style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    ❌ Reject
-                  </button>
-                ` : `
-                  <span style="color: #718096; font-style: italic;">No actions available for ${application.status.toLowerCase()} applications</span>
-                `}
+              `;
+            } else {
+              modalContent = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                  <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 95%; max-height: 90vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                      <h2 style="margin: 0; color: #2d3748;">Applicant Profile</h2>
+                      <button onclick="closeApplicantModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #718096;">&times;</button>
+                    </div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Full Name:</strong> ${profile.fullName || application.applicantName || 'N/A'}</div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Email:</strong> ${profile.email || application.applicantEmail || 'N/A'}</div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Phone:</strong> ${profile.phone || 'N/A'}</div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Location:</strong> ${profile.location || 'N/A'}</div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Application Status:</strong> <span class="status-badge status-${application.status.toLowerCase()}" style="margin-left: 8px;">${application.status}</span></div>
+                    <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Applied Date:</strong> ${formatDate(application.appliedDate)}</div>
+                    ${application.coverLetter ? `<div style=\"margin-bottom: 16px;\"><strong style=\"color: #4a5568;\">Cover Letter:</strong><div style=\"background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 8px; border-left: 4px solid #667eea;\">${escapeHtml(application.coverLetter)}</div></div>` : ''}
+                    ${profile.professionalSummary ? `<div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Professional Summary:</strong><div style='background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 8px;'>${escapeHtml(profile.professionalSummary)}</div></div>` : ''}
+                    ${renderLinks(profile)}
+                    <div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Current Position:</strong> ${profile.currentPosition || 'N/A'}</div>
+                    <div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Current Company:</strong> ${profile.currentCompany || 'N/A'}</div>
+                    <div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Years of Experience:</strong> ${profile.yearsOfExperience || 'N/A'}</div>
+                    <div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Expected Salary:</strong> ${profile.expectedSalary ? '₹' + formatSalary(profile.expectedSalary) : 'N/A'}</div>
+                    <div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Preferred Work Location:</strong> ${profile.preferredWorkLocation || 'N/A'}</div>
+                    <div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Job Type Preference:</strong> ${profile.jobTypePreference || 'N/A'}</div>
+                    <div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Work Mode Preference:</strong> ${profile.workModePreference || 'N/A'}</div>
+                    ${renderSkills(profile.skills)}
+                    ${renderList(profile.workExperience, 'Work Experience')}
+                    ${renderList(profile.education, 'Education')}
+                    ${renderList(profile.projects, 'Projects')}
+                    ${renderList(profile.certifications, 'Certifications')}
+                    ${profile.resumeUrl ? `<div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Resume:</strong> <a href='${profile.resumeUrl}' target='_blank'>View Resume</a></div>` : ''}
+                    <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+                      ${application.status === 'APPLIED' ? `
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'SHORTLISTED'); closeApplicantModal();" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">📋 Shortlist</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">✅ Accept</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">❌ Reject</button>
+                      ` : application.status === 'SHORTLISTED' ? `
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">✅ Accept</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">❌ Reject</button>
+                      ` : `
+                        <span style="color: #718096; font-style: italic;">No actions available for ${application.status.toLowerCase()} applications</span>
+                      `}
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+            document.body.insertAdjacentHTML('beforeend', modalContent);
+          })
+          .catch(() => {
+            // Fallback modal if fetch throws
+            const modalContent = `
+              <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 30px; border-radius: 12px; max-width: 700px; width: 95%; max-height: 90vh; overflow-y: auto;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0; color: #2d3748;">Applicant Profile</h2>
+                    <button onclick="closeApplicantModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #718096;">&times;</button>
+                  </div>
+                  <div style="margin-bottom: 16px; color: #e53e3e; font-weight: bold;">Unable to load applicant profile.<br>Network error or access denied.</div>
+                  <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Name:</strong> ${application.applicantName || 'N/A'}</div>
+                  <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Email:</strong> ${application.applicantEmail || 'N/A'}</div>
+                  <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Application Status:</strong> <span class="status-badge status-${application.status.toLowerCase()}" style="margin-left: 8px;">${application.status}</span></div>
+                  <div style="margin-bottom: 16px;"><strong style="color: #4a5568;">Applied Date:</strong> ${formatDate(application.appliedDate)}</div>
+                  ${application.coverLetter ? `<div style=\"margin-bottom: 16px;\"><strong style=\"color: #4a5568;\">Cover Letter:</strong><div style=\"background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 8px; border-left: 4px solid #667eea;\">${escapeHtml(application.coverLetter)}</div></div>` : ''}
+                </div>
               </div>
-            </div>
-          </div>
-        `;
-
-        // Add modal to page
-        document.body.insertAdjacentHTML('beforeend', modalContent);
-      }
-
-      function closeApplicantModal() {
-        const modal = document.querySelector('[style*="position: fixed"][style*="z-index: 10000"]');
-        if (modal) {
-          modal.remove();
-        }
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalContent);
+          });
       }
 
       async function updateApplicationStatus(applicationId, newStatus) {
@@ -1370,6 +1404,14 @@
         // since job listings are public
         loadAllData();
       });
+
+      function closeApplicantModal() {
+        const modal = document.querySelector('[style*="position: fixed"][style*="z-index: 10000"]');
+        if (modal) {
+          modal.remove();
+        }
+      }
+      window.closeApplicantModal = closeApplicantModal;
     </script>
         </div>
       </div>

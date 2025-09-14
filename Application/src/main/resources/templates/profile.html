@@ -1213,24 +1213,27 @@
 
       function displayProfile(profile) {
         // Update sidebar user info
-        document.getElementById("userName").textContent =
-          profile.name || "User";
+        const fallbackName = localStorage.getItem("userName") || "User";
+        const nameToUse =
+          profile.name && profile.name.trim() ? profile.name : fallbackName;
+        document.getElementById("userName").textContent = nameToUse;
         document.getElementById("userEmail").textContent = profile.email || "";
 
         // Update avatars
-        const avatar = (profile.name || "U").charAt(0).toUpperCase();
+        const avatar = (nameToUse || "U").charAt(0).toUpperCase();
         document.getElementById("userAvatar").textContent = avatar;
         document.getElementById("profileAvatar").textContent = avatar;
 
         // Update profile header
-        document.getElementById("profileName").textContent =
-          profile.name || "User";
+        document.getElementById("profileName").textContent = nameToUse;
         document.getElementById("profileType").textContent =
           profile.userType === "APPLICANT" ? "Employer" : "Job Seeker";
 
         // Pre-fill form
-        document.getElementById("name").value = profile.name || "";
+        document.getElementById("name").value = nameToUse;
+        document.getElementById("name").setAttribute("readonly", true);
         document.getElementById("email").value = profile.email || "";
+        document.getElementById("email").setAttribute("readonly", true);
         document.getElementById("phone").value = profile.phone || "";
         document.getElementById("location").value = profile.location || "";
         document.getElementById("summary").value = profile.summary || "";
@@ -1251,6 +1254,14 @@
           profile.jobTypePreference || "";
         document.getElementById("workModePreference").value =
           profile.workModePreference || "";
+
+        // Always update localStorage with latest name and email from profile
+        if (nameToUse) {
+          localStorage.setItem("userName", nameToUse);
+        }
+        if (profile.email) {
+          localStorage.setItem("userEmail", profile.email);
+        }
 
         // Load dynamic sections
         loadSkills(profile.skills || []);

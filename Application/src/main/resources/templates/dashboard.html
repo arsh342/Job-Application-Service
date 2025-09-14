@@ -693,10 +693,16 @@
                 };
                 currentApplicantId = userData.userId;
 
-                // Store user info for future use
-                localStorage.setItem("userName", userData.name);
-                localStorage.setItem("userEmail", userData.email);
-                localStorage.setItem("userId", userData.userId.toString());
+                // Store user info for future use (always update to latest)
+                if (
+                  localStorage.getItem("userName") !== userData.name ||
+                  localStorage.getItem("userEmail") !== userData.email ||
+                  localStorage.getItem("userId") !== userData.userId.toString()
+                ) {
+                  localStorage.setItem("userName", userData.name);
+                  localStorage.setItem("userEmail", userData.email);
+                  localStorage.setItem("userId", userData.userId.toString());
+                }
 
                 document.getElementById("userName").textContent = userData.name;
                 document.getElementById("userEmail").textContent =
@@ -1010,6 +1016,17 @@
             document.getElementById("hiredApplications").textContent = hired;
             document.getElementById("rejectedApplications").textContent =
               rejected;
+          }
+
+          async function logout() {
+            // Remove all user data from localStorage
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("jwtToken");
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userEmail");
+            localStorage.removeItem("userId");
+            // Optionally remove other related keys if needed
+            window.location.href = "http://localhost:8083/login";
           }
 
           // Initialize page
