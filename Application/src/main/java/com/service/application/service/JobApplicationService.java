@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -150,7 +151,6 @@ public class JobApplicationService {
     
     public List<ApplicationResponseDto> getApplicationsByApplicant(Long applicantId) {
         List<JobApplication> applications = jobApplicationRepository.findByApplicantId(applicantId);
-        
         return applications.stream()
                 .map(application -> {
                     try {
@@ -158,18 +158,10 @@ public class JobApplicationService {
                         return mapToResponseDto(application, job);
                     } catch (Exception e) {
                         // Job might be deleted or not accessible
-                        // Create a placeholder job for the application
-                        JobDto placeholderJob = new JobDto();
-                        placeholderJob.setJobId(application.getJobId());
-                        placeholderJob.setTitle("Job Unavailable (ID: " + application.getJobId() + ")");
-                        placeholderJob.setCompany("Unknown Company");
-                        placeholderJob.setLocation("Location Not Available");
-                        placeholderJob.setDescription("This job is no longer available or has been removed.");
-                        placeholderJob.setStatus("CLOSED");
-                        
-                        return mapToResponseDto(application, placeholderJob);
+                        return null; // Exclude this application
                     }
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
     

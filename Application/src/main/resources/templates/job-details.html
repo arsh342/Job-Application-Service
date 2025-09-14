@@ -465,7 +465,20 @@
       function displayJobDetails(job) {
         const container = document.getElementById("jobDetailsContainer");
 
-        container.innerHTML = `
+        // Check if user has already applied for this job
+        fetch("/api/applications/my-applications", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders(),
+          },
+        })
+          .then((response) => (response.ok ? response.json() : []))
+          .then((applications) => {
+            const hasApplied = applications.some(
+              (app) => app.jobId == job.jobId
+            );
+            container.innerHTML = `
           <div class="job-header">
             <h1 class="job-title">${job.title}</h1>
             <div class="job-company">${job.company}</div>
@@ -550,11 +563,14 @@
               <h3>Ready to apply?</h3>
               <p>Submit your application for this position</p>
             </div>
-            <button class="btn btn-primary" onclick="applyToJob(${job.jobId})">
-              Apply for this Job
-            </button>
+            ${
+              hasApplied
+                ? `<button class="btn btn-primary" style="background: #059669; cursor: default;" disabled>Already Applied</button>`
+                : `<button class="btn btn-primary" onclick="applyToJob(${job.jobId})">Apply for this Job</button>`
+            }
           </div>
         `;
+          });
       }
 
       function formatDate(dateString) {

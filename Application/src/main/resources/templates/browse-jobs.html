@@ -509,9 +509,23 @@
         );
       }
 
-      function setJwtToken(token) {
+      function setJwtToken(token, userData) {
+        // Remove previous user data
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("jwtToken");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userId");
+        sessionStorage.removeItem("authToken");
+
+        // Set new token and user data
         localStorage.setItem("authToken", token);
         localStorage.setItem("jwtToken", token); // Keep for compatibility
+        if (userData) {
+          localStorage.setItem("userName", userData.name);
+          localStorage.setItem("userEmail", userData.email);
+          localStorage.setItem("userId", userData.userId.toString());
+        }
       }
 
       function removeJwtToken() {
@@ -535,21 +549,16 @@
       }
 
       window.addEventListener("load", async function () {
-        // Check if token is passed via URL parameter and store it
+        // Check for token in URL
         const urlParams = new URLSearchParams(window.location.search);
         const urlToken = urlParams.get("token");
-
         if (urlToken) {
-          // Store token from URL parameter
           localStorage.setItem("authToken", urlToken);
-          localStorage.setItem("jwtToken", urlToken); // Keep for compatibility
-          
+          localStorage.setItem("jwtToken", urlToken);
           // Clean URL by removing token parameter
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-          );
+          const cleanUrl = new URL(window.location);
+          cleanUrl.searchParams.delete("token");
+          window.history.replaceState({}, document.title, cleanUrl);
         }
 
         // Give AuthHelper more time to process URL tokens before checking auth
@@ -630,14 +639,7 @@
                                 <div class="job-company">${job.company}</div>
                             </div>
                             <div style="text-align: right;">
-                                ${
-                                  isApplied
-                                    ? '<span class="applied-badge">Applied</span>'
-                                    : ""
-                                }
-                                <div class="posted-date">Posted: ${
-                                  job.postedDate
-                                }</div>
+                                <div class="posted-date">Posted: ${job.postedDate}</div>
                             </div>
                         </div>
                         
@@ -668,7 +670,7 @@
                             ${
                               !isApplied
                                 ? `<button onclick="applyNow(${job.jobId})" class="apply-btn">Apply Now</button>`
-                                : ""
+                                : `<button class="btn btn-primary" style="background: #059669; cursor: default;" disabled>Applied</button>`
                             }
                         </div>
                     </div>

@@ -253,6 +253,9 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
+      .stat-applied .stat-number {
+        color: #000000;
+      }
 
       .stat-pending .stat-number {
         color: #1976d2;
@@ -268,6 +271,10 @@
 
       .stat-rejected .stat-number {
         color: #d32f2f;
+      }
+
+      .stat-applied {
+        border-left: 4px solid #000000;
       }
 
       .stat-pending {
@@ -564,7 +571,7 @@
         <!-- Application Status Overview -->
         <div class="stats-overview">
           <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card stat-applied">
               <div class="stat-number" id="totalApplications">0</div>
               <div class="stat-label">Total Applications</div>
             </div>
@@ -699,9 +706,18 @@
                   localStorage.getItem("userEmail") !== userData.email ||
                   localStorage.getItem("userId") !== userData.userId.toString()
                 ) {
+                  // Remove previous user data and tokens
+                  localStorage.removeItem("userName");
+                  localStorage.removeItem("userEmail");
+                  localStorage.removeItem("userId");
+                  localStorage.removeItem("authToken");
+                  localStorage.removeItem("jwtToken");
+                  sessionStorage.removeItem("authToken");
+                  // Set new user data
                   localStorage.setItem("userName", userData.name);
                   localStorage.setItem("userEmail", userData.email);
                   localStorage.setItem("userId", userData.userId.toString());
+                  setJwtToken(token);
                 }
 
                 document.getElementById("userName").textContent = userData.name;

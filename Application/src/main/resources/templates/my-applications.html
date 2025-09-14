@@ -600,6 +600,17 @@
       }
 
       window.addEventListener("load", async function () {
+        // Check for token in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get("token");
+        if (urlToken) {
+          localStorage.setItem("authToken", urlToken);
+          localStorage.setItem("jwtToken", urlToken);
+          // Clean URL by removing token parameter
+          const cleanUrl = new URL(window.location);
+          cleanUrl.searchParams.delete("token");
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
         // Give AuthHelper time to process URL tokens
         await new Promise(resolve => setTimeout(resolve, 100));
         
@@ -717,70 +728,62 @@ Error Response: ${errorText}
 
         applicationsList.innerHTML = filteredApplications
           .map(
-            (application) => `
+            (application) => {
+              // If job is deleted/unavailable, show a clear message
+              const isUnavailable =
+                application.jobTitle === "Job details unavailable" ||
+                application.companyName === "Unknown" ||
+                application.jobLocation === "Unknown";
+              return `
                 <div class="application-card">
-                    <div class="application-header">
-                        <div>
-                            <h3 class="job-title">${
-                              application.jobTitle || "Job Title Unavailable"
-                            }</h3>
-                            <div class="company-name">${
-                              application.companyName || "Unknown Company"
-                            }</div>
-                        </div>
-                        <span class="status-badge status-${application.status.toLowerCase()}">${
-              application.status
-            }</span>
+                  <div class="application-header">
+                    <div>
+                      <h3 class="job-title">${
+                        isUnavailable ? "Job no longer available" : application.jobTitle
+                      }</h3>
+                      <div class="company-name">${
+                        isUnavailable ? "Job no longer available" : application.companyName
+                      }</div>
                     </div>
-                    
-                    <div class="application-details">
-                        <div class="application-meta">
-                            <strong>Applied:</strong> ${
-                              application.appliedDate
-                            } | 
-                            <strong>Location:</strong> ${
-                              application.jobLocation || "Not specified"
-                            }
-                            ${
-                              application.jobSalary
-                                ? ` | <strong>Salary:</strong> ${application.jobSalary}`
-                                : ""
-                            }
-                        </div>
-                        
-                        ${
-                          application.coverLetter
-                            ? `
-                            <div class="cover-letter">
-                                <strong>Cover Letter:</strong><br>
-                                ${application.coverLetter}
-                            </div>
-                        `
-                            : ""
-                        }
-                        
-                        ${
-                          application.additionalNotes
-                            ? `
-                            <div>
-                                <strong>Additional Notes:</strong> ${application.additionalNotes}
-                            </div>
-                        `
-                            : ""
-                        }
+                    <span class="status-badge status-${application.status.toLowerCase()}">${
+                      application.status
+                    }</span>
+                  </div>
+                  <div class="application-details">
+                    <div class="application-meta">
+                      <strong>Applied:</strong> ${application.appliedDate} |
+                      <strong>Location:</strong> ${
+                        isUnavailable ? "Job no longer available" : application.jobLocation || "Not specified"
+                      }
+                      ${
+                        isUnavailable
+                          ? ""
+                          : application.jobSalary
+                          ? ` | <strong>Salary:</strong> ${application.jobSalary}`
+                          : ""
+                      }
                     </div>
-                    
-                    <div class="application-actions">
-                        ${
-                          application.status === "APPLIED"
-                            ? `
-                            <button onclick="withdrawApplication(${application.applicationId})" class="withdraw-btn">Withdraw Application</button>
-                        `
-                            : ""
-                        }
-                    </div>
+                    ${
+                      application.coverLetter
+                        ? `<div class="cover-letter"><strong>Cover Letter:</strong><br>${application.coverLetter}</div>`
+                        : ""
+                    }
+                    ${
+                      application.additionalNotes
+                        ? `<div><strong>Additional Notes:</strong> ${application.additionalNotes}</div>`
+                        : ""
+                    }
+                  </div>
+                  <div class="application-actions">
+                    ${
+                      application.status === "APPLIED" && !isUnavailable
+                        ? `<button onclick="withdrawApplication(${application.applicationId})" class="withdraw-btn">Withdraw Application</button>`
+                        : ""
+                    }
+                  </div>
                 </div>
-            `
+              `;
+            }
           )
           .join("");
       }

@@ -1007,73 +1007,23 @@
 
       function createApplicantCard(application) {
         const statusClass = application.status.toLowerCase();
-        const isProcessed = application.status === 'HIRED' || application.status === 'REJECTED';
-        
-        // Action buttons based on current status
-        let actionButtons = '';
-        if (application.status === 'APPLIED') {
-          actionButtons = `
-            <div class="applicant-actions">
-              <button onclick="updateApplicationStatus(${application.applicationId}, 'SHORTLISTED')" class="btn btn-shortlist">
-                📋 Shortlist
-              </button>
-              <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED')" class="btn btn-accept">
-                ✅ Accept
-              </button>
-              <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED')" class="btn btn-reject">
-                ❌ Reject
-              </button>
-            </div>
-          `;
-        } else if (application.status === 'SHORTLISTED') {
-          actionButtons = `
-            <div class="applicant-actions">
-              <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED')" class="btn btn-accept">
-                ✅ Hire
-              </button>
-              <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED')" class="btn btn-reject">
-                ❌ Reject
-              </button>
-            </div>
-          `;
-        } else {
-          actionButtons = `
-            <div class="applicant-actions application-actions-disabled">
-              <small style="color: #718096; font-style: italic;">No actions available</small>
-            </div>
-          `;
-        }
+        const statusColors = {
+          applied: '#2563eb',      // blue
+          shortlisted: '#f59e0b', // orange
+          hired: '#059669',       // green
+          rejected: '#dc2626'     // red
+        };
+        const statusColor = statusColors[statusClass] || '#333';
 
         return `
-                <div class="applicant-card status-${statusClass}" onclick="viewApplicantDetails(${application.applicationId})">
-                    <div class="applicant-info">
-                        <div class="applicant-details">
-                            <div class="applicant-name">${
-                              application.applicantName || 'Applicant #' + application.applicantId
-                            }</div>
-                            <div class="applicant-email">${
-                              application.applicantEmail || 'No email provided'
-                            }</div>
-                        </div>
-                        <div class="application-status status-${statusClass}">${
-          application.status
-        }</div>
-                    </div>
-                    <div class="applied-date">Applied: ${formatDate(
-                      application.appliedDate
-                    )}</div>
-                    ${
-                      application.coverLetter
-                        ? `<div style="margin-top: 8px; font-size: 12px; color: #718096;">Cover Letter: ${escapeHtml(
-                            application.coverLetter.substring(0, 100)
-                          )}${
-                            application.coverLetter.length > 100 ? "..." : ""
-                          }</div>`
-                        : ""
-                    }
-                    ${actionButtons}
-                </div>
-            `;
+          <div class="applicant-card ${statusClass}" onclick="viewApplicantDetails(${application.applicationId})">
+            <div class="applicant-info">
+              <div class="applicant-name">${application.applicantName}</div>
+              <div class="applicant-email">${application.applicantEmail}</div>
+              <div class="applicant-status" style="color: ${statusColor}; font-weight: 600;">${application.status}</div>
+            </div>
+          </div>
+        `;
       }
 
       function createStatusSummary(applications) {

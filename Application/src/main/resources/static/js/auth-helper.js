@@ -22,36 +22,19 @@
       localStorage.setItem("authToken", token);
       localStorage.setItem("jwtToken", token); // Keep for compatibility
 
-      // Store in cookie for server-side access - try multiple approaches
-      try {
-        // Simple approach first
-        document.cookie = `authToken=${token}; path=/; max-age=3600; SameSite=Lax`;
+      // Store in cookie for server-side access - use simple approach for localhost
+      document.cookie = `authToken=${token}; path=/; max-age=3600`;
+      setTimeout(() => {
         console.log(
-          "Cookie set (simple):",
-          document.cookie.includes("authToken")
+          "Cookie after setting:",
+          document.cookie
         );
-
-        // Also try with domain specification
-        const domain = window.location.hostname;
-        document.cookie = `authToken=${token}; path=/; max-age=3600; SameSite=Lax; domain=${domain}`;
+        const hasAuthToken = document.cookie.includes("authToken=");
         console.log(
-          "Cookie set (with domain):",
-          document.cookie.includes("authToken")
+          "Auth token cookie verification (delayed):",
+          hasAuthToken ? "SUCCESS" : "FAILED"
         );
-
-        // Force immediate verification
-        setTimeout(() => {
-          const allCookies = document.cookie;
-          console.log("All cookies after setting:", allCookies);
-          const hasAuthToken = allCookies.includes("authToken=");
-          console.log(
-            "Auth token cookie verification:",
-            hasAuthToken ? "SUCCESS" : "FAILED"
-          );
-        }, 100);
-      } catch (error) {
-        console.error("Error setting cookie:", error);
-      }
+      }, 200);
     },
 
     // Remove JWT token
