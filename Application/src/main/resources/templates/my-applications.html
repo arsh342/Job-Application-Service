@@ -216,7 +216,7 @@
       .btn {
         padding: 8px 16px;
         border: none;
-        border-radius: 4px;
+        border-radius: 20px;
         cursor: pointer;
         font-size: 0.875rem;
         transition: background-color 0.15s ease-in-out;
@@ -258,14 +258,15 @@
       .content-area {
         padding: 30px;
         min-height: 400px;
+        border-radius: 16px;
       }
 
       .application-card {
         background: white;
         border: none;
         padding: 25px;
-        margin-bottom: 20px;
-        border-radius: 4px;
+        margin-bottom: 10px;
+        border-radius: 16px;
         border: 1px solid #e9ecef;
         transition: box-shadow 0.15s ease-in-out;
       }
@@ -403,7 +404,7 @@
         color: white;
         padding: 10px 20px;
         border: none;
-        border-radius: 5px;
+        border-radius: 20px;
         cursor: pointer;
         font-weight: 500;
         transition: all 0.3s;
@@ -470,14 +471,14 @@
         text-align: center;
         background: white;
         padding: 20px;
-        border-radius: 8px;
+        border-radius: 16px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       }
 
       .stat-number {
         font-size: 2rem;
         font-weight: 700;
-        color: #667eea;
+        color: #374151;
         margin-bottom: 5px;
       }
 
@@ -521,32 +522,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Filter Section -->
-          <!-- <div class="filter-section">
-            <div class="filter-group">
-              <label>Filter by Status:</label>
-              <select id="statusFilter" onchange="filterApplications()">
-                <option value="">All Applications</option>
-                <option value="APPLIED">Applied</option>
-                <option value="SHORTLISTED">Shortlisted</option>
-                <option value="REJECTED">Rejected</option>
-                <option value="HIRED">Hired</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Search:</label>
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Job title or company..."
-                onkeyup="filterApplications()"
-              />
-            </div>
-            <div class="filter-group">
-              <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
-            </div>
-          </div> -->
 
           <!-- Applications List -->
           <div class="content-area">
@@ -876,7 +851,14 @@ Error Response: ${errorText}
       }
 
       function viewJobDetails(jobId) {
-        window.open(`http://localhost:8081/job-details?id=${jobId}`, "_blank");
+        // Navigate to job details page with authentication token in the same tab
+        const token = getJwtToken();
+        if (token) {
+          window.location.href = `/job-details?id=${jobId}&token=${encodeURIComponent(token)}`;
+        } else {
+          alert("Please log in to view job details");
+          window.location.href = "http://localhost:8083/login";
+        }
       }
 
       async function withdrawApplication(applicationId) {

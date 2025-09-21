@@ -165,6 +165,7 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         border: 1px solid #e5e9f2;
         overflow: hidden;
+        padding: 20px;
       }
 
       .header h1 {
@@ -190,11 +191,11 @@
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #667eea;
         color: white;
         border: none;
         padding: 12px 20px;
-        border-radius: 8px;
+        border-radius: 20px;
         font-weight: 600;
         transition: all 0.2s ease;
       }
@@ -205,7 +206,8 @@
       }
 
       .search-filters {
-        background: #f8fafc;
+        background: #f5f7fa
+        ;
         padding: 32px;
         border-bottom: 1px solid #e5e9f2;
       }
@@ -228,7 +230,7 @@
       select {
         padding: 12px 16px;
         border: 1px solid #d1d5db;
-        border-radius: 8px;
+        border-radius: 50px;
         font-size: 14px;
         transition: all 0.2s ease;
         background-color: white;
@@ -246,10 +248,10 @@
         background: white;
         border: 1px solid #e5e9f2;
         padding: 32px;
-        margin: 0;
+        margin-top: 10px;
         border-bottom: 1px solid #e5e9f2;
         transition: all 0.2s ease;
-        border-radius: 0;
+        border-radius: 16px;
       }
 
       .job-card:hover {
@@ -301,7 +303,7 @@
         color: white;
         padding: 12px 20px;
         border: none;
-        border-radius: 8px;
+        border-radius: 20px;
         cursor: pointer;
         font-weight: 600;
         transition: all 0.2s ease;
@@ -314,11 +316,11 @@
       }
 
       .view-details-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #667eea;
         color: white;
         padding: 12px 20px;
         border: none;
-        border-radius: 8px;
+        border-radius: 20px;
         cursor: pointer;
         font-weight: 600;
         transition: all 0.2s ease;
@@ -332,11 +334,11 @@
       }
 
       .view-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #667eea;
         color: white;
         padding: 12px 20px;
         border: none;
-        border-radius: 8px;
+        border-radius: 20px;
         cursor: pointer;
         font-weight: 600;
         transition: all 0.2s ease;
@@ -353,7 +355,7 @@
         color: #856404;
         padding: 4px 8px;
         font-size: 0.75rem;
-        border-radius: 4px;
+        border-radius: 20px;
         font-weight: 500;
         text-transform: uppercase;
         border: 1px solid #ffeaa7;
@@ -384,6 +386,7 @@
 
       .pagination {
         text-align: center;
+        margin-top: 30px;
         padding: 30px;
         background: #f8f9fa;
         border-top: 1px solid #e1e1e1;
@@ -395,7 +398,7 @@
         background: white;
         border: 2px solid #667eea;
         color: #667eea;
-        border-radius: 5px;
+        border-radius: 20px;
         cursor: pointer;
         transition: all 0.3s;
       }
@@ -644,19 +647,19 @@
                         </div>
                         
                         <div class="job-details">
-                            <p><span class="location">📍 ${
+                            <p><span class="location"> ${
                               job.location
                             }</span></p>
                             ${
                               job.salaryMin || job.salaryMax
-                                ? `<p class="salary">💰 ${
+                                ? `<p class="salary"> ${
                                     job.salaryMin && job.salaryMax
                                       ? `₹${job.salaryMin} - ₹${job.salaryMax}`
                                       : job.salaryMin
                                       ? `₹${job.salaryMin}+`
                                       : `Up to ₹${job.salaryMax}`
                                   }</p>`
-                                : '<p class="salary">💰 Not specified</p>'
+                                : '<p class="salary"> Not specified</p>'
                             }
                             <p>${
                               job.description.length > 200
@@ -797,13 +800,10 @@
       }
 
       function viewJobDetails(jobId) {
-        // Navigate to job details page with authentication token
+        // Navigate to job details page with authentication token in the same tab
         const token = getJwtToken();
         if (token) {
-          window.open(
-            `/job-details?id=${jobId}&token=${encodeURIComponent(token)}`,
-            "_blank"
-          );
+          window.location.href = `/job-details?id=${jobId}&token=${encodeURIComponent(token)}`;
         } else {
           alert("Please log in to view job details");
           window.location.href = "http://localhost:8083/login";

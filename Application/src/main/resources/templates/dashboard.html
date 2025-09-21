@@ -171,7 +171,7 @@
       .btn {
         padding: 8px 16px;
         border: none;
-        border-radius: 4px;
+        border-radius: 20px;
         cursor: pointer;
         font-size: 0.875rem;
         transition: background-color 0.15s ease-in-out;
@@ -196,7 +196,7 @@
       }
 
       .btn-secondary {
-        background: #6c757d;
+        background: #667eea;
         color: white;
       }
 
@@ -332,7 +332,8 @@
       /* Job recommendations styling */
       .jobs-list {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
+        flex-direction: row;
         gap: 16px;
       }
 
@@ -344,10 +345,12 @@
       }
 
       .job-item {
+        width: calc(50% - 8px); /* 2 columns with gap */
+        box-sizing: border-box;
         background: #f8fafc;
         margin: 0;
         padding: 20px;
-        border-radius: 8px;
+        border-radius: 16px;
         border: 1px solid #e5e9f2;
         transition: all 0.2s ease;
       }
@@ -595,7 +598,7 @@
         </div>
         <!-- Job Recommendations Section -->
         <div class="section">
-          <h2>🎯 Job Recommendations</h2>
+          <h2>Job Recommendations</h2>
           <div id="jobsList" class="jobs-list">
             <p class="no-items">No job recommendations available.</p>
           </div>
@@ -793,13 +796,13 @@
               jobDiv.innerHTML = `
                 <h3>${job.title}</h3>
                 <p class="company">${job.company}</p>
-                <p class="location">📍 ${job.location}</p>
+                <p class="location"> ${job.location}</p>
                 <p class="description">${truncateText(job.description, 120)}</p>
-                <p class="salary">💰 ${formatSalary(
+                <p class="salary"> ${formatSalary(
                   job.salaryMin,
                   job.salaryMax
                 )}</p>
-                <p class="posted">🕐 Posted ${formatDate(job.postedDate)}</p>
+                <p class="posted"> Posted ${formatDate(job.postedDate)}</p>
                 <div class="job-actions">
                   <button class="btn btn-secondary" onclick="viewJobDetails(${
                     job.jobId
@@ -830,13 +833,12 @@
           }
 
           function viewJobDetails(jobId) {
-            // Navigate to job details page with authentication token
+            // Navigate to job details page with authentication token in the same tab
             const token = getJwtToken();
             if (token) {
-              window.open(
-                `/job-details?id=${jobId}&token=${encodeURIComponent(token)}`,
-                "_blank"
-              );
+              window.location.href = `/job-details?id=${jobId}&token=${encodeURIComponent(
+                token
+              )}`;
             } else {
               alert("Please log in to view job details");
               window.location.href = "http://localhost:8083/login";

@@ -29,4 +29,12 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                                   @Param("minSalary") Double minSalary,
                                   @Param("maxSalary") Double maxSalary,
                                   @Param("status") JobStatus status);
+    
+    @Query("SELECT j FROM Job j WHERE LOWER(j.title) = LOWER(:title) AND LOWER(j.location) = LOWER(:location) AND LOWER(j.company) = LOWER(:company) AND j.salaryMin = :salaryMin AND j.salaryMax = :salaryMax AND j.status = :status")
+    List<Job> findExactJobMatch(@Param("title") String title,
+                                @Param("location") String location,
+                                @Param("company") String company,
+                                @Param("salaryMin") Double salaryMin,
+                                @Param("salaryMax") Double salaryMax,
+                                @Param("status") Job.JobStatus status);
 }

@@ -203,7 +203,7 @@
         background: #10b981;
         color: white;
         padding: 8px 16px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-size: 12px;
         margin-right: 8px;
       }
@@ -217,7 +217,7 @@
         background: #ef4444;
         color: white;
         padding: 8px 16px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-size: 12px;
       }
 
@@ -235,7 +235,7 @@
 
       .filters {
         background: white;
-        border-radius: 4px;
+        border-radius: 16px;
         padding: 20px;
         margin-bottom: 30px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -265,7 +265,7 @@
       .filter-group select {
         padding: 0.75rem;
         border: 1px solid #ced4da;
-        border-radius: 4px;
+        border-radius: 50px;
         font-size: 0.875rem;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
       }
@@ -284,7 +284,7 @@
 
       .job-card {
         background: white;
-        border-radius: 4px;
+        border-radius: 16px;
         padding: 25px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         border: 1px solid #e9ecef;
@@ -316,7 +316,7 @@
 
       .job-status {
         padding: 4px 8px;
-        border-radius: 4px;
+        border-radius: 50px;
         font-size: 0.75rem;
         font-weight: 500;
         text-transform: uppercase;
@@ -389,7 +389,7 @@
       }
 
       .applicant-count {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: gray;
         color: white;
         padding: 4px 12px;
         border-radius: 15px;
@@ -496,13 +496,14 @@
         gap: 8px;
         margin-top: 12px;
         align-items: center;
+
       }
 
       .btn-accept {
         background: #10b981;
         color: white;
         padding: 6px 12px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-size: 11px;
         font-weight: 500;
         border: none;
@@ -519,7 +520,7 @@
         background: #ef4444;
         color: white;
         padding: 6px 12px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-size: 11px;
         font-weight: 500;
         border: none;
@@ -536,7 +537,7 @@
         background: #f59e0b;
         color: white;
         padding: 6px 12px;
-        border-radius: 6px;
+        border-radius: 50px;
         font-size: 11px;
         font-weight: 500;
         border: none;
@@ -912,7 +913,7 @@
               <h3>No jobs found</h3>
               <p>You haven't posted any jobs yet or no jobs match your current filters.</p>
               <button onclick="navigateToPage('/create-job')" class="btn btn-primary" style="margin-top: 16px;">
-                ➕ Create Your First Job
+                Create Your First Job
               </button>
             </div>
           `;
@@ -946,10 +947,10 @@
                             )}</div>
                             <div class="job-actions">
                                 <button onclick="editJob(${job.jobId})" class="btn btn-edit">
-                                    ✏️ Edit
+                                    Edit
                                 </button>
                                 <button onclick="deleteJob(${job.jobId})" class="btn btn-delete">
-                                    🗑️ Delete
+                                    Delete
                                 </button>
                             </div>
                         </div>
@@ -979,7 +980,7 @@
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Job ID</div>
-                            <div class="detail-value">#${job.jobId}</div>
+                            <div class="detail-value">${job.jobId}</div>
                         </div>
                     </div>
 
@@ -1202,12 +1203,12 @@
                     ${profile.resumeUrl ? `<div style='margin-bottom: 16px;'><strong style='color: #4a5568;'>Resume:</strong> <a href='${profile.resumeUrl}' target='_blank'>View Resume</a></div>` : ''}
                     <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
                       ${application.status === 'APPLIED' ? `
-                        <button onclick="updateApplicationStatus(${application.applicationId}, 'SHORTLISTED'); closeApplicantModal();" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">📋 Shortlist</button>
-                        <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">✅ Accept</button>
-                        <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">❌ Reject</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'SHORTLISTED'); closeApplicantModal();" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 14px;">Shortlist</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 14px;">Accept</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 14px;">Reject</button>
                       ` : application.status === 'SHORTLISTED' ? `
-                        <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">✅ Accept</button>
-                        <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">❌ Reject</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'HIRED'); closeApplicantModal();" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 14px;">Accept</button>
+                        <button onclick="updateApplicationStatus(${application.applicationId}, 'REJECTED'); closeApplicantModal();" style="background: #f56565; color: white; border: none; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 14px;">Reject</button>
                       ` : `
                         <span style="color: #718096; font-style: italic;">No actions available for ${application.status.toLowerCase()} applications</span>
                       `}

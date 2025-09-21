@@ -21,6 +21,18 @@ public class JobService {
     private final ApplicationServiceClient applicationServiceClient;
     
     public JobResponseDto createJob(JobCreateDto dto, Long employerId) {
+        // Check for existing job with all fields matching
+        List<Job> existingJobs = jobRepository.findExactJobMatch(
+                dto.getTitle(),
+                dto.getLocation(),
+                dto.getCompany(),
+                dto.getSalaryMin(),
+                dto.getSalaryMax(),
+                dto.getStatus()
+        );
+        if (!existingJobs.isEmpty()) {
+            throw new RuntimeException("A job with the same details already exists for this company and is open.");
+        }
         Job job = Job.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
