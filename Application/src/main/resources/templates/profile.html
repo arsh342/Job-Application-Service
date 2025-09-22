@@ -74,7 +74,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #b7d7f9 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -123,6 +123,8 @@
         background: #f0f9ff;
         color: #0ea5e9;
         border-right: 3px solid #0ea5e9;
+        border-bottom-right-radius: 20px;
+        border-top-right-radius: 20px;
       }
 
       .nav-icon {
@@ -289,7 +291,7 @@
       }
 
       .profile-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #b7d7f9 100%);
         padding: 32px;
         text-align: center;
         color: white;
@@ -369,7 +371,7 @@
         width: 100%;
         padding: 12px 16px;
         border: 2px solid #e5e9f2;
-        border-radius: 12px;
+        border-radius: 20px;
         font-size: 14px;
         transition: all 0.2s ease;
         background: #f9fafb;
@@ -402,7 +404,7 @@
       .dynamic-item {
         background: #f8fafc;
         border: 1px solid #e5e9f2;
-        border-radius: 12px;
+        border-radius: 20px;
         padding: 20px;
         margin-bottom: 16px;
         position: relative;
@@ -411,7 +413,7 @@
       .skill-item {
         background: #f8fafc;
         border: 1px solid #e5e9f2;
-        border-radius: 8px;
+        border-radius: 20px;
         padding: 16px;
         margin-bottom: 12px;
         display: grid;
@@ -462,11 +464,10 @@
         background: #ef4444;
         color: white;
         border: none;
-        border-radius: 50%;
-        width: 28px;
+        border-radius: 20px;
+        width: 50px;
         height: 28px;
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 10px;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -512,7 +513,7 @@
       .btn {
         padding: 12px 24px;
         border: none;
-        border-radius: 12px;
+        border-radius: 20px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -524,7 +525,7 @@
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #667eea;
         color: white;
       }
 
@@ -832,14 +833,14 @@
 
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary" id="saveBtn">
-                  💾 Save Changes
+                  Save
                 </button>
                 <button
                   type="button"
                   class="btn btn-secondary"
                   onclick="resetForm()"
                 >
-                  🔄 Reset
+                  Reset
                 </button>
               </div>
             </form>
@@ -888,7 +889,7 @@
             <label>Years of Experience</label>
             <input type="number" name="skillYears" min="0" max="50" />
           </div>
-          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
         `;
         container.appendChild(skillItem);
       }
@@ -898,7 +899,7 @@
         const expItem = document.createElement("div");
         expItem.className = "dynamic-item";
         expItem.innerHTML = `
-          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
           <div class="section-title">Work Experience</div>
           <div class="form-grid">
             <div class="form-group">
@@ -951,7 +952,7 @@
         const eduItem = document.createElement("div");
         eduItem.className = "dynamic-item";
         eduItem.innerHTML = `
-          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
           <div class="section-title">Education</div>
           <div class="form-grid">
             <div class="form-group">
@@ -1015,7 +1016,7 @@
         const projItem = document.createElement("div");
         projItem.className = "dynamic-item";
         projItem.innerHTML = `
-          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
           <div class="section-title">Project</div>
           <div class="form-grid">
             <div class="form-group">
@@ -1062,7 +1063,7 @@
         const certItem = document.createElement("div");
         certItem.className = "dynamic-item";
         certItem.innerHTML = `
-          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">×</button>
+          <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
           <div class="section-title">Certification</div>
           <div class="form-grid">
             <div class="form-group">
