@@ -295,18 +295,18 @@ OpenFeign → Service-to-Service Communication → Authentication Validation
 
 ```mermaid
 flowchart LR
-  subgraph AuthSvc [Authentication Service (8083)]
+  subgraph AuthSvc["Authentication Service (8083)"]
     A1[Login/Register UI]
     A2[OAuth2 (Google/GitHub)]
     A3[JWT Issuance + Validation]
   end
 
-  subgraph JobSvc [Job Service (8081)]
+  subgraph JobSvc["Job Service (8081)"]
     J1[Employer UI]
     J2[Jobs API]
   end
 
-  subgraph AppSvc [Application Service (8082)]
+  subgraph AppSvc["Application Service (8082)"]
     P1[Job Seeker UI]
     P2[Applications API]
   end
