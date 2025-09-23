@@ -31,11 +31,7 @@ public class AuthService {
             throw new RuntimeException("Email already exists");
         }
         
-        // Validate employer-specific fields
-        if (request.getUserType() == UserType.EMPLOYER && 
-            (request.getCompanyName() == null || request.getCompanyName().trim().isEmpty())) {
-            throw new RuntimeException("Company name is required for employers");
-        }
+        // No longer require company name for employers
         
         // Create user
         User user = User.builder()
