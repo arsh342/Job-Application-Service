@@ -145,6 +145,25 @@
         border-top: 1px solid #e9ecef;
       }
 
+      .oauth-buttons {
+        margin-top: 16px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .oauth-btn {
+        display: block;
+        width: 100%;
+        padding: 10px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 20px;
+        text-decoration: none;
+        color: #111827;
+        background: white;
+        text-align: center;
+        font-weight: 600;
+      }
+
       .text-center a {
         color: #495057;
         text-decoration: none;
@@ -263,6 +282,14 @@
 
         <div class="text-center">
           <p>Already have an account? <a th:href="@{/login}">Login here</a></p>
+          <div class="oauth-buttons">
+            <a class="oauth-btn" href="/oauth2/authorization/google"
+              >Continue with Google</a
+            >
+            <a class="oauth-btn" href="/oauth2/authorization/github"
+              >Continue with GitHub</a
+            >
+          </div>
         </div>
       </div>
     </div>
