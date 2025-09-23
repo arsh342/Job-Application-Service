@@ -21,20 +21,7 @@
       console.log("Setting auth token:", token ? "Token received" : "No token");
       localStorage.setItem("authToken", token);
       localStorage.setItem("jwtToken", token); // Keep for compatibility
-
-      // Store in cookie for server-side access - use simple approach for localhost
-      document.cookie = `authToken=${token}; path=/; max-age=3600`;
-      setTimeout(() => {
-        console.log(
-          "Cookie after setting:",
-          document.cookie
-        );
-        const hasAuthToken = document.cookie.includes("authToken=");
-        console.log(
-          "Auth token cookie verification (delayed):",
-          hasAuthToken ? "SUCCESS" : "FAILED"
-        );
-      }, 200);
+      // Note: We intentionally avoid cookie checks for localhost (different ports won't share cookies)
     },
 
     // Remove JWT token
@@ -43,9 +30,7 @@
       localStorage.removeItem("jwtToken");
       sessionStorage.removeItem("authToken");
       sessionStorage.removeItem("jwtToken");
-      // Also clear the cookie
-      document.cookie =
-        "authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      // Avoid cookie reliance in localhost multi-port setup
     },
 
     // Check if user is authenticated

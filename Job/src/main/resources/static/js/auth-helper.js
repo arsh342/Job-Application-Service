@@ -39,40 +39,7 @@
       localStorage.setItem("authToken", token);
       localStorage.setItem("jwtToken", token); // Keep for compatibility
 
-      // Enhanced cookie setting with comprehensive debugging
-      console.log("Setting auth token cookie...");
-
-      try {
-        // Method 1: Simple cookie setting
-        document.cookie = `authToken=${token}; path=/; max-age=${24 * 60 * 60}`;
-        console.log("Cookie set (simple): true");
-
-        // Method 2: More explicit cookie setting with domain
-        document.cookie = `authToken=${token}; path=/; max-age=${
-          24 * 60 * 60
-        }; domain=localhost`;
-        console.log("Cookie set (with domain): true");
-
-        // Immediate verification
-        setTimeout(() => {
-          const cookies = document.cookie.split(";");
-          const authCookie = cookies.find((cookie) =>
-            cookie.trim().startsWith("authToken=")
-          );
-          if (authCookie) {
-            console.log("Auth token cookie verification: SUCCESS");
-            console.log(
-              "Cookie value length:",
-              authCookie.split("=")[1]?.length
-            );
-          } else {
-            console.error("Auth token cookie verification: FAILED");
-            console.log("Available cookies:", document.cookie);
-          }
-        }, 100);
-      } catch (error) {
-        console.error("Cookie setting error:", error);
-      }
+      // Avoid cookie reliance in localhost multi-port setup
     },
 
     // Remove JWT token

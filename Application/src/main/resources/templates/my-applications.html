@@ -121,8 +121,8 @@
 
       .nav-item.active {
         background: #f0f9ff;
-        color: #0ea5e9;
-        border-right: 3px solid #0ea5e9;
+        color: #667eea;
+        border-left: 4px solid #667eea;
         border-bottom-right-radius: 20px;
         border-top-right-radius: 20px;
       }
@@ -587,6 +587,28 @@
           const cleanUrl = new URL(window.location);
           cleanUrl.searchParams.delete("token");
           window.history.replaceState({}, document.title, cleanUrl);
+          // Fetch fresh profile and update sidebar/localStorage
+          try {
+            const resp = await fetch("http://localhost:8083/api/auth/validate", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${urlToken}` },
+            });
+            if (resp.ok) {
+              const data = await resp.json();
+              if (data && data.valid) {
+                if (data.name) localStorage.setItem("userName", data.name);
+                if (data.email) localStorage.setItem("userEmail", data.email);
+                if (data.userId) localStorage.setItem("userId", String(data.userId));
+                // Update sidebar DOM if present
+                const nameEl = document.getElementById("userName");
+                const emailEl = document.getElementById("userEmail");
+                const avatarEl = document.getElementById("userAvatar");
+                if (nameEl && data.name) nameEl.textContent = data.name;
+                if (emailEl && data.email) emailEl.textContent = data.email;
+                if (avatarEl && data.name) avatarEl.textContent = String(data.name).charAt(0).toUpperCase();
+              }
+            }
+          } catch (e) {}
         }
         // Give AuthHelper time to process URL tokens
         await new Promise(resolve => setTimeout(resolve, 100));

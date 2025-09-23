@@ -2,48 +2,6 @@
 (function () {
   "use strict";
 
-  // Read token from URL if present, store it, clear stale user data, and fetch fresh profile
-  (function handleUrlToken() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlToken = urlParams.get("token");
-    if (!urlToken) return;
-
-    // Clear stale user info so sidebar refreshes
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userId");
-
-    // Store token in both local and session for compatibility
-    localStorage.setItem("authToken", urlToken);
-    localStorage.setItem("jwtToken", urlToken);
-    sessionStorage.setItem("authToken", urlToken);
-
-    // Clean URL by removing token param but keep others
-    try {
-      const url = new URL(window.location);
-      url.searchParams.delete("token");
-      window.history.replaceState({}, document.title, url.toString());
-    } catch (e) {}
-
-    // Fetch fresh user profile to populate sidebar immediately
-    try {
-      fetch("http://localhost:8083/api/auth/validate", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${urlToken}` },
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data && data.valid) {
-            if (data.name) localStorage.setItem("userName", data.name);
-            if (data.email) localStorage.setItem("userEmail", data.email);
-            if (data.userId)
-              localStorage.setItem("userId", String(data.userId));
-          }
-        })
-        .catch(() => {});
-    } catch (e) {}
-  })();
-
   // Function to get token from localStorage
   function getStoredToken() {
     return (
@@ -80,8 +38,13 @@
       return;
     }
 
-    // If URL already has token, we handled it above; nothing else to do here
-    if (hasTokenInUrl()) return;
+    // If URL already has token, clear stale user info so UI refreshes
+    if (hasTokenInUrl()) {
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userId");
+      return;
+    }
 
     // Check if we have a stored token
     const storedToken = getStoredToken();

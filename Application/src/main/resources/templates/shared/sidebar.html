@@ -92,8 +92,8 @@
 
       .nav-item.active {
         background: #f0f9ff;
-        color: #0ea5e9;
-        border-right: 3px solid #0ea5e9;
+        color: #667eea;
+        border-left: 4px solid #667eea;
         border-bottom-right-radius: 20px;
         border-top-right-radius: 20px;
       }
@@ -307,6 +307,9 @@
           document.getElementById("userAvatar").textContent = userName
             .charAt(0)
             .toUpperCase();
+        } else {
+          // If missing, try hydrating from token once
+          hydrateUserFromToken();
         }
 
         // Set active navigation item based on current page
@@ -332,6 +335,30 @@
           // For job details, don't highlight any specific nav item or highlight browse-jobs
           document.getElementById("nav-browse-jobs").classList.add("active");
         }
+      }
+
+      async function hydrateUserFromToken() {
+        try {
+          const token = getJwtToken();
+          if (!token) return;
+          const resp = await fetch("http://localhost:8083/api/auth/validate", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!resp.ok) return;
+          const data = await resp.json();
+          if (!data || !data.valid) return;
+          if (data.name) localStorage.setItem("userName", data.name);
+          if (data.email) localStorage.setItem("userEmail", data.email);
+          if (data.userId) localStorage.setItem("userId", String(data.userId));
+          const nameEl = document.getElementById("userName");
+          const emailEl = document.getElementById("userEmail");
+          const avatarEl = document.getElementById("userAvatar");
+          if (nameEl && data.name) nameEl.textContent = data.name;
+          if (emailEl && data.email) emailEl.textContent = data.email;
+          if (avatarEl && data.name)
+            avatarEl.textContent = String(data.name).charAt(0).toUpperCase();
+        } catch (e) {}
       }
 
       // JWT utility functions for sidebar
@@ -408,6 +435,21 @@
       // Initialize sidebar when page loads
       document.addEventListener("DOMContentLoaded", function () {
         initializeSidebar();
+        // React to updates from other scripts setting user info
+        window.addEventListener("storage", function (e) {
+          if (["userName", "userEmail"].includes(e.key)) {
+            const n = localStorage.getItem("userName");
+            const m = localStorage.getItem("userEmail");
+            if (n && m) {
+              const nameEl = document.getElementById("userName");
+              const emailEl = document.getElementById("userEmail");
+              const avatarEl = document.getElementById("userAvatar");
+              if (nameEl) nameEl.textContent = n;
+              if (emailEl) emailEl.textContent = m;
+              if (avatarEl) avatarEl.textContent = n.charAt(0).toUpperCase();
+            }
+          }
+        });
       });
     </script>
 

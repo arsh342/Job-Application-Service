@@ -31,7 +31,7 @@ public class AuthService {
             throw new RuntimeException("Email already exists");
         }
         
-        // No longer require company name for employers
+        // No company name is required at registration time for employers
         
         // Create user
         User user = User.builder()

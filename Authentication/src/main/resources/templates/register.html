@@ -207,14 +207,6 @@
         color: #6c757d;
         border: 1px solid #e9ecef;
       }
-
-      .toggle-password {
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-      }
     </style>
   </head>
   <body>
@@ -239,114 +231,27 @@
           </div>
 
           <div class="form-group">
-            <div class="form-group">
-              <label for="password">Password</label>
-              <div style="position: relative">
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  required
-                  minlength="8"
-                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{\]};:'&quot;,<>?/\\|]).{8,}$"
-                  title="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number and one special character"
-                  style="padding-right: 32px"
-                />
-
-                <span
-                  class="toggle-password"
-                  onclick="togglePassword('password', this)"
-                  style="
-                    position: absolute;
-                    right: 8px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    cursor: pointer;
-                  "
-                >
-                  <svg
-                    id="eyeIcon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                </span>
-              </div>
-              <small
-                style="
-                  color: #6c757d;
-                  font-size: 12px;
-                  margin-top: 4px;
-                  display: block;
-                "
-              >
-                Must be at least 8 characters with uppercase, lowercase, number
-                and special character
-              </small>
-            </div>
-
-            <div class="form-group">
-              <label for="confirmPassword">Confirm Password</label>
-              <div style="position: relative">
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  required
-                  style="padding-right: 32px"
-                />
-                <span
-                  class="toggle-password"
-                  onclick="togglePassword('confirmPassword', this)"
-                  style="
-                    position: absolute;
-                    right: 8px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    cursor: pointer;
-                  "
-                >
-                  <svg
-                    id="eyeIcon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                </span>
-              </div>
-            </div>
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              minlength="8"
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>/?]).*$"
+              title="Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number and one special character"
+            />
+            <small
+              style="
+                color: #6c757d;
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+              "
+            >
+              Must be at least 8 characters with uppercase, lowercase, number
+              and special character
+            </small>
           </div>
 
           <div class="form-group">
@@ -411,7 +316,7 @@
           userTypeDescription.textContent =
             "As a Job Seeker, you can browse and apply for jobs posted by employers.";
         } else if (selectedType === "EMPLOYER") {
-          // Do not ask for company name for employer selection
+          // Company not required anymore at registration
           userTypeInfo.style.display = "block";
           userTypeDescription.textContent =
             "As an Employer, you can post job openings and manage applications.";
@@ -443,7 +348,7 @@
             userType: userType,
           };
 
-          // Do not require company name for employer; ignore company field
+          // Do not include companyName at registration time
 
           // Phone is optional for all users but typically only collected for employers
           const phoneValue = document.getElementById("phone").value;
@@ -499,27 +404,6 @@
           // No browser alert fallback
         }
       }
-
-      function togglePassword(id, el) {
-        const input = document.getElementById(id);
-        if (input.type === "password") {
-          input.type = "text";
-          el.querySelector("svg").style.opacity = 0.5;
-        } else {
-          input.type = "password";
-          el.querySelector("svg").style.opacity = 1;
-        }
-      }
-      document
-        .getElementById("registerForm")
-        .addEventListener("submit", function (e) {
-          const pwd = document.getElementById("password").value;
-          const cpwd = document.getElementById("confirmPassword").value;
-          if (pwd !== cpwd) {
-            e.preventDefault();
-            alert("Passwords do not match!");
-          }
-        });
     </script>
   </body>
 </html>

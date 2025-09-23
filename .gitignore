@@ -46,7 +46,6 @@ Thumbs.db
 
 # Environment variables
 .env
-.env.*
 
 # Database files
 *.db
