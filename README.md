@@ -296,9 +296,9 @@ OpenFeign → Service-to-Service Communication → Authentication Validation
 ```mermaid
 flowchart LR
   subgraph AuthSvc["Authentication Service (8083)"]
-    A1[Login/Register UI]
-    A2[OAuth2 (Google/GitHub)]
-    A3[JWT Issuance + Validation]
+    A1[Login and Register UI]
+    A2[OAuth2 Providers]
+    A3[JWT Issuer and Validator]
   end
 
   subgraph JobSvc["Job Service (8081)"]
@@ -316,8 +316,8 @@ flowchart LR
   P2 -->|Fetch Jobs| J2
 
   A2 --> A3
-  A3 -->|JWT + domain-based redirect| P1
-  A3 -->|JWT + domain-based redirect| J1
+  A3 -->|JWT redirect| P1
+  A3 -->|JWT redirect| J1
 ```
 
 ### Service Independence Benefits
