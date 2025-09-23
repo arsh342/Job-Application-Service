@@ -23,29 +23,30 @@ The **Job Portal Microservices System** is a comprehensive, enterprise-grade job
 
 ### Key Features
 
-- **Multi-role Support**: Separate interfaces for Job Seekers and Employers
-- **Advanced Authentication**:
-  - JWT token-based authentication across all services
-  - **HTTP Cookie Persistence**: Automatic cookie setting for page reload authentication
-  - **Cross-Service Token Validation**: Real-time token verification
-  - **Seamless Navigation**: Token-based routing with URL parameter support
-- **Real-time Communication**: Seamless inter-service communication via REST APIs
-- **Scalable Architecture**: Independent services that can be scaled individually
-- **Modern UI**: Responsive web interface with professional design
-- **Enhanced Security**: Role-based access control with comprehensive endpoint protection
+- **Multi-role Support**: Separate experiences for Job Seekers and Employers
+- **Authentication**:
+  - OAuth2 login with **Google** and **GitHub** (via Authentication service)
+  - JWT issued post-login, used across services for authorization
+  - Domain-based redirect after OAuth: consumer domains (gmail/outlook/hotmail/yahoo) → Application; others → Job
+  - Cross-service token validation through the Authentication service
+  - Token propagation during navigation via `?token=` URL param and localStorage
+- **Inter-Service Communication**: RESTful calls (Application ↔ Job; all ↔ Authentication)
+- **Scalable Architecture**: Independently deployable Spring Boot services
+- **Modern UI**: Thymeleaf-based, responsive pages per service
+- **Security**: Spring Security with role-based access control
 
 ### Technology Stack
 
-| Component          | Technology             | Version       |
-| ------------------ | ---------------------- | ------------- |
-| **Framework**      | Spring Boot            | 3.5.5         |
-| **Language**       | Java                   | 21            |
-| **Security**       | Spring Security + JWT  | JJWT 0.11.5   |
-| **Database**       | MySQL                  | 8.0+          |
-| **ORM**            | Hibernate/JPA          | -             |
-| **Build Tool**     | Maven                  | 3.6+          |
-| **Frontend**       | Thymeleaf + HTML5/CSS3 | -             |
-| **Authentication** | HTTP Cookies + JWT     | Enhanced v1.1 |
+| Component          | Technology             | Version     |
+| ------------------ | ---------------------- | ----------- |
+| **Framework**      | Spring Boot            | 3.5.5       |
+| **Language**       | Java                   | 21          |
+| **Security**       | Spring Security + JWT  | JJWT 0.11.5 |
+| **Database**       | MySQL                  | 8.0+        |
+| **ORM**            | Hibernate/JPA          | -           |
+| **Build Tool**     | Maven                  | 3.6+        |
+| **Frontend**       | Thymeleaf + HTML5/CSS3 | -           |
+| **Authentication** | OAuth2 + JWT           |             |
 
 ## 📦 Dependencies & Their Functions
 
@@ -292,23 +293,31 @@ OpenFeign → Service-to-Service Communication → Authentication Validation
 
 ### Microservices Design Pattern
 
-```
-┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   AUTHENTICATION    │    │    JOB SERVICE      │    │  APPLICATION        │
-│      SERVICE        │    │                     │    │    SERVICE          │
-│   (Port 8083)       │    │   (Port 8081)       │    │  (Port 8082)        │
-│                     │    │                     │    │                     │
-│ • User Management   │    │ • Job Posting       │    │ • Job Applications  │
-│ • JWT Token Issue   │    │ • Job Management    │    │ • Application       │
-│ • Authentication    │    │ • Employer Portal   │    │   Tracking          │
-│ • User Validation   │    │ • Job Search        │    │ • Job Seeker Portal │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-         │                           │                           │
-         │◄────── Token Validation ──┤                           │
-         │                           │                           │
-         │◄────── Token Validation ──┼───────────────────────────┤
-         │                           │                           │
-         │                           │◄───── Job Data Fetch ─────┤
+```mermaid
+flowchart LR
+  subgraph AuthSvc[Authentication Service (8083)]
+    A1[Login/Register UI]
+    A2[OAuth2 (Google/GitHub)]
+    A3[JWT Issuance + Validation]
+  end
+
+  subgraph JobSvc[Job Service (8081)]
+    J1[Employer UI]
+    J2[Jobs API]
+  end
+
+  subgraph AppSvc[Application Service (8082)]
+    P1[Job Seeker UI]
+    P2[Applications API]
+  end
+
+  A3 <-- Validate Token --> J2
+  A3 <-- Validate Token --> P2
+  P2 <-- Fetch Jobs --> J2
+
+  A2 --> A3
+  A3 -->|JWT + domain-based redirect| P1
+  A3 -->|JWT + domain-based redirect| J1
 ```
 
 ### Service Independence Benefits
@@ -351,12 +360,12 @@ The Authentication Service serves as the central identity management system, han
 #### **Security Configuration**
 
 - **File**: `SecurityConfig.java`
-- **Function**: Configures Spring Security with JWT authentication
+- **Function**: Configures Spring Security
 - **Features**:
-  - JWT token validation filter
-  - CORS configuration for cross-origin requests
-  - Public endpoint access (login, register)
-  - Protected route security
+  - OAuth2 Login (`/oauth2/authorization/{google|github}`)
+  - Custom OAuth2 success handler (domain-based redirect + JWT issuance)
+  - Public UI routes (`/login`, `/register`) and auth APIs under `/api/auth/**`
+  - Stateless session, CORS and headers configuration
 
 #### **JWT Utility**
 
@@ -414,6 +423,14 @@ The Authentication Service serves as the central identity management system, han
 - **File**: `WebController.java`
 - **Purpose**: Handles web page routing for authentication UI
 - **Templates**: login.html, register.html, dashboard.html
+
+#### **OAuth2 Success Handler**
+
+- **File**: `OAuth2SuccessHandler.java`
+- **Function**: After OAuth login, determines email domain and:
+  - Creates/updates user if needed
+  - Issues a JWT
+  - Redirects to Application (8082) or Job (8081) with `?token=...`
 
 ### Service Workflow
 
@@ -556,18 +573,22 @@ The Application Service handles job applications, tracking application status, a
 
 ### Authentication Flow
 
-```
-User Login Request → Authentication Service
-    ↓
-JWT Token Generated → User Details Retrieved
-    ↓
-Token Returned to Client → Stored in Browser
-    ↓
-Subsequent Requests → Token Attached in Header
-    ↓
-Service Receives Request → Validates Token with Auth Service
-    ↓
-User Context Established → Request Processed
+```mermaid
+sequenceDiagram
+  autonumber
+  participant U as User
+  participant AS as Auth Service
+  participant JS as Job Service
+  participant PS as Application Service
+
+  U->>AS: Login (form) or OAuth2 (Google/GitHub)
+  AS-->>U: JWT + redirect (based on email domain)
+  U->>PS: Navigate with ?token=JWT
+  PS->>AS: POST /api/auth/validate (JWT)
+  AS-->>PS: Valid=true + user info
+  U->>JS: (from PS) Apply/Fetch Jobs with Authorization: Bearer JWT
+  JS->>AS: POST /api/auth/validate (JWT)
+  AS-->>JS: Valid=true
 ```
 
 ### Job Application Flow
@@ -626,7 +647,7 @@ POST /api/auth/validate         # Validate JWT token
 
 #### **Request/Response Examples**
 
-**User Registration:**
+**User Registration (JSON):**
 
 ```json
 POST /api/auth/register
@@ -634,8 +655,7 @@ POST /api/auth/register
   "email": "user@example.com",
   "password": "SecurePass123!",
   "name": "John Doe",
-  "userType": "JOB_SEEKER", // or "EMPLOYER"
-  "companyName": "Company Inc" // Required for EMPLOYER
+  "userType": "JOB_SEEKER" // or "EMPLOYER"
 }
 }
 
@@ -918,7 +938,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    user_type ENUM('EMPLOYER', 'JOB_SEEKER') NOT NULL,
+    user_type ENUM('EMPLOYER', 'APPLICANT') NOT NULL,
     external_user_id BIGINT,
     company_name VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -985,7 +1005,41 @@ GRANT ALL PRIVILEGES ON job_portal_*.* TO 'jobportal'@'localhost';
 
 ### Service Configuration
 
-Update `application.properties` in each service:
+Add a `.env` file at repo root (or environment variables) and the services will auto-import it:
+
+```
+# ====== Authentication (8083) ======
+AUTH_DB_URL=jdbc:mysql://localhost:3306/job_portal_auth_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+AUTH_DB_USERNAME=root
+AUTH_DB_PASSWORD=
+JWT_SECRET=change-me-32b-min
+JWT_EXPIRATION=86400000
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# ====== Application (8082) ======
+APP_DB_URL=jdbc:mysql://localhost:3306/job_portal_application_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+APP_DB_USERNAME=root
+APP_DB_PASSWORD=
+APP_JWT_SECRET=change-me-32b-min
+APP_JWT_EXPIRATION=86400000
+
+# ====== Job (8081) ======
+JOB_DB_URL=jdbc:mysql://localhost:3306/job_portal_job_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+JOB_DB_USERNAME=root
+JOB_DB_PASSWORD=
+JOB_JWT_SECRET=change-me-32b-min
+JOB_JWT_EXPIRATION=86400000
+```
+
+Notes:
+
+- OAuth redirect URIs:
+  - Google: `http://localhost:8083/login/oauth2/code/google`
+  - GitHub: `http://localhost:8083/login/oauth2/code/github`
+- Services already import `.env` and `../.env` via `spring.config.import`.
 
 ```properties
 spring.datasource.username=your_username
@@ -993,10 +1047,10 @@ spring.datasource.password=your_password
 spring.datasource.url=jdbc:mysql://localhost:3306/database_name
 ```
 
-### Startup Sequence
+### Startup & Run
 
 ```bash
-# Terminal 1: Authentication Service (Required First)
+# Terminal 1: Authentication Service (start first)
 cd Authentication && mvn spring-boot:run
 
 # Terminal 2: Job Service
@@ -1037,62 +1091,15 @@ cd Application && mvn spring-boot:run
 ### JWT Authentication Flow
 
 1. **Token Generation**: User credentials validated → JWT created with user info
-2. **Token Storage**: Client stores token in localStorage/sessionStorage + HTTP cookies
-3. **Request Authorization**: Token attached to Authorization header or cookies
-4. **Token Validation**: Service validates token with Authentication Service
+2. **Token Storage**: Client stores token in localStorage/sessionStorage
+3. **Request Authorization**: Token attached to Authorization header; token passed via URL `?token=` during cross-service navigation
+4. **Token Validation**: Services validate token with Authentication Service
 5. **User Context**: User information extracted and made available
 
-### 🔄 Enhanced Authentication Features (v1.1)
+### Frontend Auth Helpers
 
-#### **HTTP Cookie Persistence**
-
-- **Server-side Cookie Setting**: When tokens are found in URL parameters, services automatically set HttpOnly cookies
-- **Page Reload Support**: Cookies persist across browser refreshes and navigation
-- **Cross-Service Compatibility**: Cookies work across all microservices (Application, Job, Authentication)
-
-#### **Multi-Source Token Detection**
-
-Services check for authentication tokens in the following order:
-
-1. **Authorization Header**: `Bearer {token}` (for API calls)
-2. **URL Query Parameter**: `?token={token}` (for navigation links)
-3. **HTTP Cookies**: `authToken={token}` (for page reloads)
-
-#### **Authentication Filter Enhancement**
-
-```java
-// Enhanced AuthenticationFilter checks multiple sources
-if (authHeader != null && authHeader.startsWith("Bearer ")) {
-    token = authHeader.substring(7);
-} else if ((token = request.getParameter("token")) != null) {
-    // Set cookie for future requests
-    Cookie authCookie = new Cookie("authToken", token);
-    authCookie.setHttpOnly(true);
-    response.addCookie(authCookie);
-} else if (cookies != null) {
-    // Check for existing auth cookie
-    for (Cookie cookie : cookies) {
-        if ("authToken".equals(cookie.getName())) {
-            token = cookie.getValue();
-            break;
-        }
-    }
-}
-```
-
-#### **Client-Side Pre-Authentication**
-
-- **Pre-auth Scripts**: Execute before page rendering to handle tokens immediately
-- **URL Parameter Processing**: Extract tokens from navigation links and store locally
-- **Seamless Navigation**: Token-based routing prevents authentication interruptions
-
-#### **Benefits**
-
-- ✅ **No Page Reload Redirects**: Users stay on the same page after refresh
-- ✅ **Seamless Navigation**: Clicking between pages maintains authentication
-- ✅ **Enhanced UX**: No authentication pop-ups or login interruptions
-- ✅ **Cross-Browser Support**: Works with all modern browsers
-- ✅ **Security Maintained**: HttpOnly cookies protect against XSS attacks
+- `static/js/pre-auth.js`: Handles `?token=` on first paint; stores token; hydrates user info to update sidebar.
+- `static/js/auth-helper.js`: Standardizes token storage, auth checks, token injection on in-app navigation.
 
 ### Security Features
 
@@ -1123,8 +1130,9 @@ mysql -u root -p -e "SHOW DATABASES;"
 #### Authentication Issues
 
 - Verify Authentication Service is running on port 8083
-- Check JWT token format: `Bearer <token>`
-- Use debug endpoints for token validation
+- Check JWT token format: `Authorization: Bearer <token>`
+- OAuth redirect URIs must match the provider configuration (Google/GitHub)
+- On localhost, cookies are not shared across different ports; this project relies on localStorage + URL token propagation instead
 
 #### Database Connection Issues
 
@@ -1138,40 +1146,58 @@ mysql -u root -p -e "SHOW DATABASES;"
 - **Browser Console**: Check for JavaScript errors
 - **Application Logs**: Review service console output
 
-## 📝 Development Guidelines
-
-### Project Structure
+## 📂 Project File Map (High-level)
 
 ```
 Job-Application-Service/
-├── Authentication/          # Port 8083
+├── Authentication/
 │   ├── src/main/java/com/service/authentication/
-│   │   ├── controller/     # REST controllers
-│   │   ├── entity/         # JPA entities
-│   │   ├── repository/     # Data access
-│   │   ├── service/        # Business logic
-│   │   ├── config/         # Security config
-│   │   └── util/           # JWT utilities
+│   │   ├── config/                # Security config, OAuth2 success handler
+│   │   ├── controller/            # REST + Web controllers
+│   │   ├── dto/                   # DTOs for API requests/responses
+│   │   ├── entity/                # JPA entities (User, UserType)
+│   │   ├── repository/            # Spring Data repositories
+│   │   ├── service/               # Business logic (AuthService, CustomUserDetailsService)
+│   │   └── util/                  # JwtUtil
 │   └── src/main/resources/
-│       ├── templates/      # Thymeleaf views
+│       ├── templates/             # login.html, register.html
 │       └── application.properties
-├── Job/                    # Port 8081
-├── Application/            # Port 8082
-└── README.md
+│
+├── Job/
+│   ├── src/main/java/com/service/job/
+│   │   ├── controller/            # REST + Web controllers
+│   │   ├── dto/ | model/          # Job DTOs and models
+│   │   ├── repository/            # Job repositories
+│   │   ├── service/               # Job business logic
+│   │   └── config/                # Security/auth filters if any
+│   └── src/main/resources/
+│       ├── templates/             # Employer UI (dashboard, create-job, listings)
+│       └── static/js/             # pre-auth.js, auth-helper.js
+│
+├── Application/
+│   ├── src/main/java/com/service/application/
+│   │   ├── controller/            # REST + Web controllers
+│   │   ├── dto/ | model/          # Application DTOs and models
+│   │   ├── repository/            # Application repositories
+│   │   ├── service/               # Application business logic
+│   │   └── config/                # Request auth filters
+│   └── src/main/resources/
+│       ├── templates/             # Seeker UI (dashboard, browse-jobs, my-applications, profile)
+│       └── static/js/             # pre-auth.js, auth-helper.js
+│
+└── .env.example                   # Environment variable template
 ```
 
-### Code Standards
+## 🗺️ Visual Guides
 
-- **Java 21**: Modern Java features and syntax
-- **RESTful APIs**: Consistent endpoint design
-- **Error Handling**: Comprehensive exception management
-- **Logging**: Structured logging with SLF4J
-- **Testing**: Unit and integration tests
+```mermaid
+graph TD
+  A[User] -->|OAuth Login| B(Authenticaton Svc)
+  B -->|JWT + Redirect| C{Email Domain?}
+  C -->|Consumer| D[Application Svc]
+  C -->|Business/Other| E[Job Svc]
+  D -->|Validate JWT| B
+  E -->|Validate JWT| B
+  D -->|Fetch Jobs| E
+```
 
-### API Design Principles
-
-- **Consistent URLs**: RESTful resource naming
-- **HTTP Methods**: Proper use of GET, POST, PUT, DELETE
-- **Status Codes**: Appropriate HTTP response codes
-- **Request/Response**: Standardized JSON formats
-- **Documentation**: Comprehensive API documentation
