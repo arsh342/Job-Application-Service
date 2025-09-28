@@ -34,6 +34,19 @@ The **Job Portal Microservices System** is a comprehensive, enterprise-grade job
 - **Scalable Architecture**: Independently deployable Spring Boot services
 - **Modern UI**: Thymeleaf-based, responsive pages per service
 - **Security**: Spring Security with role-based access control
+- **AI-Powered Job Summaries**:
+  - Gemini API integration for intelligent job analysis
+  - Dynamic loading messages with engaging user experience
+  - Personalized profile matching with percentage calculations
+  - Comprehensive job summaries with key responsibilities and skills
+- **Enhanced Job Management**:
+  - Job type categorization (Full-time, Part-time, Contract, Internship, Freelance, Temporary)
+  - Advanced filtering and sorting options
+  - Empty filter states for better user control
+- **User Profile Integration**:
+  - Profile-based job matching
+  - Skills and experience alignment analysis
+  - Personalized application tips
 
 ### Technology Stack
 
@@ -47,6 +60,7 @@ The **Job Portal Microservices System** is a comprehensive, enterprise-grade job
 | **Build Tool**     | Maven                  | 3.6+        |
 | **Frontend**       | Thymeleaf + HTML5/CSS3 | -           |
 | **Authentication** | OAuth2 + JWT           |             |
+| **AI Integration** | Google Gemini API      | 2.5-flash   |
 
 ## 📦 Dependencies & Their Functions
 
@@ -799,9 +813,13 @@ PUT    /api/applications/{applicationId}/status  # Update application status
 GET    /api/profile                             # Get user profile
 PUT    /api/profile                             # Update user profile
 
+# AI-Powered Features
+GET    /api/gemini-summary                     # Generate AI job summary
+
 # Debug Endpoints
 GET    /api/debug/applications                  # Debug applications
 GET    /api/debug/auth                         # Debug authentication
+GET    /api/debug/user-info                    # Debug user information
 ```
 
 #### **Request/Response Examples**
@@ -848,6 +866,27 @@ Response:
     "resumeUrl": "https://example.com/resume.pdf"
   }
 ]
+```
+
+**Generate AI Job Summary:**
+
+```json
+GET /api/gemini-summary?jobId=1
+Headers: Authorization: Bearer {token}
+
+Response:
+• **Software Engineer** at **TechCorp** - Full-stack development role
+
+• **Key Responsibilities**:
+  - **React.js** development and maintenance
+  - **API integration** and backend services
+  - **Database design** and optimization
+
+• **Required Skills**: **JavaScript**, **Node.js**, **SQL**, **Git**
+
+• **Profile Match: 85%** - Strong alignment with your React experience
+
+• **Application Tip**: Highlight your full-stack projects and API development experience
 ```
 
 ### 🔄 Inter-Service Communication
@@ -928,6 +967,108 @@ POST {AUTH_SERVICE}/api/auth/validate
 | 409  | Conflict              | Resource already exists           |
 | 500  | Internal Server Error | Server processing error           |
 
+## 🤖 AI-Powered Features
+
+### Gemini API Integration
+
+The Application Service now includes advanced AI capabilities powered by Google's Gemini API to provide intelligent job analysis and personalized insights.
+
+#### **AI Job Summary Generation**
+
+- **Service**: `GeminiService.java` in Application Service
+- **API Endpoint**: `GET /api/gemini-summary?jobId={id}`
+- **Features**:
+  - Comprehensive job analysis with bullet-point format
+  - Personalized profile matching with percentage calculations
+  - Key responsibilities and required skills extraction
+  - Application tips based on user profile
+  - Dynamic loading with engaging progress messages
+
+#### **Dynamic Loading Experience**
+
+The AI summary generation includes a sophisticated loading system:
+
+```javascript
+// Loading message sequence (3 seconds each)
+1. "Reading job description..."
+2. "Analyzing requirements..."
+3. "Fetching your profile data..."
+4. "Processing with AI..."
+5. "Generating personalized summary..."
+6. "Almost ready..." (final message)
+```
+
+#### **Profile Matching Algorithm**
+
+The AI calculates profile match percentages based on:
+
+- **Skills Alignment** (40% weight): Technical skills matching
+- **Experience Relevance** (30% weight): Work experience alignment
+- **Education Fit** (20% weight): Educational background compatibility
+- **Career Progression** (10% weight): Career growth potential
+
+#### **Summary Format**
+
+Generated summaries include:
+
+- **Job Title** at **Company** - Brief overview
+- **Key Responsibilities**: Bullet-pointed main duties
+- **Required Skills**: Highlighted technical and soft skills
+- **Profile Match**: Percentage with explanation
+- **Application Tip**: Personalized advice for the candidate
+
+#### **Configuration**
+
+Add to your environment variables:
+
+```bash
+# Gemini API Configuration
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### Enhanced Job Management
+
+#### **Job Type Categorization**
+
+Jobs now support multiple employment types:
+
+- **Full-time**: Traditional full-time employment
+- **Part-time**: Reduced hours employment
+- **Contract**: Fixed-term contract work
+- **Internship**: Entry-level learning positions
+- **Freelance**: Independent contractor work
+- **Temporary**: Short-term employment
+
+#### **Improved Filtering System**
+
+- **Empty Filter States**: All filters start empty for better user control
+- **Dynamic Filtering**: Real-time job filtering based on multiple criteria
+- **Sorting Options**: Multiple sorting methods (newest, salary, title, etc.)
+- **User-Friendly Display**: Formatted job types and status indicators
+
+### Recent Updates & Improvements
+
+#### **Frontend Enhancements**
+
+- **Dynamic Loading Messages**: Engaging 3-second intervals with smooth animations
+- **Improved Button Styling**: Better visual feedback and hover effects
+- **Responsive Design**: Optimized for all screen sizes
+- **Error Handling**: User-friendly error messages with retry options
+
+#### **Backend Optimizations**
+
+- **Simplified AI Processing**: Removed autoregressive complexity for faster response
+- **Direct API Integration**: Streamlined Gemini API calls
+- **Profile Validation**: Smart handling of empty user profiles
+- **Performance Improvements**: Reduced processing overhead
+
+#### **User Experience Improvements**
+
+- **Single Loop Loading**: Loading messages complete one cycle before showing results
+- **Profile-Aware Summaries**: Different behavior for users with/without profiles
+- **Clean Formatting**: Proper bullet points and line breaks in summaries
+- **Visual Feedback**: Loading spinners and progress indicators
+
 ## 🗄️ Database Schema
 
 ### Authentication Database (`job_portal_auth_db`)
@@ -957,6 +1098,7 @@ CREATE TABLE jobs (
     company VARCHAR(255) NOT NULL,
     salary_min DECIMAL(10,2),
     salary_max DECIMAL(10,2),
+    job_type ENUM('FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERNSHIP', 'FREELANCE', 'TEMPORARY') DEFAULT 'FULL_TIME',
     posted_date DATE DEFAULT CURRENT_DATE,
     status ENUM('OPEN', 'CLOSED') DEFAULT 'OPEN',
     employer_id BIGINT NOT NULL,
@@ -1025,6 +1167,7 @@ APP_DB_USERNAME=root
 APP_DB_PASSWORD=
 APP_JWT_SECRET=change-me-32b-min
 APP_JWT_EXPIRATION=86400000
+GEMINI_API_KEY=your_gemini_api_key_here
 
 # ====== Job (8081) ======
 JOB_DB_URL=jdbc:mysql://localhost:3306/job_portal_job_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
@@ -1200,3 +1343,67 @@ graph TD
   E -->|Validate JWT| B
   D -->|Fetch Jobs| E
 ```
+
+## 📝 Changelog
+
+### Version 2.0.0 - AI Integration & Enhanced Features
+
+#### 🚀 New Features
+
+- **AI-Powered Job Summaries**: Integrated Google Gemini API for intelligent job analysis
+- **Dynamic Loading System**: Engaging 3-second interval loading messages with smooth animations
+- **Profile Matching Algorithm**: Smart percentage calculation based on skills, experience, and education
+- **Job Type Categorization**: Added support for Full-time, Part-time, Contract, Internship, Freelance, and Temporary jobs
+- **Enhanced Filtering**: Empty filter states for better user control and experience
+
+#### 🔧 Improvements
+
+- **Frontend Enhancements**:
+
+  - Improved button styling with better hover effects
+  - Responsive design optimizations
+  - User-friendly error handling with retry options
+  - Clean bullet-point formatting in AI summaries
+
+- **Backend Optimizations**:
+
+  - Simplified AI processing for faster response times
+  - Streamlined Gemini API integration
+  - Smart profile validation for empty user profiles
+  - Reduced processing overhead
+
+- **User Experience**:
+  - Single-loop loading messages (no infinite cycling)
+  - Profile-aware summary generation
+  - Proper line breaks and formatting in summaries
+  - Visual feedback with loading spinners
+
+#### 🐛 Bug Fixes
+
+- Fixed bullet points displaying on single line instead of separate lines
+- Resolved incorrect profile match percentages for empty profiles
+- Improved error handling in AI summary generation
+- Fixed filter default values to start empty
+
+#### 📊 Technical Changes
+
+- Added `GeminiService.java` for AI integration
+- Updated `Job` entity with `JobType` enum
+- Enhanced frontend JavaScript for dynamic loading
+- Improved CSS animations and styling
+- Added environment variable support for Gemini API key
+
+#### 🔄 API Changes
+
+- New endpoint: `GET /api/gemini-summary?jobId={id}`
+- Updated job creation/update endpoints to support job types
+- Enhanced filtering and sorting capabilities
+- Added debug endpoints for troubleshooting
+
+### Version 1.0.0 - Initial Release
+
+- Basic microservices architecture with Authentication, Job, and Application services
+- JWT-based authentication with OAuth2 integration
+- Job posting and application management
+- User registration and login functionality
+- Inter-service communication via REST APIs
