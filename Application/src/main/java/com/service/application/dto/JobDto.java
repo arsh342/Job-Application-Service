@@ -20,6 +20,7 @@ public class JobDto {
     private Double salaryMin;
     private Double salaryMax;
     private LocalDate postedDate;
+    private String jobType;
     private String status;
     private Long employerId;
 }

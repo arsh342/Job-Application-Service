@@ -40,6 +40,7 @@ public class JobService {
                 .salaryMin(dto.getSalaryMin())
                 .salaryMax(dto.getSalaryMax())
                 .company(dto.getCompany())
+                .jobType(dto.getJobType())
                 .status(dto.getStatus())
                 .employerId(employerId)
                 .build();
@@ -62,6 +63,7 @@ public class JobService {
         job.setSalaryMin(dto.getSalaryMin());
         job.setSalaryMax(dto.getSalaryMax());
         job.setCompany(dto.getCompany());
+        job.setJobType(dto.getJobType());
         job.setStatus(dto.getStatus());
         
         Job updatedJob = jobRepository.save(job);
@@ -125,6 +127,7 @@ public class JobService {
                 .salaryMin(job.getSalaryMin())
                 .salaryMax(job.getSalaryMax())
                 .postedDate(job.getPostedDate())
+                .jobType(job.getJobType())
                 .status(job.getStatus())
                 .employerId(job.getEmployerId())
                 .company(job.getCompany())

@@ -1,6 +1,7 @@
 package com.service.job.dto;
 
 import com.service.job.model.Job.JobStatus;
+import com.service.job.model.Job.JobType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class JobResponseDto {
     private Double salaryMin;
     private Double salaryMax;
     private LocalDate postedDate;
+    private JobType jobType;
     private JobStatus status;
     private Long employerId;
 }

@@ -2,7 +2,9 @@ package com.service.application.controller;
 
 import com.service.application.client.JobServiceClient;
 import com.service.application.dto.JobDto;
+import com.service.application.dto.profile.UserProfileDto;
 import com.service.application.service.GeminiService;
+import com.service.application.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,8 @@ public class WebController {
     private JobServiceClient jobServiceClient;
     @Autowired
     private GeminiService geminiService;
+    @Autowired
+    private UserProfileService userProfileService;
     
     // Helper method to add common user and token attributes to model
     private void addCommonAttributes(HttpServletRequest request, Model model) {
@@ -105,12 +109,55 @@ public class WebController {
     
     @GetMapping("/api/gemini-summary")
     @ResponseBody
-    public String getGeminiSummary(@RequestParam("jobId") Long jobId) {
+    public String getGeminiSummary(@RequestParam("jobId") Long jobId, HttpServletRequest request) {
         try {
             JobDto job = jobServiceClient.getJobById(jobId);
-            return geminiService.summarizeJob(job.getDescription());
+            
+            // Get user profile if available
+            Long userId = (Long) request.getAttribute("userId");
+            Long applicantId = (Long) request.getAttribute("applicantId");
+            String userEmail = (String) request.getAttribute("userEmail");
+            String userName = (String) request.getAttribute("userName");
+            
+            // Use applicantId if userId is null (for compatibility)
+            Long profileUserId = userId != null ? userId : applicantId;
+            
+            UserProfileDto userProfile = null;
+            if (profileUserId != null) {
+                try {
+                    userProfile = userProfileService.getProfileByUserId(profileUserId);
+                    // If profile doesn't have basic info, set it from request attributes
+                    if (userProfile != null) {
+                        if (userProfile.getEmail() == null && userEmail != null) {
+                            userProfile.setEmail(userEmail);
+                        }
+                        if (userProfile.getName() == null && userName != null) {
+                            userProfile.setName(userName);
+                        }
+                    }
+                } catch (Exception e) {
+                    // User profile not found or error, continue without it
+                    System.out.println("Error getting user profile: " + e.getMessage());
+                }
+            }
+            
+            return geminiService.generateComprehensiveSummary(job, userProfile);
         } catch (Exception e) {
+            System.out.println("Error generating summary: " + e.getMessage());
             return "Could not generate summary.";
         }
+    }
+    
+    @GetMapping("/api/debug/user-info")
+    @ResponseBody
+    public String debugUserInfo(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        Long applicantId = (Long) request.getAttribute("applicantId");
+        String userEmail = (String) request.getAttribute("userEmail");
+        String userName = (String) request.getAttribute("userName");
+        String userType = (String) request.getAttribute("userType");
+        
+        return String.format("userId: %s, applicantId: %s, email: %s, name: %s, type: %s", 
+                           userId, applicantId, userEmail, userName, userType);
     }
 }

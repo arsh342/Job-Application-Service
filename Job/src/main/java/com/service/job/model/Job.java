@@ -52,6 +52,11 @@ public class Job {
     
     @Column  
     private Double salaryMax;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private JobType jobType = JobType.FULL_TIME;
 
     @PrePersist
     protected void onCreate() {
@@ -59,9 +64,16 @@ public class Job {
         if (status == null) {
             status = JobStatus.OPEN;
         }
+        if (jobType == null) {
+            jobType = JobType.FULL_TIME;
+        }
     }
     
     public enum JobStatus {
         OPEN, CLOSED
+    }
+    
+    public enum JobType {
+        FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, FREELANCE, TEMPORARY
     }
 }

@@ -1,6 +1,7 @@
 package com.service.job.dto;
 
 import com.service.job.model.Job.JobStatus;
+import com.service.job.model.Job.JobType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,10 @@ public class JobCreateDto {
     
     @Positive(message = "Maximum salary must be positive")
     private Double salaryMax;
+    
+    @NotNull(message = "Job type is required")
+    @Builder.Default
+    private JobType jobType = JobType.FULL_TIME;
     
     @Builder.Default
     private JobStatus status = JobStatus.OPEN;

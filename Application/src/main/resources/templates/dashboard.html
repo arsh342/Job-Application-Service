@@ -799,6 +799,7 @@
                 <h3>${job.title}</h3>
                 <p class="company">${job.company}</p>
                 <p class="location"> ${job.location}</p>
+                <p class="job-type"> ${formatJobType(job.jobType)}</p>
                 <p class="description">${truncateText(job.description, 120)}</p>
                 <p class="salary"> ${formatSalary(
                   job.salaryMin,
@@ -832,6 +833,21 @@
             } else {
               return "Salary not specified";
             }
+          }
+
+          function formatJobType(jobType) {
+            if (!jobType) return "Full-time";
+
+            const typeMap = {
+              FULL_TIME: "Full-time",
+              PART_TIME: "Part-time",
+              CONTRACT: "Contract",
+              INTERNSHIP: "Internship",
+              FREELANCE: "Freelance",
+              TEMPORARY: "Temporary",
+            };
+
+            return typeMap[jobType] || jobType;
           }
 
           function viewJobDetails(jobId) {

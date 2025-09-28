@@ -46,8 +46,8 @@ public class SecurityConfig {
                 .requestMatchers("/dashboard", "/browse-jobs", "/my-applications", "/profile").authenticated()
                 // Protected API endpoints - require authentication
                 .requestMatchers("/api/applications/**").authenticated()
-                // Remove debug endpoints in production
-                .requestMatchers("/debug/**").denyAll()
+                // Debug endpoints for troubleshooting
+                .requestMatchers("/api/debug/**").authenticated()
                 // All other requests require authentication
                 .anyRequest().authenticated()
             )

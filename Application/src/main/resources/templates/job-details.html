@@ -344,12 +344,12 @@
       }
 
       .btn-secondary {
-        background: #6b7280;
+        background: #98bbff;
         color: white;
       }
 
       .btn-secondary:hover {
-        background: #4b5563;
+        background: #7bb0f9;
       }
 
       .loading {
@@ -364,6 +364,83 @@
         padding: 16px;
         border-radius: 8px;
         margin-bottom: 24px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .loading-message {
+        animation: fadeInUp 0.3s ease-out;
+      }
+
+      .loading-spinner {
+        animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
+      }
+
+      /* Summary box styling */
+      #jobSummaryBox {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      #jobSummaryBox strong {
+        color: #1e40af;
+        font-weight: 600;
+      }
+
+      #jobSummaryBox {
+        text-align: left;
+      }
+
+      #jobSummaryBox br {
+        margin-bottom: 4px;
+      }
+
+      #jobSummaryBox br + • {
+        margin-top: 8px;
+        display: block;
+      }
+
+      #jobSummaryBox .profile-match {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #b7d7f9 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-weight: bold;
+        font-size: 12px;
+        margin: 4px 0;
       }
 
       /* Responsive */
@@ -501,7 +578,7 @@
               </div>
               <div class="job-meta-item">
                 <span></span>
-                <span>${job.jobType || "Full-time"}</span>
+                <span>${formatJobType(job.jobType)}</span>
               </div>
             </div>
           </div>
@@ -530,6 +607,13 @@
                     ? job.description.replace(/\n/g, "<br>")
                     : "No description available"
                 }</p>
+              </div>
+              <div style="margin-top: 16px;">
+                <button id="toggleSummaryBtn" class="btn btn-secondary" style="margin-bottom: 12px;">
+                  Summary
+                </button>
+                <div id="jobSummaryBox" style="display: none;">
+                </div>
               </div>
             </div>
 
@@ -582,6 +666,8 @@
             }
           </div>
         `;
+            // Setup the summary button after the job details are displayed
+            setTimeout(setupSummaryButton, 100);
           });
       }
 
@@ -604,6 +690,21 @@
         } else {
           return "Competitive salary";
         }
+      }
+
+      function formatJobType(jobType) {
+        if (!jobType) return "Full-time";
+
+        const typeMap = {
+          FULL_TIME: "Full-time",
+          PART_TIME: "Part-time",
+          CONTRACT: "Contract",
+          INTERNSHIP: "Internship",
+          FREELANCE: "Freelance",
+          TEMPORARY: "Temporary",
+        };
+
+        return typeMap[jobType] || jobType;
       }
 
       async function applyToJob(jobId) {
@@ -698,39 +799,155 @@
         await loadJobDetails();
       });
 
-      document.addEventListener("DOMContentLoaded", function () {
+      // Function to setup summary button functionality
+      // Dynamic loading messages for AI summary generation
+      function startDynamicLoading(element) {
+        const messages = [
+          "Reading job description...",
+          "Analyzing requirements...",
+          "Fetching your profile data...",
+          "Processing with AI...",
+          "Generating personalized summary...",
+        ];
+
+        let messageIndex = 0;
+        const interval = setInterval(() => {
+          if (messageIndex < messages.length) {
+            element.innerHTML = `
+                <div class="loading-message" style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #6b7280; min-height: 60px;">
+                  <span class="loading-spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #6b7280; border-top: 2px solid transparent; border-radius: 50%; margin-right: 12px;"></span>
+                  <span style="font-weight: 500;">${messages[messageIndex]}</span>
+                </div>
+              `;
+            messageIndex++;
+          } else {
+            // Stop after one complete loop
+            clearInterval(interval);
+            // Show final loading message
+            element.innerHTML = `
+                <div class="loading-message" style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #6b7280; min-height: 60px;">
+                  <span class="loading-spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #6b7280; border-top: 2px solid transparent; border-radius: 50%; margin-right: 12px;"></span>
+                  <span style="font-weight: 500;">Almost ready...</span>
+                </div>
+              `;
+          }
+        }, 3000); // Change message every 1500ms
+
+        return interval;
+      }
+
+      function setupSummaryButton() {
         const btn = document.getElementById("toggleSummaryBtn");
         const box = document.getElementById("jobSummaryBox");
         let summaryLoaded = false;
+
         if (btn && box) {
-          btn.addEventListener("click", async function () {
-            if (box.style.display === "none") {
+          // Remove any existing event listeners
+          btn.replaceWith(btn.cloneNode(true));
+          const newBtn = document.getElementById("toggleSummaryBtn");
+
+          newBtn.addEventListener("click", async function () {
+            if (box.style.display === "none" || box.style.display === "") {
               if (!summaryLoaded && currentJobId) {
-                box.textContent = "Loading summary...";
+                // Show dynamic loading state
+                box.style.display = "block";
+                const loadingInterval = startDynamicLoading(box);
+
+                newBtn.innerHTML =
+                  '<span style="display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px;"></span>Generating...';
+                newBtn.disabled = true;
+                newBtn.style.opacity = "0.7";
+
                 try {
                   const response = await fetch(
-                    `/api/gemini-summary?jobId=${currentJobId}`
+                    `/api/gemini-summary?jobId=${currentJobId}`,
+                    {
+                      method: "GET",
+                      headers: {
+                        "Content-Type": "application/json",
+                        ...getAuthHeaders(),
+                      },
+                    }
                   );
+
+                  // Clear the loading interval when we get a response
+                  clearInterval(loadingInterval);
+
                   if (response.ok) {
                     const summary = await response.text();
-                    box.textContent = summary;
+                    // Process formatting and convert to HTML with bold support
+                    let processedSummary = summary
+                      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Convert **text** to <strong>text</strong>
+                      .replace(/\*/g, "") // Remove remaining single asterisks
+                      .replace(/#/g, ""); // Remove hashtags
+
+                    // Split by bullet points and rejoin with proper line breaks
+                    const bulletPoints = processedSummary.split(/•/);
+                    if (bulletPoints.length > 1) {
+                      processedSummary = bulletPoints
+                        .map((point, index) => {
+                          if (index === 0) return point.trim(); // First part (before first bullet)
+                          return point.trim() ? `• ${point.trim()}` : ""; // Add bullet to each point
+                        })
+                        .filter((point) => point.length > 0) // Remove empty points
+                        .join("<br><br>"); // Join with double line breaks
+                    } else {
+                      // Fallback: convert line breaks normally
+                      processedSummary = processedSummary.replace(
+                        /\n/g,
+                        "<br>"
+                      );
+                    }
+
+                    // Add percentage match styling if present
+                    const styledSummary = processedSummary
+                      .replace(
+                        /Profile Match:\s*(\d+)%/g,
+                        '<span style="background: linear-gradient(135deg, #667eea 0%, #b7d7f9 100%); color: white; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;">Profile Match: $1%</span>'
+                      )
+                      .replace(
+                        /(\d+)%\s*Match/g,
+                        '<span style="background: linear-gradient(135deg, #667eea 0%, #b7d7f9 100%); color: white; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;">$1% Match</span>'
+                      )
+                      .replace(
+                        /Profile Match:\s*Complete your profile to see match percentage/g,
+                        '<span style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: white; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;">Profile Match: Complete your profile to see match percentage</span>'
+                      );
+
+                    box.innerHTML = `<div style="line-height: 1.6; font-size: 14px;">${styledSummary}</div>`;
                   } else {
-                    box.textContent = "Could not generate summary.";
+                    box.innerHTML = `
+                      <div style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #dc2626;">
+                        Could not generate summary. Please try again.
+                      </div>
+                    `;
                   }
                 } catch (e) {
-                  box.textContent = "Could not generate summary.";
+                  // Clear the loading interval on error too
+                  clearInterval(loadingInterval);
+                  box.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #dc2626;">
+                      Could not generate summary. Please try again.
+                    </div>
+                  `;
+                } finally {
+                  // Reset button state
+                  newBtn.innerHTML = "Hide";
+                  newBtn.disabled = false;
+                  newBtn.style.opacity = "1";
+                  summaryLoaded = true;
                 }
-                summaryLoaded = true;
+              } else {
+                box.style.display = "block";
+                newBtn.innerHTML = "Hide";
               }
-              box.style.display = "block";
-              btn.textContent = "Hide Summary";
             } else {
               box.style.display = "none";
-              btn.textContent = "Show Summary";
+              newBtn.innerHTML = "Summary";
             }
           });
         }
-      });
+      }
     </script>
   </body>
 </html>
