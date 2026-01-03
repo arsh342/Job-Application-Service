@@ -1,5 +1,6 @@
 package com.service.job.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,8 +48,8 @@ public class WebController {
     }
     
     @GetMapping("/login-redirect")
-    public String loginRedirect() {
-        return "redirect:http://localhost:8083/login";
+    public String loginRedirect(@Value("${auth.service.url:http://localhost:8083}") String authServiceUrl) {
+        return "redirect:" + authServiceUrl + "/login";
     }
     
     @GetMapping("/dashboard")
