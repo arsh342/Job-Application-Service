@@ -10,6 +10,36 @@
     <script src="/js/auth-helper.js"></script>
 
     <style>
+      :root {
+        --bg-primary: #0f0f0f;
+        --bg-secondary: #1a1a1a;
+        --bg-card: #242424;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0a0;
+        --border-color: #333333;
+        --accent-color: #3dd598;
+        --hover-bg: #2a2a2a;
+        --input-bg: #1a1a1a;
+        --input-border: #333333;
+        --shadow: rgba(0, 0, 0, 0.3);
+        --error-bg: #2d1a1a;
+      }
+
+      body.light-mode {
+        --bg-primary: #f5f7fa;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --border-color: #e5e9f2;
+        --accent-color: #3dd598;
+        --hover-bg: #f8fafc;
+        --input-bg: #ffffff;
+        --input-border: #e5e9f2;
+        --shadow: rgba(0, 0, 0, 0.05);
+        --error-bg: #fef2f2;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -19,10 +49,12 @@
       }
 
       body {
-        background: #f5f7fa;
+        background: var(--bg-primary);
+        color: var(--text-primary);
         min-height: 100vh;
         margin: 0;
         padding: 0;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
 
       .layout {
@@ -30,11 +62,11 @@
         min-height: 100vh;
       }
 
-      /* Sidebar */
+      /* Sidebar Styles */
       .sidebar {
         width: 280px;
-        background: white;
-        border-right: 1px solid #e5e9f2;
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
         position: fixed;
         height: 100vh;
         overflow-y: auto;
@@ -43,7 +75,10 @@
 
       .sidebar-header {
         padding: 24px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
       .logo {
@@ -52,18 +87,31 @@
         gap: 12px;
         font-size: 20px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
       }
 
       .logo-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 50px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+      }
+
+      .theme-toggle {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-weight: bold;
+      }
+
+      .theme-toggle:hover {
+        background: var(--hover-bg);
+        transform: scale(1.05);
       }
 
       .user-info {
@@ -71,14 +119,14 @@
         align-items: center;
         gap: 12px;
         padding: 16px 24px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
       }
 
       .user-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #b7d7f9 100%);
+        background: var(--accent-color);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -89,13 +137,13 @@
       .user-details h4 {
         font-size: 14px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 2px;
       }
 
       .user-details p {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--text-secondary);
       }
 
       .nav-menu {
@@ -107,7 +155,7 @@
         align-items: center;
         gap: 12px;
         padding: 12px 24px;
-        color: #6b7280;
+        color: var(--text-secondary);
         text-decoration: none;
         transition: all 0.2s ease;
         cursor: pointer;
@@ -119,23 +167,77 @@
       }
 
       .nav-item:hover {
-        background: #f8fafc;
-        color: #374151;
+        background: var(--hover-bg);
+        color: var(--text-primary);
       }
 
       .nav-item.active {
-        background: #f0f9ff;
-        color: #667eea;
-        border-left: 4px solid #667eea;
+        background: rgba(61, 213, 152, 0.1);
+        color: var(--accent-color);
+        border-left: 4px solid var(--accent-color);
         border-bottom-right-radius: 20px;
         border-top-right-radius: 20px;
       }
+
       .nav-icon {
         width: 20px;
         height: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      .nav-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: currentColor;
+      }
+
+      .nav-item .nav-icon {
+        color: var(--text-secondary);
+      }
+
+      .nav-item:hover .nav-icon {
+        color: var(--text-primary);
+      }
+
+      .nav-item.active .nav-icon {
+        color: var(--accent-color);
+      }
+
+      .logo-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #3dd598 !important;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+        display: block;
+        flex-shrink: 0;
+      }
+
+      .logo-dots-container {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .logo-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .logo-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(0.8);
+        }
       }
 
       /* Main Content */
@@ -158,13 +260,13 @@
       .page-title {
         font-size: 28px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 8px;
       }
 
       .page-subtitle {
         font-size: 16px;
-        color: #6b7280;
+        color: var(--text-secondary);
       }
 
       /* Stats Cards */
@@ -176,10 +278,10 @@
       }
 
       .stat-card {
-        background: white;
+        background: var(--bg-card);
         border-radius: 16px;
         padding: 10px;
-        border-left: 5px solid #667eea;
+        border-left: 5px solid var(--accent-color);
         position: relative;
         overflow: hidden;
       }
@@ -190,19 +292,19 @@
         top: 0;
         left: 4px;
         right: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--accent-color);
       }
 
       .stat-number {
         font-size: 32px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 4px;
       }
 
       .stat-label {
         font-size: 14px;
-        color: #6b7280;
+        color: var(--text-secondary);
         font-weight: 500;
       }
 
@@ -215,15 +317,15 @@
       }
 
       .card {
-        background: white;
+        background: var(--bg-card);
         border-radius: 16px;
-        border: 1px solid #e5e9f2;
+        border: 1px solid var(--border-color);
         overflow: hidden;
       }
 
       .card-header {
         padding: 24px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         align-items: center;
         justify-content: between;
@@ -232,7 +334,7 @@
       .card-title {
         font-size: 18px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-primary);
       }
 
       .card-content {
@@ -245,13 +347,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #f8fafc;
+        background: var(--bg-secondary);
         border-radius: 12px;
         margin-bottom: 16px;
       }
 
       .chart-placeholder {
-        color: #6b7280;
+        color: var(--text-secondary);
         font-size: 14px;
       }
 
@@ -265,7 +367,7 @@
 
       .chart-bar-label {
         font-weight: 500;
-        color: #374151;
+        color: var(--text-primary);
         min-width: 100px;
         font-size: 14px;
       }
@@ -273,7 +375,7 @@
       .chart-bar-container {
         flex: 1;
         height: 20px;
-        background: #f3f4f6;
+        background: var(--bg-secondary);
         border-radius: 10px;
         overflow: hidden;
         position: relative;
@@ -281,7 +383,7 @@
 
       .chart-bar-fill {
         height: 100%;
-        background: linear-gradient(90deg, #3b82f6, #2563eb);
+        background: var(--accent-color);
         border-radius: 10px;
         transition: width 0.5s ease;
       }
@@ -293,7 +395,7 @@
         transform: translateY(-50%);
         font-size: 12px;
         font-weight: 600;
-        color: #374151;
+        color: var(--text-primary);
         min-width: 40px;
         text-align: right;
         font-size: 14px;
@@ -305,16 +407,16 @@
         align-items: center;
         justify-content: space-between;
         padding: 16px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-color);
         border-radius: 20px;
         margin-bottom: 12px;
-        background: white;
+        background: var(--bg-secondary);
         transition: all 0.2s ease;
       }
 
       .job-listing-item:hover {
-        border-color: #667eea;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        border-color: var(--accent-color);
+        box-shadow: 0 4px 12px rgba(61, 213, 152, 0.1);
       }
 
       .job-listing-info {
@@ -324,13 +426,13 @@
       .job-listing-title {
         font-size: 16px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 4px;
       }
 
       .job-listing-details {
         font-size: 14px;
-        color: #6b7280;
+        color: var(--text-secondary);
         margin-bottom: 8px;
       }
 
@@ -338,7 +440,7 @@
         display: flex;
         gap: 16px;
         font-size: 12px;
-        color: #9ca3af;
+        color: var(--text-secondary);
       }
 
       .application-count {
@@ -346,7 +448,7 @@
         align-items: center;
         gap: 8px;
         padding: 8px 16px;
-        background: #667eea;
+        background: var(--accent-color);
         color: white;
         border-radius: 20px;
         font-size: 14px;
@@ -385,7 +487,7 @@
         align-items: center;
         gap: 16px;
         padding: 16px 0;
-        border-bottom: 1px solid #f3f4f6;
+        border-bottom: 1px solid var(--border-color);
       }
 
       .job-item:last-child {
@@ -407,13 +509,13 @@
       .job-details h4 {
         font-size: 14px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 4px;
       }
 
       .job-details p {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--text-secondary);
       }
 
       .job-meta {
@@ -423,13 +525,13 @@
 
       .job-type {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--text-secondary);
         margin-bottom: 2px;
       }
 
       .job-location {
         font-size: 12px;
-        color: #9ca3af;
+        color: var(--text-secondary);
       }
 
       /* Buttons */
@@ -448,23 +550,23 @@
       }
 
       .btn-primary {
-        background: #667eea;
+        background: var(--accent-color);
         color: white;
       }
 
       .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 25px rgba(61, 213, 152, 0.3);
       }
 
       .btn-secondary {
-        background: #f8fafc;
-        color: #374151;
-        border: 1px solid #e5e9f2;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
       }
 
       .btn-secondary:hover {
-        background: #f1f5f9;
+        background: var(--hover-bg);
       }
 
       /* Responsive */
@@ -488,18 +590,18 @@
 
       /* Add new CSS styles for recent job cards */
       .recent-job-card {
-        background: #fff;
+        background: var(--bg-card);
         border-radius: 14px;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+        box-shadow: 0 2px 8px var(--shadow);
         padding: 20px 24px;
         margin-bottom: 18px;
         transition: box-shadow 0.2s;
         cursor: pointer;
-        border: 1px solid #e5e9f2;
+        border: 1px solid var(--border-color);
       }
       .recent-job-card:hover {
-        box-shadow: 0 6px 24px rgba(102, 126, 234, 0.18);
-        border-color: #667eea;
+        box-shadow: 0 6px 24px rgba(61, 213, 152, 0.18);
+        border-color: var(--accent-color);
       }
       .recent-job-header {
         display: flex;
@@ -513,11 +615,11 @@
         gap: 10px;
         font-size: 18px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-primary);
       }
       .recent-job-icon {
         font-size: 22px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--accent-color);
         color: #fff;
         border-radius: 8px;
         padding: 6px 10px;
@@ -528,22 +630,22 @@
         font-weight: 500;
         padding: 4px 12px;
         border-radius: 12px;
-        background: #f3f4f6;
-        color: #374151;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
       }
       .recent-job-status.status-open {
-        background: #e0f7ef;
-        color: #10b981;
+        background: rgba(61, 213, 152, 0.1);
+        color: var(--accent-color);
       }
       .recent-job-status.status-closed {
-        background: #f3f4f6;
-        color: #6b7280;
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
       }
       .recent-job-details {
         display: flex;
         gap: 24px;
         font-size: 14px;
-        color: #6b7280;
+        color: var(--text-secondary);
         margin-bottom: 8px;
       }
       .recent-job-meta {
@@ -1225,6 +1327,32 @@
           userTypeElem.textContent = currentEmployer.userType;
         }
       }
+
+      // Theme toggle functionality
+      function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+          document.body.classList.add('light-mode');
+        }
+        updateThemeIcon();
+      }
+
+      function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const theme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+        localStorage.setItem('theme', theme);
+        updateThemeIcon();
+      }
+
+      function updateThemeIcon() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+          themeToggle.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        }
+      }
+
+      // Initialize theme on page load
+      initTheme();
     </script>
   </body>
 </html>

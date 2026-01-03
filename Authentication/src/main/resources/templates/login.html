@@ -14,7 +14,7 @@
       }
 
       body {
-        background: #f5f7fa;
+        background: #0f0f0f;
         min-height: 100vh;
         margin: 0;
         padding: 0;
@@ -24,12 +24,13 @@
         position: sticky;
         top: 0;
         z-index: 100;
-        background: white;
-        color: #1f2937;
+        background: rgba(20, 20, 20, 0.95);
+        backdrop-filter: blur(10px);
+        color: white;
         padding: 24px 0;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         width: 100%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: none;
       }
 
       .header-content {
@@ -49,11 +50,12 @@
       }
 
       .login-container {
-        background: white;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
         padding: 48px;
         border-radius: 16px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e5e9f2;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         width: 100%;
         max-width: 400px;
       }
@@ -61,8 +63,43 @@
       .logo {
         text-align: center;
         margin-bottom: 32px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding-bottom: 24px;
+      }
+
+      .logo-dots-container {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+      }
+
+      .logo-dot {
+        width: 12px;
+        height: 12px;
+        background-color: #3dd598;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .logo-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .logo-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(0.8);
+        }
       }
 
       .logo-img {
@@ -73,14 +110,14 @@
       }
 
       .logo h1 {
-        color: #1f2937;
+        color: white;
         font-size: 28px;
         margin-bottom: 8px;
         font-weight: 700;
       }
 
       .logo p {
-        color: #6b7280;
+        color: rgba(255, 255, 255, 0.6);
         font-size: 14px;
       }
 
@@ -91,7 +128,7 @@
       label {
         display: block;
         margin-bottom: 8px;
-        color: #374151;
+        color: rgba(255, 255, 255, 0.9);
         font-weight: 600;
         font-size: 14px;
       }
@@ -101,44 +138,47 @@
       select {
         width: 100%;
         padding: 12px 16px;
-        border: 1px solid #d1d5db;
-        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
         font-size: 16px;
         transition: all 0.2s ease;
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0.05);
+        color: white;
       }
 
       input[type="email"]:focus,
       input[type="password"]:focus,
       select:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #3dd598;
+        box-shadow: 0 0 0 3px rgba(61, 213, 152, 0.1);
+        background-color: rgba(255, 255, 255, 0.08);
       }
 
       .btn {
         width: 100%;
         padding: 12px 16px;
-        background: #667eea;
-        color: white;
+        background: #3dd598;
+        color: #0f0f0f;
         border: none;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 16px;
         cursor: pointer;
-        transition: all 0.2s ease;
-        font-weight: 600;
+        transition: all 0.3s ease;
+        font-weight: 700;
       }
 
       .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+        background: #35c085;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(61, 213, 152, 0.3);
       }
 
       .text-center {
         text-align: center;
         margin-top: 1.5rem;
         padding-top: 1rem;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .oauth-buttons {
@@ -151,53 +191,63 @@
         display: block;
         width: 100%;
         padding: 10px 16px;
-        border: 1px solid #d1d5db;
-        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
         text-decoration: none;
-        color: #111827;
-        background: white;
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
         text-align: center;
         font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .oauth-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.25);
       }
 
       .text-center a {
-        color: #495057;
+        color: #3dd598;
         text-decoration: none;
       }
 
       .text-center a:hover {
-        color: #212529;
+        color: #35c085;
         text-decoration: underline;
+      }
+
+      .text-center p {
+        color: rgba(255, 255, 255, 0.7);
       }
 
       .alert {
         padding: 0.75rem;
         margin-bottom: 1rem;
-        border-radius: 20px;
+        border-radius: 8px;
         display: none;
         border: 1px solid transparent;
       }
 
       .alert-error {
-        background-color: #f8d7da;
-        color: #721c24;
-        border-color: #f5c6cb;
+        background-color: rgba(220, 53, 69, 0.15);
+        color: #ff6b6b;
+        border-color: rgba(220, 53, 69, 0.3);
       }
 
       .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border-color: #c3e6cb;
+        background-color: rgba(61, 213, 152, 0.15);
+        color: #3dd598;
+        border-color: rgba(61, 213, 152, 0.3);
       }
 
       .dashboard-links {
         margin-top: 2rem;
         padding-top: 1.5rem;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .dashboard-links h3 {
-        color: #495057;
+        color: rgba(255, 255, 255, 0.9);
         margin-bottom: 1rem;
         text-align: center;
         font-size: 1rem;
@@ -209,18 +259,19 @@
         width: 100%;
         padding: 0.75rem;
         margin-bottom: 0.5rem;
-        background: #f8f9fa;
-        color: #495057;
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.9);
         text-decoration: none;
-        border-radius: 4px;
+        border-radius: 8px;
         text-align: center;
-        transition: background-color 0.15s ease-in-out;
-        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .dashboard-link:hover {
-        background: #e9ecef;
-        color: #212529;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(61, 213, 152, 0.3);
+        color: white;
       }
     </style>
   </head>
@@ -228,7 +279,11 @@
     <div class="main-content">
       <div class="login-container">
         <div class="logo">
-          <img src="/images/skillfind.png" alt="Skillfind" class="logo-img" />
+          <div class="logo-dots-container">
+            <div class="logo-dot"></div>
+            <div class="logo-dot"></div>
+            <div class="logo-dot"></div>
+          </div>
           <h1>Skillfind</h1>
           <p>Your Career Journey Starts Here</p>
         </div>
@@ -266,14 +321,6 @@
           <p>
             Don't have an account? <a th:href="@{/register}">Register here</a>
           </p>
-          <div class="oauth-buttons">
-            <a class="oauth-btn" href="/oauth2/authorization/google"
-              >Continue with Google</a
-            >
-            <a class="oauth-btn" href="/oauth2/authorization/github"
-              >Continue with GitHub</a
-            >
-          </div>
         </div>
       </div>
     </div>

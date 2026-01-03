@@ -7,6 +7,34 @@
     <script src="/static/js/pre-auth.js"></script>
     <script src="/static/js/auth-helper.js"></script>
     <style>
+      :root {
+        --bg-primary: #0f0f0f;
+        --bg-secondary: #1a1a1a;
+        --bg-card: #242424;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0a0;
+        --border-color: #333333;
+        --hover-bg: #2a2a2a;
+        --accent-color: #3dd598;
+        --accent-hover: #32b87d;
+        --shadow: rgba(0, 0, 0, 0.3);
+        --input-bg: #1a1a1a;
+      }
+
+      body.light-mode {
+        --bg-primary: #f5f7fa;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --border-color: #e5e9f2;
+        --hover-bg: #f8fafc;
+        --accent-color: #3dd598;
+        --accent-hover: #32b87d;
+        --shadow: rgba(0, 0, 0, 0.1);
+        --input-bg: #ffffff;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -15,7 +43,7 @@
       }
 
       body {
-        background: #f5f7fa;
+        background: var(--bg-primary);
         min-height: 100vh;
         margin: 0;
         padding: 0;
@@ -26,11 +54,11 @@
         min-height: 100vh;
       }
 
-      /* Sidebar */
+      /* Sidebar - styles from shared component */
       .sidebar {
         width: 280px;
-        background: white;
-        border-right: 1px solid #e5e9f2;
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
         position: fixed;
         height: 100vh;
         overflow-y: auto;
@@ -39,7 +67,10 @@
 
       .sidebar-header {
         padding: 24px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
       .logo {
@@ -48,18 +79,31 @@
         gap: 12px;
         font-size: 20px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
       }
 
       .logo-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 50px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+      }
+
+      .theme-toggle {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-weight: bold;
+      }
+
+      .theme-toggle:hover {
+        background: var(--hover-bg);
+        transform: scale(1.05);
       }
 
       .user-info {
@@ -67,14 +111,14 @@
         align-items: center;
         gap: 12px;
         padding: 16px 24px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
       }
 
       .user-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #b7d7f9 100%);
+        background: var(--accent-color);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -85,13 +129,13 @@
       .user-details h4 {
         font-size: 14px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 2px;
       }
 
       .user-details p {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--text-secondary);
       }
 
       .nav-menu {
@@ -103,7 +147,7 @@
         align-items: center;
         gap: 12px;
         padding: 12px 24px;
-        color: #6b7280;
+        color: var(--text-secondary);
         text-decoration: none;
         transition: all 0.2s ease;
         cursor: pointer;
@@ -115,14 +159,14 @@
       }
 
       .nav-item:hover {
-        background: #f8fafc;
-        color: #374151;
+        background: var(--hover-bg);
+        color: var(--text-primary);
       }
 
       .nav-item.active {
-        background: #f0f9ff;
-        color: #667eea;
-        border-left: 4px solid #667eea;
+        background: rgba(61, 213, 152, 0.1);
+        color: var(--accent-color);
+        border-left: 4px solid var(--accent-color);
         border-bottom-right-radius: 20px;
         border-top-right-radius: 20px;
       }
@@ -133,6 +177,47 @@
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      .logo-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #3dd598 !important;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+        display: block;
+        flex-shrink: 0;
+      }
+
+      .logo-dots-container {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .logo-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .logo-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(0.8);
+        }
+      }
+
+      .nav-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: currentColor;
       }
 
       /* Main Content */
@@ -149,22 +234,22 @@
       .page-title {
         font-size: 28px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 8px;
       }
 
       .page-subtitle {
         font-size: 16px;
-        color: #6b7280;
+        color: var(--text-secondary);
       }
 
       .container {
         max-width: none;
         margin: 0;
-        background: white;
+        background: var(--bg-card);
         border-radius: 16px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e5e9f2;
+        box-shadow: 0 4px 6px var(--shadow);
+        border: 1px solid var(--border-color);
         overflow: hidden;
       }
 
@@ -172,12 +257,12 @@
         position: sticky;
         top: 0;
         z-index: 100;
-        background: white;
-        color: #1f2937;
+        background: var(--bg-card);
+        color: var(--text-primary);
         padding: 24px 0;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
         width: 100%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 3px var(--shadow);
       }
 
       .header-content {
@@ -198,7 +283,7 @@
       .container {
         max-width: 1200px;
         margin: 0 auto;
-        background: white;
+        background: var(--bg-card);
         border-radius: 16px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         border: 1px solid #e5e9f2;
@@ -264,17 +349,17 @@
       }
 
       .application-card {
-        background: white;
+        background: var(--bg-card);
         border: none;
         padding: 25px;
         margin-bottom: 10px;
         border-radius: 16px;
-        border: 1px solid #e9ecef;
+        border: 1px solid var(--border-color);
         transition: box-shadow 0.15s ease-in-out;
       }
 
       .application-card:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px var(--shadow);
       }
 
       .application-header {
@@ -286,13 +371,13 @@
 
       .job-title {
         margin: 0 0 8px 0;
-        color: #333;
+        color: var(--text-primary);
         font-size: 1.4rem;
         font-weight: 600;
       }
 
       .company-name {
-        color: #667eea;
+        color: var(--accent-color);
         font-size: 1rem;
         font-weight: 500;
       }
@@ -450,14 +535,14 @@
       }
 
       .stats-section {
-        background: #f8f9fa;
+        background: var(--bg-card);
         padding: 25px 30px;
         margin: 0;
-        border-bottom: 1px solid #e1e1e1;
+        border-bottom: 1px solid var(--border-color);
       }
 
       .stats-section h3 {
-        color: #333;
+        color: var(--text-primary);
         margin-bottom: 20px;
         font-size: 1.3rem;
         font-weight: 600;
@@ -471,21 +556,22 @@
 
       .stat-item {
         text-align: center;
-        background: white;
+        background: var(--bg-secondary);
         padding: 20px;
         border-radius: 16px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 10px var(--shadow);
+        border: 1px solid var(--border-color);
       }
 
       .stat-number {
         font-size: 2rem;
         font-weight: 700;
-        color: #374151;
+        color: var(--text-primary);
         margin-bottom: 5px;
       }
 
       .stat-label {
-        color: #666;
+        color: var(--text-secondary);
         font-size: 0.9rem;
         font-weight: 500;
       }

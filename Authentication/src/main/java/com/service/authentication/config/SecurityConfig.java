@@ -15,7 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,7 +27,6 @@ import java.util.Arrays;
 public class SecurityConfig {
     
     private final CustomUserDetailsService userDetailsService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -65,13 +63,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/health").permitAll()
-                .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**", "/oauth2/**", "/login/oauth2/**").permitAll()
+                .requestMatchers("/", "/home", "/features", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/dashboard", "/profile").authenticated()
                 .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth -> oauth
-                .loginPage("/login")
-                .successHandler(oAuth2SuccessHandler)
             )
             .authenticationProvider(authenticationProvider());
         

@@ -1,11 +1,12 @@
 package com.service.application.service;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import com.service.application.dto.JobDto;
 import com.service.application.dto.profile.UserProfileDto;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 @Service
 public class GeminiService {
@@ -29,6 +30,8 @@ public class GeminiService {
             
             return response.text().trim();
         } catch (Exception e) {
+            System.err.println("Error in summarizeJob: " + e.getMessage());
+            e.printStackTrace();
             return "Unable to generate summary at this time.";
         }
     }
@@ -126,83 +129,15 @@ public class GeminiService {
             
             String generatedText = response.text();
             
-            // Simple post-processing to clean up the text
+            // Return the generated text directly without post-processing
+            // to preserve bold formatting and bullet points
             return generatedText.trim();
             
         } catch (Exception e) {
+            System.err.println("Error in generateComprehensiveSummary: " + e.getMessage());
+            e.printStackTrace();
             // Fallback to simple summary if comprehensive generation fails
             return summarizeJob(job.getDescription());
         }
-    }
-    
-    /**
-     * Post-processes the generated text to ensure smooth autoregressive flow
-     * and clean formatting
-     */
-    private String postProcessAutoregressiveText(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            return "Unable to generate summary at this time.";
-        }
-        
-        // Clean up the text for better flow while preserving bold formatting and bullet points
-        String processed = text
-                .trim()
-                .replaceAll("\\*([^*]+)\\*", "$1") // Remove italic markers (single asterisks)
-                .replaceAll("#+\\s*", "") // Remove markdown headers
-                .replaceAll("\\n\\s*\\n", "\n") // Remove excessive line breaks
-                .replaceAll("^\\s*[-•]\\s*", "• ") // Standardize bullet points at start
-                .replaceAll("\\n\\s*[-•]\\s*", "\n• ") // Standardize bullet points in middle
-                .replaceAll("^\\s*\\d+\\.\\s*", "• ") // Convert numbered lists to bullet points
-                .replaceAll("\\n\\s*\\d+\\.\\s*", "\n• ") // Convert numbered lists to bullet points
-                .replaceAll("^\\s*[-*]\\s*", "• ") // Convert dash/asterisk lists to bullet points
-                .replaceAll("\\n\\s*[-*]\\s*", "\n• ") // Convert dash/asterisk lists to bullet points
-                .trim();
-        
-        // Ensure proper sentence flow
-        processed = ensureSentenceFlow(processed);
-        
-        // Limit to reasonable length (approximately 150 words)
-        return limitWordCount(processed, 150);
-    }
-    
-    /**
-     * Ensures smooth sentence flow in the generated text
-     */
-    private String ensureSentenceFlow(String text) {
-        // Add proper spacing and flow
-        return text
-                .replaceAll("([.!?])\\s*([A-Z])", "$1 $2") // Proper sentence spacing
-                .replaceAll("\\s+", " ") // Remove multiple spaces
-                .replaceAll("\\n\\s*", "\n") // Clean line breaks
-                .trim();
-    }
-    
-    /**
-     * Limits the text to approximately the specified word count
-     */
-    private String limitWordCount(String text, int maxWords) {
-        String[] words = text.split("\\s+");
-        if (words.length <= maxWords) {
-            return text;
-        }
-        
-        StringBuilder limited = new StringBuilder();
-        for (int i = 0; i < maxWords && i < words.length; i++) {
-            if (i > 0) limited.append(" ");
-            limited.append(words[i]);
-        }
-        
-        // Try to end at a complete sentence
-        String result = limited.toString();
-        int lastSentenceEnd = Math.max(
-            Math.max(result.lastIndexOf('.'), result.lastIndexOf('!')),
-            result.lastIndexOf('?')
-        );
-        
-        if (lastSentenceEnd > result.length() * 0.7) { // If we can end at a sentence
-            return result.substring(0, lastSentenceEnd + 1);
-        }
-        
-        return result + "...";
     }
 }
