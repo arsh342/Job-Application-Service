@@ -138,24 +138,9 @@
       this.handleTokenFromUrl();
       this.setupAuthInterceptor();
 
-      // Check authentication on page load for protected pages
-      const protectedPaths = [
-        "/dashboard",
-        "/profile",
-        "/browse-jobs",
-        "/my-applications",
-        "/create-job",
-        "/job-details",
-        "/job-listings",
-      ];
-
-      if (
-        protectedPaths.some((path) => window.location.pathname.includes(path))
-      ) {
-        if (!this.isAuthenticated()) {
-          this.requireAuth();
-        }
-      }
+      // Note: Automatic authentication check is disabled to prevent race conditions
+      // The server-side AuthenticationFilter handles authentication for protected pages
+      // This allows page-specific scripts to process tokens before any auth checks
     },
   };
 
