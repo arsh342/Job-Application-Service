@@ -367,14 +367,23 @@
                 localStorage.setItem("authToken", data.token);
                 sessionStorage.setItem("authToken", data.token);
 
+                // Determine base URLs based on environment
+                const isLocalhost = window.location.hostname === 'localhost';
+                const jobServiceUrl = isLocalhost 
+                  ? 'http://localhost:8081' 
+                  : 'https://alert-eagerness-production-c0ff.up.railway.app';
+                const appServiceUrl = isLocalhost 
+                  ? 'http://localhost:8082' 
+                  : 'https://splendid-imagination-production-885a.up.railway.app';
+
                 if (data.userType === "EMPLOYER") {
                   // Redirect to Job Service (Employer Dashboard) with token
-                  window.location.href = `http://localhost:8081/dashboard?token=${encodeURIComponent(
+                  window.location.href = `${jobServiceUrl}/dashboard?token=${encodeURIComponent(
                     data.token
                   )}`;
                 } else if (data.userType === "APPLICANT") {
                   // Redirect to Application Service (Applicant Dashboard) with token
-                  window.location.href = `http://localhost:8082/dashboard?token=${encodeURIComponent(
+                  window.location.href = `${appServiceUrl}/dashboard?token=${encodeURIComponent(
                     data.token
                   )}`;
                 } else {
