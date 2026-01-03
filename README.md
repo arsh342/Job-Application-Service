@@ -25,9 +25,8 @@ The **Job Portal Microservices System** is a comprehensive, enterprise-grade job
 
 - **Multi-role Support**: Separate experiences for Job Seekers and Employers
 - **Authentication**:
-  - OAuth2 login with **Google** and **GitHub** (via Authentication service)
+  - JWT-based authentication with email/password login
   - JWT issued post-login, used across services for authorization
-  - Domain-based redirect after OAuth: consumer domains (gmail/outlook/hotmail/yahoo) → Application; others → Job
   - Cross-service token validation through the Authentication service
   - Token propagation during navigation via `?token=` URL param and localStorage
 - **Inter-Service Communication**: RESTful calls (Application ↔ Job; all ↔ Authentication)
@@ -59,8 +58,9 @@ The **Job Portal Microservices System** is a comprehensive, enterprise-grade job
 | **ORM**            | Hibernate/JPA          | -           |
 | **Build Tool**     | Maven                  | 3.6+        |
 | **Frontend**       | Thymeleaf + HTML5/CSS3 | -           |
-| **Authentication** | OAuth2 + JWT           |             |
+| **Authentication** | JWT                    |             |
 | **AI Integration** | Google Gemini API      | 2.5-flash   |
+| **Deployment**     | Railway.app            | Cloud       |
 
 ## 📦 Dependencies & Their Functions
 
@@ -124,32 +124,7 @@ This project uses a comprehensive set of dependencies to build a robust microser
   - CORS handling
   - Security filter chain
 
-#### **Spring Boot Starter OAuth2 Authorization Server**
 
-- **Function**: OAuth2 authorization server capabilities
-- **Usage**: Enhanced authentication features in Authentication Service
-- **Features**:
-  - OAuth2 token generation
-  - Client registration
-  - Authorization code flow
-
-#### **Spring Boot Starter OAuth2 Client**
-
-- **Function**: OAuth2 client capabilities
-- **Usage**: Service-to-service authentication
-- **Features**:
-  - OAuth2 token consumption
-  - Client credentials flow
-  - Resource server integration
-
-#### **Spring Boot Starter OAuth2 Resource Server**
-
-- **Function**: Resource server for token validation
-- **Usage**: Protecting endpoints with OAuth2 tokens
-- **Features**:
-  - JWT token validation
-  - Token introspection
-  - Resource protection
 
 #### **Thymeleaf Extras Spring Security 6**
 
@@ -376,8 +351,7 @@ The Authentication Service serves as the central identity management system, han
 - **File**: `SecurityConfig.java`
 - **Function**: Configures Spring Security
 - **Features**:
-  - OAuth2 Login (`/oauth2/authorization/{google|github}`)
-  - Custom OAuth2 success handler (domain-based redirect + JWT issuance)
+  - JWT-based authentication
   - Public UI routes (`/login`, `/register`) and auth APIs under `/api/auth/**`
   - Stateless session, CORS and headers configuration
 
@@ -438,13 +412,7 @@ The Authentication Service serves as the central identity management system, han
 - **Purpose**: Handles web page routing for authentication UI
 - **Templates**: login.html, register.html, dashboard.html
 
-#### **OAuth2 Success Handler**
 
-- **File**: `OAuth2SuccessHandler.java`
-- **Function**: After OAuth login, determines email domain and:
-  - Creates/updates user if needed
-  - Issues a JWT
-  - Redirects to Application (8082) or Job (8081) with `?token=...`
 
 ### Service Workflow
 
@@ -1153,18 +1121,14 @@ Add a `.env` file at repo root (or environment variables) and the services will 
 # ====== Authentication (8083) ======
 AUTH_DB_URL=jdbc:mysql://localhost:3306/job_portal_auth_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
 AUTH_DB_USERNAME=root
-AUTH_DB_PASSWORD=
+AUTH_DB_PASSWORD=your_password
 JWT_SECRET=change-me-32b-min
 JWT_EXPIRATION=86400000
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
 
 # ====== Application (8082) ======
 APP_DB_URL=jdbc:mysql://localhost:3306/job_portal_application_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
 APP_DB_USERNAME=root
-APP_DB_PASSWORD=
+APP_DB_PASSWORD=your_password
 APP_JWT_SECRET=change-me-32b-min
 APP_JWT_EXPIRATION=86400000
 GEMINI_API_KEY=your_gemini_api_key_here
@@ -1172,17 +1136,14 @@ GEMINI_API_KEY=your_gemini_api_key_here
 # ====== Job (8081) ======
 JOB_DB_URL=jdbc:mysql://localhost:3306/job_portal_job_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
 JOB_DB_USERNAME=root
-JOB_DB_PASSWORD=
+JOB_DB_PASSWORD=your_password
 JOB_JWT_SECRET=change-me-32b-min
 JOB_JWT_EXPIRATION=86400000
 ```
 
 Notes:
-
-- OAuth redirect URIs:
-  - Google: `http://localhost:8083/login/oauth2/code/google`
-  - GitHub: `http://localhost:8083/login/oauth2/code/github`
-- Services already import `.env` and `../.env` via `spring.config.import`.
+- Services already import `.env` and `../.env` via `spring.config.import`
+- All JWT secrets must be at least 32 bytes for security
 
 ```properties
 spring.datasource.username=your_username
@@ -1208,6 +1169,77 @@ cd Application && mvn spring-boot:run
 - **Authentication Portal**: http://localhost:8083
 - **Employer Dashboard**: http://localhost:8081/dashboard
 - **Job Seeker Dashboard**: http://localhost:8082/dashboard
+
+## ☁️ Railway Deployment
+
+The application is deployed on Railway.app with three separate services:
+
+### Deployed Services
+
+1. **Authentication Service**: Handles user login and registration
+2. **Job Service**: Manages employer job postings  
+3. **Application Service**: Manages job seeker applications
+
+### Railway Configuration
+
+Each service requires the following environment variables:
+
+#### Authentication Service (Root Directory: `/Authentication`)
+```
+AUTH_DB_URL=jdbc:mysql://mysql.railway.internal:3306/railway?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+AUTH_DB_USERNAME=root
+AUTH_DB_PASSWORD=<railway_mysql_password>
+JWT_SECRET=<your_jwt_secret>
+JWT_EXPIRATION=86400000
+PORT=8083
+```
+
+#### Job Service (Root Directory: `/Job`)
+```
+JOB_DB_URL=jdbc:mysql://mysql.railway.internal:3306/railway?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+JOB_DB_USERNAME=root
+JOB_DB_PASSWORD=<railway_mysql_password>
+JOB_JWT_SECRET=<your_jwt_secret>
+JOB_JWT_EXPIRATION=86400000
+PORT=8081
+```
+
+#### Application Service (Root Directory: `/Application`)
+```
+APP_DB_URL=jdbc:mysql://mysql.railway.internal:3306/railway?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+APP_DB_USERNAME=root
+APP_DB_PASSWORD=<railway_mysql_password>
+APP_JWT_SECRET=<your_jwt_secret>
+APP_JWT_EXPIRATION=86400000
+GEMINI_API_KEY=<your_gemini_api_key>
+PORT=8082
+```
+
+### Database Setup
+
+- **Database**: Railway MySQL (shared across all services)
+- **Connection**: `mysql.railway.internal:3306`
+- **Database Name**: `railway`
+- **Auto-create**: Tables are automatically created by Hibernate on first run
+
+### Deployment Steps
+
+1. **Create Railway Project** and connect GitHub repository
+2. **Add MySQL Database** to the project
+3. **Create Three Services**:
+   - Deploy Authentication service with `/Authentication` root directory
+   - Deploy Job service with `/Job` root directory  
+   - Deploy Application service with `/Application` root directory
+4. **Configure Variables** for each service (see above)
+5. **Generate Public Domains** for all three services
+6. **Update Service URLs** in code if services need to communicate via public URLs
+
+### Important Notes
+
+- All three services share the same Railway MySQL database
+- Each service gets its own public HTTPS domain
+- Database credentials are automatically provided by Railway
+- All services must have `allowPublicKeyRetrieval=true` in database URL for Railway MySQL
 
 ## 👥 User Workflows
 
