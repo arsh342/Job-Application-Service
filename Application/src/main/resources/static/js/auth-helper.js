@@ -82,7 +82,8 @@
         // Give a small delay to ensure any async token processing is complete
         setTimeout(() => {
           if (!this.isAuthenticated()) {
-            window.location.href = "http://localhost:8083/login";
+            const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+            window.location.href = authUrl + "/login";
           }
         }, 50);
         return false;

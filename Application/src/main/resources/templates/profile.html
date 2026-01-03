@@ -1705,7 +1705,8 @@
               showMessage("Profile updated successfully!", "success");
             } else if (response.status === 401) {
               alert("Your session has expired. Please log in again.");
-              window.location.href = "http://localhost:8083/login";
+              const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+              window.location.href = authUrl + "/login";
               return;
             } else {
               const errorText = await response.text();

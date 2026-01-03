@@ -344,7 +344,8 @@
               try {
                 window.logout();
               } catch (e) {
-                window.location.href = "http://localhost:8083/login";
+                const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+                window.location.href = authUrl + "/login";
               }
             } else {
               window.location.href = "http://localhost:8083/login";
@@ -428,7 +429,8 @@
         try {
           const token = getJwtToken();
           if (!token) return;
-          const resp = await fetch("http://localhost:8083/api/auth/validate", {
+          const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+          const resp = await fetch(authUrl + "/api/auth/validate", {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
           });

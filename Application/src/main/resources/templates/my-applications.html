@@ -675,7 +675,8 @@
           window.history.replaceState({}, document.title, cleanUrl);
           // Fetch fresh profile and update sidebar/localStorage
           try {
-            const resp = await fetch("http://localhost:8083/api/auth/validate", {
+            const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+            const resp = await fetch(authUrl + "/api/auth/validate", {
               method: "POST",
               headers: { Authorization: `Bearer ${urlToken}` },
             });
@@ -774,7 +775,8 @@
             
             if (response.status === 401) {
               alert("Your session has expired. Please log in again.");
-              window.location.href = "http://localhost:8083/login";
+              const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+              window.location.href = authUrl + "/login";
               return;
             }
             
@@ -967,7 +969,8 @@ Error Response: ${errorText}
           window.location.href = `/job-details?id=${jobId}&token=${encodeURIComponent(token)}`;
         } else {
           alert("Please log in to view job details");
-          window.location.href = "http://localhost:8083/login";
+          const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+          window.location.href = authUrl + "/login";
         }
       }
 

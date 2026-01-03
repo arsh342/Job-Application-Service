@@ -799,7 +799,8 @@
 
           if (!token) {
             console.log("No token found, redirecting to login");
-            window.location.href = "http://localhost:8083/login";
+            const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+            window.location.href = authUrl + "/login";
             return;
           }
 

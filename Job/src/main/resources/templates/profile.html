@@ -683,7 +683,8 @@
 
                 // Fallback: try to validate token with Authentication Service
                 const response = await fetch(
-                  "http://localhost:8083/api/auth/validate",
+                  const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+                  authUrl + "/api/auth/validate",
                   {
                     method: "POST",
                     headers: {
@@ -695,7 +696,8 @@
 
                 if (!response.ok) {
                   removeJwtToken();
-                  window.location.href = "http://localhost:8083/login";
+                  const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+                  window.location.href = authUrl + "/login";
                   return;
                 }
 

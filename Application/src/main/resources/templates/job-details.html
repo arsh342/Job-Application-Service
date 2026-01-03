@@ -623,7 +623,8 @@
           } else if (response.status === 401) {
             showError("Please log in to view job details");
             setTimeout(() => {
-              window.location.href = "http://localhost:8083/login";
+              const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+              window.location.href = authUrl + "/login";
             }, 2000);
           } else {
             showError("Failed to load job details");
