@@ -45,7 +45,10 @@
     // Redirect to login if not authenticated
     requireAuth: function () {
       if (!this.isAuthenticated()) {
-        window.location.href = "http://localhost:8083/login";
+        const authUrl = window.location.hostname === 'localhost'
+          ? 'http://localhost:8083'
+          : 'https://job-application-service-production.up.railway.app';
+        window.location.href = `${authUrl}/login`;
         return false;
       }
       return true;
@@ -61,7 +64,10 @@
           token
         )}`;
       } else {
-        window.location.href = "http://localhost:8083/login";
+        const authUrl = window.location.hostname === 'localhost'
+          ? 'http://localhost:8083'
+          : 'https://job-application-service-production.up.railway.app';
+        window.location.href = `${authUrl}/login`;
       }
     },
 
