@@ -869,13 +869,14 @@
       }
 
       async function logout() {
+        const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
         const token = getJwtToken();
         if (token) {
           removeJwtToken();
-          window.location.href = "http://localhost:8083/login";
+          window.location.href = authUrl + "/login";
         } else {
           // If not logged in, just redirect to login
-          window.location.href = "http://localhost:8083/login";
+          window.location.href = authUrl + "/login";
         }
       }
 
