@@ -1,5 +1,6 @@
 package com.service.job.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +10,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 public class WebController {
     
+    @Value("${auth.service.url:http://localhost:8083}")
+    private String authServiceUrl;
+    
     // Helper method to add common user and token attributes to model
     private void addCommonAttributes(HttpServletRequest request, Model model) {
+        // Add auth service URL for templates
+        model.addAttribute("authServiceUrl", authServiceUrl);
+        
         // Add token if present
         String token = request.getParameter("token");
         String authHeader = request.getHeader("Authorization");
@@ -42,13 +49,14 @@ public class WebController {
     }
     
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+        model.addAttribute("authServiceUrl", authServiceUrl);
         return "index";
     }
     
     @GetMapping("/login-redirect")
-    public String loginRedirect() {
-        return "redirect:http://localhost:8083/login";
+    public String loginRedirect(@Value("${auth.service.url:http://localhost:8083}") String authServiceUrl) {
+        return "redirect:" + authServiceUrl + "/login";
     }
     
     @GetMapping("/dashboard")

@@ -135,8 +135,8 @@
       </div>
 
       <div>
-        <a href="http://localhost:8083/login" class="btn">Login to Continue</a>
-        <a href="http://localhost:8083/register" class="btn btn-secondary"
+        <a th:href="${authServiceUrl + '/login'}" class="btn">Login to Continue</a>
+        <a th:href="${authServiceUrl + '/register'}" class="btn btn-secondary"
           >Create Account</a
         >
       </div>

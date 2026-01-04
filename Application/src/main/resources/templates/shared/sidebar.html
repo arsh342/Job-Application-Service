@@ -5,8 +5,8 @@
       /* Sidebar Styles */
       .sidebar {
         width: 280px;
-        background: white;
-        border-right: 1px solid #e5e9f2;
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
         position: fixed;
         height: 100vh;
         overflow-y: auto;
@@ -15,7 +15,10 @@
 
       .sidebar-header {
         padding: 24px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
       .logo {
@@ -24,7 +27,7 @@
         gap: 12px;
         font-size: 20px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
       }
 
       .logo-icon {
@@ -33,19 +36,37 @@
         border-radius: 8px;
       }
 
+      .theme-toggle {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .theme-toggle:hover {
+        background: var(--hover-bg);
+        transform: scale(1.05);
+      }
+
       .user-info {
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 16px 24px;
-        border-bottom: 1px solid #e5e9f2;
+        border-bottom: 1px solid var(--border-color);
       }
 
       .user-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: #6b7280;
+        background: var(--accent-color);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -56,13 +77,13 @@
       .user-details h4 {
         font-size: 14px;
         font-weight: 600;
-        color: #1f2937;
+        color: var(--text-primary);
         margin-bottom: 2px;
       }
 
       .user-details p {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--text-secondary);
       }
 
       .nav-menu {
@@ -74,7 +95,7 @@
         align-items: center;
         gap: 12px;
         padding: 12px 24px;
-        color: #6b7280;
+        color: var(--text-secondary);
         text-decoration: none;
         transition: all 0.2s ease;
         cursor: pointer;
@@ -86,14 +107,14 @@
       }
 
       .nav-item:hover {
-        background: #f8fafc;
-        color: #374151;
+        background: var(--hover-bg);
+        color: var(--text-primary);
       }
 
       .nav-item.active {
-        background: #f0f9ff;
-        color: #667eea;
-        border-left: 4px solid #667eea;
+        background: rgba(61, 213, 152, 0.1);
+        color: var(--accent-color);
+        border-left: 4px solid var(--accent-color);
         border-bottom-right-radius: 20px;
         border-top-right-radius: 20px;
       }
@@ -105,6 +126,41 @@
         align-items: center;
         justify-content: center;
         background: #0ea5e9;
+      }
+
+      .logo-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #3dd598 !important;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+        display: block;
+        flex-shrink: 0;
+      }
+
+      .logo-dots-container {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .logo-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .logo-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(0.8);
+        }
       }
 
       /* Responsive */
@@ -119,9 +175,16 @@
     <div class="sidebar" th:fragment="sidebar">
       <div class="sidebar-header">
         <div class="logo">
-          <img src="/images/skillfind.png" alt="Skillfind" class="logo-icon" />
+          <div class="logo-dots-container">
+            <div class="logo-dot"></div>
+            <div class="logo-dot"></div>
+            <div class="logo-dot"></div>
+          </div>
           <div>Skillfind</div>
         </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+          🌙
+        </button>
       </div>
 
       <div class="user-info">
@@ -281,7 +344,8 @@
               try {
                 window.logout();
               } catch (e) {
-                window.location.href = "http://localhost:8083/login";
+                const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+                window.location.href = authUrl + "/login";
               }
             } else {
               window.location.href = "http://localhost:8083/login";
@@ -292,6 +356,30 @@
     </div>
 
     <script th:fragment="sidebar-script">
+      // Theme Toggle Functions
+      function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+          document.body.classList.add('light-mode');
+        }
+        updateThemeIcon();
+      }
+
+      function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        updateThemeIcon();
+      }
+
+      function updateThemeIcon() {
+        const themeIcon = document.querySelector('.theme-toggle');
+        const isLight = document.body.classList.contains('light-mode');
+        if (themeIcon) {
+          themeIcon.textContent = isLight ? '☀️' : '🌙';
+        }
+      }
+
       // Sidebar functionality
       function initializeSidebar() {
         // Use Thymeleaf variables if available, otherwise fallback to localStorage
@@ -341,7 +429,8 @@
         try {
           const token = getJwtToken();
           if (!token) return;
-          const resp = await fetch("http://localhost:8083/api/auth/validate", {
+          const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+          const resp = await fetch(authUrl + "/api/auth/validate", {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -402,7 +491,8 @@
 
       async function logout() {
         removeJwtToken();
-        window.location.href = "http://localhost:8083/login";
+        const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+        window.location.href = authUrl + "/login";
       }
 
       // Logout confirmation modal
@@ -429,11 +519,13 @@
         try {
           localStorage.removeItem("authToken");
         } catch (e) {}
-        window.location.href = "http://localhost:8083/login";
+        const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+        window.location.href = authUrl + "/login";
       }
 
       // Initialize sidebar when page loads
       document.addEventListener("DOMContentLoaded", function () {
+        initTheme();
         initializeSidebar();
         // React to updates from other scripts setting user info
         window.addEventListener("storage", function (e) {

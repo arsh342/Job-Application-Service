@@ -96,7 +96,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             // For web pages, redirect to login instead of returning 401
             if (isWebPageRequest(path)) {
                 log.info("Redirecting to login for web page: {}", path);
-                response.sendRedirect("http://localhost:8083/login");
+                response.sendRedirect(authServiceUrl + "/login");
                 return;
             } else {
                 sendUnauthorizedResponse(response, "No authentication token provided");
@@ -110,7 +110,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (!validation.isValid()) {
                 // For web pages, redirect to login instead of returning 401
                 if (isWebPageRequest(path)) {
-                    response.sendRedirect("http://localhost:8083/login");
+                    response.sendRedirect(authServiceUrl + "/login");
                     return;
                 } else {
                     sendUnauthorizedResponse(response, "Invalid authentication token");
@@ -141,7 +141,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             log.error("Error validating token with auth service", e);
             // For web pages, redirect to login instead of returning 401
             if (isWebPageRequest(path)) {
-                response.sendRedirect("http://localhost:8083/login");
+                response.sendRedirect(authServiceUrl + "/login");
                 return;
             } else {
                 sendUnauthorizedResponse(response, "Authentication service error");
@@ -214,7 +214,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             "<h2>Authentication Required</h2>" +
             "<p>" + message + "</p>" +
             "<p>Please log in to access this service.</p>" +
-            "<a href='http://localhost:8083/login' class='btn'>Login</a>" +
+            "<a href='" + authServiceUrl + "/login' class='btn'>Login</a>" +
             "</div></body></html>"
         );
     }

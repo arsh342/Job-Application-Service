@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - Skillfind</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background: #0f0f0f;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            display: flex;
+            gap: 3px;
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #3dd598;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .logo-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .logo-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: scale(0.8);
+            }
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-signin {
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-signin:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-signup {
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            background: #3dd598;
+            color: #0f0f0f;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-signup:hover {
+            background: #35c085;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(61, 213, 152, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 48px 60px;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 700px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+        }
+
+        /* Feature Categories */
+        .feature-categories {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 48px 80px;
+        }
+
+        .category {
+            margin-bottom: 80px;
+        }
+
+        .category-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .category-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .category-header h3 {
+            font-size: 36px;
+            color: white;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .category-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(61, 213, 152, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(61, 213, 152, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h4 {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .feature-list li {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #3dd598;
+            font-weight: 700;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 48px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .comparison-section h3 {
+            text-align: center;
+            font-size: 36px;
+            color: white;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .comparison-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            margin-bottom: 48px;
+        }
+
+        .comparison-table {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+            padding: 24px 32px;
+            background: rgba(61, 213, 152, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-header div {
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .comparison-header div:first-child {
+            text-align: left;
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+            padding: 20px 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: center;
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-row div:first-child {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+        }
+
+        .comparison-row div:not(:first-child) {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .check {
+            color: #3dd598;
+        }
+
+        .cross {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 48px;
+            text-align: center;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, rgba(61, 213, 152, 0.1) 0%, rgba(61, 213, 152, 0.05) 100%);
+            border: 1px solid rgba(61, 213, 152, 0.2);
+            border-radius: 24px;
+            padding: 60px 48px;
+        }
+
+        .cta-box h2 {
+            font-size: 42px;
+            color: white;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .cta-box p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            margin-bottom: 32px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            padding: 16px 40px;
+            background: #3dd598;
+            color: #0f0f0f;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #35c085;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(61, 213, 152, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 40px 48px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer p {
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 24px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 80px 24px 40px;
+            }
+
+            .hero h2 {
+                font-size: 36px;
+            }
+
+            .feature-categories {
+                padding: 0 24px 60px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-header h3 {
+                font-size: 28px;
+            }
+
+            .comparison-section {
+                padding: 60px 24px;
+            }
+
+            .comparison-section h3 {
+                font-size: 28px;
+            }
+
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 2fr 1fr 1fr;
+                padding: 16px 20px;
+                gap: 10px;
+            }
+
+            .comparison-header div,
+            .comparison-row div:first-child {
+                font-size: 13px;
+            }
+
+            .cta-section {
+                padding: 60px 24px;
+            }
+
+            .cta-box {
+                padding: 40px 24px;
+            }
+
+            .cta-box h2 {
+                font-size: 32px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-dot"></div>
+                    <div class="logo-dot"></div>
+                    <div class="logo-dot"></div>
+                </div>
+                <h1>Skillfind</h1>
+            </a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/features" class="active">Features</a>
+                <a href="/#roles">For You</a>
+            </nav>
+            <div class="header-buttons">
+                <a href="/login" class="btn-signin">Sign In</a>
+                <a href="/register" class="btn-signup">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2>Powerful Features for Your Success</h2>
+        <p>Everything you need to find the perfect job or hire the perfect candidate, all in one comprehensive platform.</p>
+    </section>
+
+    <!-- Feature Categories -->
+    <section class="feature-categories">
+        <!-- Job Seeker Features -->
+        <div class="category">
+            <div class="category-header">
+                <div class="category-icon">🎯</div>
+                <h3>For Job Seekers</h3>
+                <p>Tools to help you find and land your dream job</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔍</div>
+                    <h4>Advanced Job Search</h4>
+                    <p>Find opportunities tailored to your skills and preferences with powerful search and filtering options.</p>
+                    <ul class="feature-list">
+                        <li>Filter by location, salary, and job type</li>
+                        <li>Save searches and get alerts</li>
+                        <li>Sort by relevance or date posted</li>
+                        <li>Browse by category or industry</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📄</div>
+                    <h4>Professional Profile</h4>
+                    <p>Create a comprehensive profile that showcases your skills, experience, and achievements.</p>
+                    <ul class="feature-list">
+                        <li>Add work experience and education</li>
+                        <li>Highlight your key skills</li>
+                        <li>Upload resume and portfolio</li>
+                        <li>Get profile completion tips</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">✉️</div>
+                    <h4>One-Click Applications</h4>
+                    <p>Apply to multiple jobs quickly with your saved profile information and cover letter templates.</p>
+                    <ul class="feature-list">
+                        <li>Pre-fill application forms</li>
+                        <li>Customize cover letters</li>
+                        <li>Track application status</li>
+                        <li>Get application insights</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📊</div>
+                    <h4>Application Dashboard</h4>
+                    <p>Monitor all your applications in one place with real-time updates and actionable insights.</p>
+                    <ul class="feature-list">
+                        <li>View application history</li>
+                        <li>Track response rates</li>
+                        <li>Get status notifications</li>
+                        <li>Organize by status or date</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🤖</div>
+                    <h4>AI Job Recommendations</h4>
+                    <p>Get personalized job suggestions powered by AI that match your profile and preferences.</p>
+                    <ul class="feature-list">
+                        <li>Smart matching algorithm</li>
+                        <li>Daily job recommendations</li>
+                        <li>Match percentage indicators</li>
+                        <li>Improve over time with feedback</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">💾</div>
+                    <h4>Save & Organize Jobs</h4>
+                    <p>Bookmark interesting opportunities and organize them into custom lists for easy reference.</p>
+                    <ul class="feature-list">
+                        <li>Create custom job lists</li>
+                        <li>Add notes to saved jobs</li>
+                        <li>Set reminders for deadlines</li>
+                        <li>Share jobs with friends</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employer Features -->
+        <div class="category">
+            <div class="category-header">
+                <div class="category-icon">💼</div>
+                <h3>For Employers</h3>
+                <p>Everything you need to find and hire top talent</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">📝</div>
+                    <h4>Easy Job Posting</h4>
+                    <p>Create and publish job listings in minutes with our intuitive posting interface.</p>
+                    <ul class="feature-list">
+                        <li>Template-based job creation</li>
+                        <li>Rich text job descriptions</li>
+                        <li>Add company branding</li>
+                        <li>Preview before publishing</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">👥</div>
+                    <h4>Applicant Management</h4>
+                    <p>Review, filter, and manage applications efficiently with powerful organizational tools.</p>
+                    <ul class="feature-list">
+                        <li>View all applicants in one place</li>
+                        <li>Filter by qualifications</li>
+                        <li>Sort by match score</li>
+                        <li>Bulk actions for efficiency</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📈</div>
+                    <h4>Hiring Analytics</h4>
+                    <p>Track your hiring metrics and gain insights to improve your recruitment process.</p>
+                    <ul class="feature-list">
+                        <li>View application statistics</li>
+                        <li>Track time-to-hire</li>
+                        <li>Monitor job performance</li>
+                        <li>Export reports</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🎯</div>
+                    <h4>Candidate Screening</h4>
+                    <p>Quickly identify the best candidates with AI-powered screening and ranking tools.</p>
+                    <ul class="feature-list">
+                        <li>Automatic candidate scoring</li>
+                        <li>Skills matching</li>
+                        <li>Experience verification</li>
+                        <li>Custom screening criteria</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📢</div>
+                    <h4>Job Promotion</h4>
+                    <p>Boost your job postings to reach more qualified candidates faster.</p>
+                    <ul class="feature-list">
+                        <li>Featured listing options</li>
+                        <li>Social media sharing</li>
+                        <li>Email notifications</li>
+                        <li>Targeted promotion</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">⚡</div>
+                    <h4>Quick Actions</h4>
+                    <p>Streamline your workflow with shortcuts and bulk actions for common tasks.</p>
+                    <ul class="feature-list">
+                        <li>Bulk status updates</li>
+                        <li>Template responses</li>
+                        <li>Scheduled actions</li>
+                        <li>Keyboard shortcuts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Features -->
+        <div class="category">
+            <div class="category-header">
+                <div class="category-icon">🚀</div>
+                <h3>Platform Features</h3>
+                <p>Core capabilities that make Skillfind exceptional</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔒</div>
+                    <h4>Enterprise Security</h4>
+                    <p>Your data is protected with bank-level encryption and security protocols.</p>
+                    <ul class="feature-list">
+                        <li>SSL/TLS encryption</li>
+                        <li>Secure authentication</li>
+                        <li>Regular security audits</li>
+                        <li>GDPR compliant</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📱</div>
+                    <h4>Mobile Optimized</h4>
+                    <p>Access all features seamlessly on any device, anytime, anywhere.</p>
+                    <ul class="feature-list">
+                        <li>Responsive design</li>
+                        <li>Touch-optimized interface</li>
+                        <li>Works offline</li>
+                        <li>Fast loading times</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔔</div>
+                    <h4>Real-time Notifications</h4>
+                    <p>Stay updated with instant notifications for all important events and actions.</p>
+                    <ul class="feature-list">
+                        <li>Email notifications</li>
+                        <li>In-app alerts</li>
+                        <li>Customizable preferences</li>
+                        <li>Digest summaries</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">💬</div>
+                    <h4>Built-in Messaging</h4>
+                    <p>Communicate directly with employers or candidates without leaving the platform.</p>
+                    <ul class="feature-list">
+                        <li>Secure messaging system</li>
+                        <li>File sharing capability</li>
+                        <li>Message history</li>
+                        <li>Read receipts</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🌐</div>
+                    <h4>Multi-language Support</h4>
+                    <p>Access the platform in your preferred language for a better user experience.</p>
+                    <ul class="feature-list">
+                        <li>20+ languages supported</li>
+                        <li>Automatic translation</li>
+                        <li>Regional content</li>
+                        <li>Cultural customization</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🎨</div>
+                    <h4>Customizable Interface</h4>
+                    <p>Personalize your experience with themes, layouts, and preferences.</p>
+                    <ul class="feature-list">
+                        <li>Dark/light mode</li>
+                        <li>Custom dashboard</li>
+                        <li>Layout preferences</li>
+                        <li>Accessibility options</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison-section">
+        <h3>Why Choose Skillfind?</h3>
+        <p class="comparison-subtitle">See how we compare to other job platforms</p>
+        <div class="comparison-table">
+            <div class="comparison-header">
+                <div>Feature</div>
+                <div>Skillfind</div>
+                <div>Others</div>
+            </div>
+            <div class="comparison-row">
+                <div>AI-Powered Job Matching</div>
+                <div class="check">✓</div>
+                <div class="cross">✗</div>
+            </div>
+            <div class="comparison-row">
+                <div>Unlimited Applications</div>
+                <div class="check">✓</div>
+                <div class="cross">✗</div>
+            </div>
+            <div class="comparison-row">
+                <div>Real-time Notifications</div>
+                <div class="check">✓</div>
+                <div class="check">✓</div>
+            </div>
+            <div class="comparison-row">
+                <div>Profile Analytics</div>
+                <div class="check">✓</div>
+                <div class="cross">✗</div>
+            </div>
+            <div class="comparison-row">
+                <div>Direct Messaging</div>
+                <div class="check">✓</div>
+                <div class="cross">✗</div>
+            </div>
+            <div class="comparison-row">
+                <div>Mobile App</div>
+                <div class="check">✓</div>
+                <div class="check">✓</div>
+            </div>
+            <div class="comparison-row">
+                <div>Advanced Search Filters</div>
+                <div class="check">✓</div>
+                <div class="cross">✗</div>
+            </div>
+            <div class="comparison-row">
+                <div>Job Recommendations</div>
+                <div class="check">✓</div>
+                <div class="cross">✗</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <h2>Start Using Skillfind Today</h2>
+            <p>Join thousands of users who are already finding success</p>
+            <div class="cta-buttons">
+                <a href="/register" class="btn-primary">Get Started Free</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Skillfind. All rights reserved. | Connecting Talent with Opportunity</p>
+    </footer>
+</body>
+</html>

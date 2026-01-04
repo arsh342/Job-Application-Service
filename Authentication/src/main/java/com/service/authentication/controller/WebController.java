@@ -10,7 +10,17 @@ public class WebController {
     
     @GetMapping("/")
     public String home() {
-        return "redirect:/login";
+        return "index";
+    }
+    
+    @GetMapping("/home")
+    public String landingPage() {
+        return "index";
+    }
+    
+    @GetMapping("/features")
+    public String features() {
+        return "features";
     }
     
     @GetMapping("/login")
@@ -29,12 +39,16 @@ public class WebController {
     @GetMapping("/register")
     public String register(@RequestParam(value = "error", required = false) String error,
                           @RequestParam(value = "success", required = false) String success,
+                          @RequestParam(value = "userType", required = false) String userType,
                           Model model) {
         if (error != null) {
             model.addAttribute("error", error);
         }
         if (success != null) {
             model.addAttribute("success", success);
+        }
+        if (userType != null) {
+            model.addAttribute("userType", userType);
         }
         return "register";
     }

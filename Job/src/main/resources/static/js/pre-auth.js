@@ -30,7 +30,8 @@
 
     // Fetch fresh user profile for sidebar
     try {
-      fetch("http://localhost:8083/api/auth/validate", {
+      const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
+      fetch(authUrl + "/api/auth/validate", {
         method: "POST",
         headers: { Authorization: `Bearer ${urlToken}` },
       })

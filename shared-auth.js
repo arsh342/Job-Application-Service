@@ -45,7 +45,10 @@
     // Redirect to login if not authenticated
     requireAuth: function () {
       if (!this.isAuthenticated()) {
-        window.location.href = "http://localhost:8083/login";
+        const authUrl = window.location.hostname === 'localhost'
+          ? 'http://localhost:8083'
+          : 'https://job-application-service-production.up.railway.app';
+        window.location.href = `${authUrl}/login`;
         return false;
       }
       return true;
@@ -61,7 +64,10 @@
           token
         )}`;
       } else {
-        window.location.href = "http://localhost:8083/login";
+        const authUrl = window.location.hostname === 'localhost'
+          ? 'http://localhost:8083'
+          : 'https://job-application-service-production.up.railway.app';
+        window.location.href = `${authUrl}/login`;
       }
     },
 
@@ -132,24 +138,9 @@
       this.handleTokenFromUrl();
       this.setupAuthInterceptor();
 
-      // Check authentication on page load for protected pages
-      const protectedPaths = [
-        "/dashboard",
-        "/profile",
-        "/browse-jobs",
-        "/my-applications",
-        "/create-job",
-        "/job-details",
-        "/job-listings",
-      ];
-
-      if (
-        protectedPaths.some((path) => window.location.pathname.includes(path))
-      ) {
-        if (!this.isAuthenticated()) {
-          this.requireAuth();
-        }
-      }
+      // Note: Automatic authentication check is disabled to prevent race conditions
+      // The server-side AuthenticationFilter handles authentication for protected pages
+      // This allows page-specific scripts to process tokens before any auth checks
     },
   };
 
