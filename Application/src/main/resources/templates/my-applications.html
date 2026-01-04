@@ -709,6 +709,7 @@
 
       async function loadApplications() {
         try {
+          console.log("Loading applications with auth headers:", getAuthHeaders());
           const response = await fetch("/api/applications/my-applications", {
             method: "GET",
             headers: {
@@ -717,8 +718,11 @@
             },
           });
           
+          console.log("Applications response status:", response.status);
+          
           if (response.ok) {
             allApplications = await response.json();
+            console.log("Loaded applications:", allApplications.length, allApplications);
 
             // Load job details for each application
             const jobServiceUrl = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://alert-eagerness-production-c0ff.up.railway.app';
