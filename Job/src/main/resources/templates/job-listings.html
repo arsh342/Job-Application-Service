@@ -554,13 +554,13 @@
 
       .applicant-name {
         font-weight: 600;
-        color: #2d3748;
+        color: #ffffff;
         font-size: 16px;
         margin-bottom: 4px;
       }
 
       .applicant-email {
-        color: #718096;
+        color: #ffffff;
         font-size: 14px;
       }
 
@@ -1119,12 +1119,12 @@
       function createApplicantCard(application) {
         const statusClass = application.status.toLowerCase();
         const statusColors = {
-          applied: '#2563eb',      // blue
+          applied: '#ffffff',      // white
           shortlisted: '#f59e0b', // orange
           hired: '#059669',       // green
           rejected: '#dc2626'     // red
         };
-        const statusColor = statusColors[statusClass] || '#333';
+        const statusColor = statusColors[statusClass] || '#ffffff';
 
         return `
           <div class="applicant-card ${statusClass}" onclick="viewApplicantDetails(${application.applicationId})">
