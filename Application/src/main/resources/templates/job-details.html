@@ -606,8 +606,9 @@
         }
 
         try {
+          const jobServiceUrl = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://alert-eagerness-production-c0ff.up.railway.app';
           const response = await fetch(
-            `http://localhost:8081/api/jobs/${currentJobId}`,
+            `${jobServiceUrl}/api/jobs/${currentJobId}`,
             {
               method: "GET",
               headers: {
@@ -828,8 +829,9 @@
               navigateToPage("/my-applications");
             }, 1500);
           } else if (response.status === 401) {
+            const authUrl = window.location.hostname === 'localhost' ? 'http://localhost:8083' : 'https://job-application-service-production.up.railway.app';
             alert("Please log in to apply for jobs");
-            window.location.href = "http://localhost:8083/login";
+            window.location.href = authUrl + "/login";
           } else {
             const errorText = await response.text();
             alert("Failed to submit application: " + errorText);
