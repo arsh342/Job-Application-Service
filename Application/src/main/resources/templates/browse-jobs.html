@@ -657,7 +657,8 @@
 
       async function loadJobs() {
         try {
-          const response = await fetch("http://localhost:8081/api/jobs/all", {
+          const jobServiceUrl = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://alert-eagerness-production-c0ff.up.railway.app';
+          const response = await fetch(jobServiceUrl + "/api/jobs/all", {
             headers: getAuthHeaders()
           });
 

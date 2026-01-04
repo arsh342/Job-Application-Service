@@ -721,10 +721,11 @@
             allApplications = await response.json();
 
             // Load job details for each application
+            const jobServiceUrl = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://alert-eagerness-production-c0ff.up.railway.app';
             for (let application of allApplications) {
               try {
                 const jobResponse = await fetch(
-                  `http://localhost:8081/api/jobs/${application.jobId}`,
+                  `${jobServiceUrl}/api/jobs/${application.jobId}`,
                   {
                     method: "GET",
                     headers: {
