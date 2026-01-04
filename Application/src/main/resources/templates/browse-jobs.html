@@ -777,6 +777,11 @@
       function displayPagination() {
         const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
         const pagination = document.getElementById("paginationControls");
+        
+        // Check if pagination element exists
+        if (!pagination) {
+          return;
+        }
 
         if (totalPages <= 1) {
           pagination.innerHTML = "";
