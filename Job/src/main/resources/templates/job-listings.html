@@ -554,13 +554,13 @@
 
       .applicant-name {
         font-weight: 600;
-        color: #2d3748;
+        color: #ffffff;
         font-size: 16px;
         margin-bottom: 4px;
       }
 
       .applicant-email {
-        color: #718096;
+        color: #ffffff;
         font-size: 14px;
       }
 
@@ -836,6 +836,11 @@
     <script>
       let allJobs = [];
       let allApplications = {};
+
+      // Dynamic service URL configuration
+      const applicationServiceUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:8082' 
+        : 'https://splendid-imagination-production-885a.up.railway.app';
 
       // Additional JWT utility functions (supplementing sidebar)
       function getAuthHeaders() {
@@ -1119,12 +1124,12 @@
       function createApplicantCard(application) {
         const statusClass = application.status.toLowerCase();
         const statusColors = {
-          applied: '#2563eb',      // blue
+          applied: '#ffffff',      // white
           shortlisted: '#f59e0b', // orange
           hired: '#059669',       // green
           rejected: '#dc2626'     // red
         };
-        const statusColor = statusColors[statusClass] || '#333';
+        const statusColor = statusColors[statusClass] || '#ffffff';
 
         return `
           <div class="applicant-card ${statusClass}" onclick="viewApplicantDetails(${application.applicationId})">
@@ -1241,7 +1246,7 @@
         }
 
         const headers = getAuthHeaders();
-        fetch(`http://localhost:8082/api/applicants/${application.applicantId}`, { headers })
+        fetch(`${applicationServiceUrl}/api/applicants/${application.applicantId}`, { headers })
           .then(response => response.ok ? response.json() : null)
           .then(profile => {
             // Helper for rendering lists
@@ -1376,7 +1381,7 @@
           const headers = getAuthHeaders();
           headers['Content-Type'] = 'application/json';
 
-          const response = await fetch(`http://localhost:8082/api/applications/${applicationId}/status`, {
+          const response = await fetch(`${applicationServiceUrl}/api/applications/${applicationId}/status`, {
             method: 'PUT',
             headers: headers,
             body: JSON.stringify({ status: newStatus })

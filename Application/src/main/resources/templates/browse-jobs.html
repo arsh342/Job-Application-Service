@@ -657,7 +657,8 @@
 
       async function loadJobs() {
         try {
-          const response = await fetch("http://localhost:8081/api/jobs/all", {
+          const jobServiceUrl = window.location.hostname === 'localhost' ? 'http://localhost:8081' : 'https://alert-eagerness-production-c0ff.up.railway.app';
+          const response = await fetch(jobServiceUrl + "/api/jobs/all", {
             headers: getAuthHeaders()
           });
 
@@ -776,6 +777,11 @@
       function displayPagination() {
         const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
         const pagination = document.getElementById("paginationControls");
+        
+        // Check if pagination element exists
+        if (!pagination) {
+          return;
+        }
 
         if (totalPages <= 1) {
           pagination.innerHTML = "";
@@ -933,16 +939,21 @@
         })
           .then((response) => {
             if (response.ok) {
-              alert("Application submitted successfully!");
-              appliedJobs.add(job.jobId);
-              displayJobs();
+              return response.json().then(data => {
+                console.log("Application submitted successfully:", data);
+                alert("Application submitted successfully!");
+                appliedJobs.add(job.jobId);
+                displayJobs();
+              });
             } else {
-              response.text().then((text) => {
+              return response.text().then((text) => {
+                console.error("Application submission failed:", response.status, text);
                 alert("Failed to submit application: " + text);
               });
             }
           })
           .catch((error) => {
+            console.error("Error submitting application:", error);
             alert("Error submitting application: " + error.message);
           });
       }
