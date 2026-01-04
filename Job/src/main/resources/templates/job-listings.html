@@ -837,6 +837,11 @@
       let allJobs = [];
       let allApplications = {};
 
+      // Dynamic service URL configuration
+      const applicationServiceUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:8082' 
+        : 'https://splendid-imagination-production-885a.up.railway.app';
+
       // Additional JWT utility functions (supplementing sidebar)
       function getAuthHeaders() {
         const token = getJwtToken();
@@ -1241,7 +1246,7 @@
         }
 
         const headers = getAuthHeaders();
-        fetch(`http://localhost:8082/api/applicants/${application.applicantId}`, { headers })
+        fetch(`${applicationServiceUrl}/api/applicants/${application.applicantId}`, { headers })
           .then(response => response.ok ? response.json() : null)
           .then(profile => {
             // Helper for rendering lists
