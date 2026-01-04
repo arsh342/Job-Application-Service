@@ -5,6 +5,7 @@ import com.service.job.dto.JobCreateDto;
 import com.service.job.dto.JobResponseDto;
 import com.service.job.service.JobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,9 @@ import java.util.List;
 public class JobController {
     
     private final JobService jobService;
+    
+    @Value("${application.service.url:http://localhost:8082}")
+    private String applicationServiceUrlConfig;
     
     @PostMapping("/jobs")
     public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDto dto, HttpServletRequest request) {
@@ -169,7 +173,7 @@ public class JobController {
         
         try {
             // Delegate to Application service
-            String applicationServiceUrl = "http://localhost:8082";
+            String applicationServiceUrl = applicationServiceUrlConfig;
             
             // Create HTTP client request
             java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();

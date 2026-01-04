@@ -1381,7 +1381,7 @@
           const headers = getAuthHeaders();
           headers['Content-Type'] = 'application/json';
 
-          const response = await fetch(`http://localhost:8082/api/applications/${applicationId}/status`, {
+          const response = await fetch(`${applicationServiceUrl}/api/applications/${applicationId}/status`, {
             method: 'PUT',
             headers: headers,
             body: JSON.stringify({ status: newStatus })
